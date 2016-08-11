@@ -29,7 +29,7 @@ class StorageManager {
 
     constructor (path: String) {
         mDir = File(path)
-        mFile = File(path + "board.ldes")
+        mFile = File(path + File.separator + "board.ldes")
         val boFactory: RuntimeTypeAdapterFactory<BaseObject> = RuntimeTypeAdapterFactory.of(BaseObject::class.java, "ObjectType")
         boFactory.registerSubtype(SourceObject::class.java)
         boFactory.registerSubtype(CopyObject::class.java)
@@ -68,18 +68,18 @@ class StorageManager {
     }
 
     fun addImageFile (file: File) {
-        FileUtils.copyFile(file, File(mDir.path + file.name))
+        FileUtils.copyFile(file, File(mDir.path + File.separator  + file.name))
     }
 
     fun removeImageFile (name: String) {
-        val f = File(mDir.path + name)
+        val f = File(mDir.path + File.separator + name)
         if (f.exists())
             f.delete()
     }
 
     @Throws(FileNotFoundException::class)
     fun getImageFile (name: String) : String {
-        val f = File(mDir.path + name)
+        val f = File(mDir.path + File.separator  + name)
         if (!f.exists())
             throw FileNotFoundException()
         return f.path
@@ -112,7 +112,7 @@ class StorageManager {
     companion object {
         @Throws(IllegalArgumentException::class)
         fun createWithNameInternal(name: String, ctx: Context) : StorageManager {
-            val path = ctx.filesDir.path.plus(File.separator).plus(name).plus(File.separator)
+            val path = ctx.filesDir.path.plus(File.separator).plus(name)
             if (File(path).exists()) {
                 throw IllegalArgumentException("this file exists already.")
             } else {

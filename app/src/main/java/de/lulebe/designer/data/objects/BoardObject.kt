@@ -106,11 +106,11 @@ class BoardObject() : SourceObject() {
             gridChange()
         }
 
-    private val _colorStyles: MutableList<ColorStyle> = mutableListOf()
+    private val _colorStyles: MutableMap<Long, ColorStyle> = mutableMapOf()
 
-    private val _boxStyles: MutableList<BoxStyle> = mutableListOf()
+    private val _boxStyles: MutableMap<Long, BoxStyle> = mutableMapOf()
 
-    private val _textStyles: MutableList<TextStyle> = mutableListOf()
+    private val _textStyles: MutableMap<Long, TextStyle> = mutableMapOf()
 
     private val _objects: MutableList<BaseObject> = mutableListOf()
     val objects: MutableList<BaseObject>
@@ -227,30 +227,6 @@ class BoardObject() : SourceObject() {
         for (obj in _objects) {
             if (obj.uid == uid)
                 return obj
-        }
-        return null
-    }
-
-    fun getBoxStyleWithUID (uid: Long) : BoxStyle? {
-        for (boxstyle in _boxStyles) {
-            if (boxstyle.uid == uid)
-                return boxStyle
-        }
-        return null
-    }
-
-    fun getColorStyleWithUId (uid: Long) : ColorStyle? {
-        for (colorstyle in _colorStyles) {
-            if (colorstyle.uid == uid)
-                return colorstyle
-        }
-        return null
-    }
-
-    fun getTextStyleWithUId (uid: Long) : TextStyle? {
-        for (textstyle in _textStyles) {
-            if (textstyle.uid == uid)
-                return textstyle
         }
         return null
     }
