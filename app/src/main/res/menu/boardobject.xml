@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_resize"
+        android:title="Board Settings" />
+    <item
+        android:id="@+id/menu_export"
+        android:title="export"
+        />
+    <item
+        android:id="@+id/menu_share"
+        android:title="share"
+        />
+</menu>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp">
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_format_color_fill_grey600_24dp"/>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="76dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="56dp">
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/field_object_textcolor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:hint="text color"
+                android:inputType="text"
+                android:maxLines="1"
+                android:maxLength="6"
+                android:text="000000"/>
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="16dp">
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/field_object_fontsize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:hint="font size"
+                android:inputType="number"
+                android:maxLines="1"
+                android:maxLength="3"
+                android:text="16"/>
+        </android.support.design.widget.TextInputLayout>
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp">
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_textbox_grey600_24dp"/>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="56dp">
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/field_object_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="text"
+                android:inputType="textMultiLine"
+                android:text="text"/>
+        </android.support.design.widget.TextInputLayout>
+    </FrameLayout>
+
+</merge>

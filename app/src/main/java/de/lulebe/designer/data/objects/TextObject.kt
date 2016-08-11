@@ -1,0 +1,126 @@
+package de.lulebe.designer.data.objects
+
+import android.graphics.Color
+import android.graphics.Paint
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
+import de.lulebe.designer.data.Deserializer
+
+
+class TextObject : SourceObject() {
+
+
+    private var _text = ""
+    var text: String
+        get() = _text
+        set(value) {
+            _text = value
+            calcSizes()
+            change()
+        }
+
+
+    private var _alignment = Layout.Alignment.ALIGN_NORMAL
+    var alignment: Layout.Alignment
+        get() = _alignment
+        set(value) {
+            _alignment = value
+            calcSizes()
+            change()
+        }
+
+
+    private var _textColor: Int = Color.BLACK
+    var textColor: Int
+        get() = _textColor
+        set(value) {
+            _textColor = value
+            change()
+        }
+
+
+    private var _fontSize: Int = 16
+    var fontSize: Int
+        get() = _fontSize
+        set(value) {
+            _fontSize = value
+            calcSizes()
+            change()
+        }
+
+    override var height: Int
+        get() = super.height
+        set(value) {
+        }
+
+    override var width: Int
+        get() = super.width
+        set(value) {
+            _width = value
+            calcSizes()
+            change()
+        }
+
+    init {
+        _text = "Text"
+        _width = 100
+    }
+
+    override fun canDirectlyChangeHeight() = false
+
+    override fun applyMovement() {
+        _xpos = xposMoving
+        _ypos = yposMoving
+        _width = widthMoving
+        calcSizes()
+        calculateHandles()
+        change()
+    }
+
+    override fun getRenderables(d: Deserializer, forceReload: Boolean): Array<Renderable> {
+        if (!forceReload && !hasChanged)
+            return renderables.toTypedArray()
+        renderables.clear()
+
+        if (alpha == 0) {
+            hasChanged = false
+            return emptyArray()
+        }
+        val paint = TextPaint(Paint.ANTI_ALIAS_FLAG)
+        paint.color = textColor
+        paint.textSize = d.dipToPxF(fontSize)
+        paint.alpha = alpha
+        val layout = StaticLayout(_text, paint, d.dipToPxI(width), alignment, 1F, 0F, false)
+        val r = Renderable(Renderable.Type.TEXT, layout, d.dipToPxF(xpos), d.dipToPxF(ypos), paint)
+        renderables.add(r)
+        hasChanged = false
+        return renderables.toTypedArray()
+    }
+
+    private fun calcSizes () {
+        val paint = TextPaint()
+        paint.textSize = fontSize.toFloat()
+        val layout = StaticLayout(_text, paint, width.toInt(), alignment, 1F, 0F, false)
+        _width = layout.width
+        _widthMoving = layout.width
+        _height = layout.height
+        _heightMoving = layout.height
+        calculateHandles()
+    }
+
+    override fun getMainColor(): Int {
+        return textColor
+    }
+
+    override fun clone(): TextObject {
+        val obj = TextObject()
+        applyBaseClone(obj)
+        obj.text = text
+        obj.alignment = alignment
+        obj.textColor = textColor
+        obj.fontSize = fontSize
+        return obj
+    }
+
+}
