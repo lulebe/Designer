@@ -107,10 +107,16 @@ class BoardObject() : SourceObject() {
         }
 
     private val _colorStyles: MutableMap<Long, ColorStyle> = mutableMapOf()
+    val colorStyles: MutableMap<Long, ColorStyle>
+        get() = _colorStyles
 
     private val _boxStyles: MutableMap<Long, BoxStyle> = mutableMapOf()
+    val boxStyles: MutableMap<Long, BoxStyle>
+        get() = _boxStyles
 
     private val _textStyles: MutableMap<Long, TextStyle> = mutableMapOf()
+    val textStyles: MutableMap<Long, TextStyle>
+        get() = _textStyles
 
     private val _objects: MutableList<BaseObject> = mutableListOf()
     val objects: MutableList<BaseObject>
@@ -159,13 +165,13 @@ class BoardObject() : SourceObject() {
         change()
     }
 
-    override fun init (ctx: Context) {
-        super.init(ctx)
+    override fun init (ctx: Context, board: BoardObject) {
+        super.init(ctx, board)
         for (obj in _objects) {
             if (obj is CopyObject)
                 obj.init(ctx, this)
             else
-                obj.init(ctx)
+                obj.init(ctx, board)
             obj.addChangeListener {
                 change()
             }

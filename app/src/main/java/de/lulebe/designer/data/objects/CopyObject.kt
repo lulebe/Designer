@@ -35,7 +35,7 @@ class CopyObject : BaseObject() {
             }
             source!!.addChangeListener(sourceListener)
         }
-        super.init(ctx)
+        super.init(ctx, )
     }
 
     override fun close() {

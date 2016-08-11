@@ -97,8 +97,8 @@ class ImageObject() : SourceObject() {
         return renderables.toTypedArray()
     }
 
-    override fun init(ctx: Context) {
-        super.init(ctx)
+    override fun init(ctx: Context, board: BoardObject) {
+        super.init(ctx, board)
         this.ctx = WeakReference(ctx)
     }
 

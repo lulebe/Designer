@@ -107,6 +107,10 @@ abstract class BaseObject : IRenderable {
     open var width: Int
         get() = _width
         set(value) {
+            if (_boxStyle != null) {
+                _boxStyle = null
+                _boxStyleUID = null
+            }
             if (widthMoving == _width)
                 widthMoving = value
             _width = value
@@ -128,6 +132,10 @@ abstract class BaseObject : IRenderable {
     open var height: Int
         get() = _height
         set(value) {
+            if (_boxStyle != null) {
+                _boxStyle = null
+                _boxStyleUID = null
+            }
             if (heightMoving == _height)
                 heightMoving = value
             _height = value
@@ -144,7 +152,7 @@ abstract class BaseObject : IRenderable {
         }
 
 
-    protected var _boxStyleUID: Long? = null
+    private var _boxStyleUID: Long? = null
     @Transient
     protected var _boxStyle: BoxStyle? = null
     var boxStyle: BoxStyle?
@@ -156,7 +164,6 @@ abstract class BaseObject : IRenderable {
             }
             else {
                 _boxStyle?.removeChangeListener(boxStyleChangeListener)
-
                 if (value != null) {
                     _boxStyle = value
                     _boxStyleUID = value.uid
@@ -172,12 +179,12 @@ abstract class BaseObject : IRenderable {
     @Transient
     open protected val boxStyleChangeListener = {
         if (canDirectlyChangeWidth()) {
-            if (widthMoving == _width)
+            if (_widthMoving == _width)
                 _widthMoving = boxStyle!!.width
             _width = boxStyle!!.width
         }
         if (canDirectlyChangeHeight()) {
-            if (heightMoving == _height)
+            if (_heightMoving == _height)
                 _heightMoving = boxStyle!!.height
             _height = boxStyle!!.height
         }
@@ -205,6 +212,14 @@ abstract class BaseObject : IRenderable {
         return true
     }
     open fun canAcceptBoxStyle() = true
+
+    open fun extractBoxStyle() : BoxStyle {
+        val bs = BoxStyle()
+        bs.name = name + " Box style"
+        bs.width = width
+        bs.height = height
+        return bs
+    }
 
 
     fun movingTo(x: Int = xpos, y: Int = ypos) {
@@ -258,7 +273,8 @@ abstract class BaseObject : IRenderable {
     }
 
 
-    open fun init (ctx: Context) {
+    open fun init (ctx: Context, board: BoardObject) {
+        boxStyle = board.boxStyles[_boxStyleUID]
         _xposMoving = xpos
         _yposMoving = ypos
         _widthMoving = width

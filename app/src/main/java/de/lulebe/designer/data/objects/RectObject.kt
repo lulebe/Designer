@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.styles.BoxStyle
 
 /**
  * Created by LuLeBe on 13/06/16.
@@ -57,6 +58,8 @@ class RectObject : SourceObject() {
     var cornerRadius: Int
         get() = _cornerRadius
         set(value) {
+            if (_boxStyle != null)
+                boxStyle = null
             _cornerRadius = value
             change()
         }
@@ -72,6 +75,14 @@ class RectObject : SourceObject() {
         _cornerRadius = boxStyle!!.cornerRadius
         calculateHandles()
         change()
+    }
+
+
+
+    override fun extractBoxStyle() : BoxStyle {
+        val bs = super.extractBoxStyle()
+        bs.cornerRadius = cornerRadius
+        return bs
     }
 
 

@@ -49,7 +49,7 @@ class StorageManager {
         mBoardObject = mGson.fromJson(inr, BoardObject::class.java)
         inr.close()
         ins.close()
-        mBoardObject!!.init(ctx)
+        mBoardObject!!.init(ctx, )
         return mBoardObject!!
     }
 

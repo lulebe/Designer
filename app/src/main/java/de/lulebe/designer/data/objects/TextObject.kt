@@ -6,6 +6,7 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.styles.TextStyle
 
 
 class TextObject : SourceObject() {
@@ -62,12 +63,47 @@ class TextObject : SourceObject() {
             change()
         }
 
+
+    protected var _textStyleUID: Long? = null
+    @Transient
+    protected var _textStyle: TextStyle? = null
+    var textStyle: TextStyle?
+        get() = _textStyle
+        set(value) {
+            _textStyle?.removeChangeListener(textStyleChangeListener)
+            if (value != null) {
+                _textStyle = value
+                _textStyleUID = value.uid
+                value.addChangeListener(textStyleChangeListener)
+                textStyleChangeListener()
+            } else {
+                _textStyleUID = null
+            }
+        }
+
+    @Transient
+    protected val textStyleChangeListener = {
+        _fontSize = _textStyle!!.fontSize
+    }
+
+
+
+
     init {
         _text = "Text"
         _width = 100
     }
 
     override fun canDirectlyChangeHeight() = false
+
+
+    fun extractTextStyle(): TextStyle {
+        val ts = TextStyle()
+        ts.name = name + " Text style"
+        ts.fontSize = fontSize
+        return ts
+    }
+
 
     override fun applyMovement() {
         _xpos = xposMoving
