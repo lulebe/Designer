@@ -154,8 +154,10 @@ abstract class BaseObject : IRenderable {
     var boxStyle: BoxStyle?
         get() = _boxStyle
         set(value) {
-            if (!canAcceptBoxStyle())
-                boxStyle = null
+            if (!canAcceptBoxStyle()) {
+                _boxStyle = null
+                _boxStyleUID = null
+            }
             else {
                 _boxStyle?.removeChangeListener(boxStyleChangeListener!!)
                 if (value != null) {

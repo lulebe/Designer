@@ -27,6 +27,7 @@ class BoxStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val m
         override fun onBindViewHolder(holder: StyleViewHolder, position: Int) {
             val bs = mBoardObject.styles.boxStyles.values.toList().get(position)
             holder.name.text = bs.name
+            holder.dimensions.text = bs.width.toString() + " * " + bs.height.toString()
             holder.view.setOnClickListener {
                 if (mBoardState.selected != null)
                     mBoardState.selected!!.boxStyle = bs
@@ -45,9 +46,11 @@ class BoxStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val m
         inner class StyleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val view: View
             val name: TextView
+            val dimensions: TextView
             init {
                 view = itemView
                 name = itemView.findViewById(R.id.name) as TextView
+                dimensions = itemView.findViewById(R.id.dimensions) as TextView
             }
         }
     }
