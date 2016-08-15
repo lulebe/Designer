@@ -25,16 +25,16 @@ class BoardsAdapter(val listener: (BoardMeta, longClick: Boolean) -> Unit) : Rec
         return mItems.size
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): BoardViewHolder? {
-        return BoardViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.rv_board, parent, false) as ViewGroup)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardViewHolder? {
+        return BoardViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.listitem_board, parent, false) as ViewGroup)
     }
 
-    override fun onBindViewHolder(holder: BoardViewHolder?, position: Int) {
-        holder?.tvName?.text = mItems.get(position).name
-        holder?.view?.setOnClickListener {
+    override fun onBindViewHolder(holder: BoardViewHolder, position: Int) {
+        holder.tvName.text = mItems[position].name
+        holder.view.setOnClickListener {
             listener(mItems[position], false)
         }
-        holder?.view?.setOnLongClickListener {
+        holder.view.setOnLongClickListener {
             listener(mItems[position], true)
             true
         }

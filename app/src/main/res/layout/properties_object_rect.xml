@@ -19,7 +19,7 @@
             android:orientation="vertical"
             android:paddingBottom="16dp"
             android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingRight="4dp"
             android:clipToPadding="false">
             <TextView
                 android:layout_width="wrap_content"
@@ -28,7 +28,7 @@
                 android:text="Fill Color"/>
             <Button
                 android:id="@+id/btn_object_fillcolor"
-                android:layout_width="88dp"
+                android:layout_width="116dp"
                 android:layout_height="36dp"
                 android:layout_marginTop="24dp"
                 android:elevation="2dp"
@@ -39,7 +39,7 @@
                 android:layout_height="36dp"
                 android:padding="6dp"
                 android:layout_gravity="right|bottom"
-                android:src="@drawable/ic_hexagon_grey600_24dp"
+                android:src="@drawable/ic_content_save_grey600_24dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"/>
         </FrameLayout>
@@ -57,7 +57,7 @@
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_border_style_grey600_24dp"/>
         <android.support.design.widget.TextInputLayout
-            android:layout_width="64dp"
+            android:layout_width="56dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="56dp">
             <android.support.design.widget.TextInputEditText
@@ -71,14 +71,13 @@
                 android:maxLength="2"
                 android:text="0"/>
         </android.support.design.widget.TextInputLayout>
-        <LinearLayout
-            android:layout_width="80dp"
+        <FrameLayout
+            android:layout_width="56dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:orientation="vertical"
+            android:layout_marginLeft="120dp"
             android:paddingBottom="16dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
             android:clipToPadding="false">
             <TextView
                 android:layout_width="wrap_content"
@@ -90,18 +89,21 @@
                 android:id="@+id/btn_object_strokecolor"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
+                android:layout_marginTop="12dp"
                 android:elevation="2dp"
                 android:foreground="?attr/selectableItemBackground"/>
-            <ImageView
-                android:id="@+id/btn_object_extractstrokecolor"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="6dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_hexagon_grey600_24dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"/>
-        </LinearLayout>
+        </FrameLayout>
+        <ImageView
+            android:id="@+id/btn_object_extractstrokecolor"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="4dp"
+            android:padding="6dp"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_content_save_grey600_24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"/>
     </FrameLayout>
 
     <FrameLayout

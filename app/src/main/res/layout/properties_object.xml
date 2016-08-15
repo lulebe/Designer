@@ -169,6 +169,16 @@
                 android:layout_marginTop="24dp"/>
         </FrameLayout>
     </FrameLayout>
+    <ImageView
+        android:id="@+id/btn_object_extractboxstyle"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="right"
+        android:layout_marginRight="16dp"
+        android:padding="6dp"
+        android:src="@drawable/ic_content_save_grey600_24dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"/>
 
 
     <FrameLayout

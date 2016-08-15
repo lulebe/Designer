@@ -4,9 +4,7 @@ import android.os.Bundle
 import de.lulebe.designer.data.objects.BaseObject
 import de.lulebe.designer.data.objects.BoardObject
 
-/**
- * Created by LuLeBe on 01/07/16.
- */
+
 class BoardState {
 
     open class BoardStateListener () {
@@ -17,6 +15,7 @@ class BoardState {
         open fun onBoardScrollY (scrollY: Float) {}
         open fun onExpandLeftPanel (expanded: Boolean) {}
         open fun onExpandRightPanel (expanded: Boolean) {}
+        open fun onExpandBottomPanel (expanded: Boolean) {}
     }
 
     //listeners
@@ -106,6 +105,16 @@ class BoardState {
             }
         }
 
+    private var _bottomPanelExpanded: Boolean = false
+    var bottomPanelExpanded: Boolean
+        get() = _bottomPanelExpanded
+        set(value) {
+            _bottomPanelExpanded = value
+            for (l in mListeners) {
+                l.onExpandBottomPanel(value)
+            }
+        }
+
 
     fun saveInstanceState (instanceState: Bundle) {
         val b = Bundle()
@@ -113,8 +122,9 @@ class BoardState {
         b.putBoolean("showGrid", showGrid)
         b.putFloat("boardScrollX", boardScrollX)
         b.putFloat("boardScrollY", boardScrollY)
-        b.putBoolean("rightPanelExpanded", rightPanelExpanded)
         b.putBoolean("leftPanelExpanded", leftPanelExpanded)
+        b.putBoolean("rightPanelExpanded", rightPanelExpanded)
+        b.putBoolean("bottomPanelExpanded", bottomPanelExpanded)
         if (selected != null)
             b.putString("selectedUID", selected?.uid.toString())
         else
@@ -135,6 +145,7 @@ class BoardState {
             bs.boardScrollY = b.getFloat("boardScrollY")
             bs.leftPanelExpanded = b.getBoolean("leftPanelExpanded")
             bs.rightPanelExpanded = b.getBoolean("rightPanelExpanded")
+            bs.bottomPanelExpanded = b.getBoolean("bottomPanelExpanded")
             val s = b.getString("selectedUID")
             if (s != null)
                 bs.selected = boardObject.getObjectWithUID(s.toLong())

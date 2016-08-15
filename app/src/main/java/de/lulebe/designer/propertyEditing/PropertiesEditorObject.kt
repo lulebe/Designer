@@ -1,18 +1,18 @@
 package de.lulebe.designer.propertyEditing
 
+import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import de.lulebe.designer.R
 import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.objects.CopyObject
 import de.lulebe.designer.data.objects.SourceObject
+import de.lulebe.designer.data.styles.BoxStyle
 
 /**
  * Created by LuLeBe on 18/06/16.
@@ -33,6 +33,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
     private val mHeightView: EditText
     private val mHeightDisplayLayoutView: View
     private val mHeightDisplayView: TextView
+    private val mExtractBoxstyleView: ImageView
     private val mAlphaView: EditText
     private val mShadowView: CheckBox
     private val mShadowBlurView: EditText
@@ -53,6 +54,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         mHeightView = mView.findViewById(R.id.field_object_height) as EditText
         mHeightDisplayLayoutView = mView.findViewById(R.id.display_object_height_layout)
         mHeightDisplayView = mView.findViewById(R.id.display_object_height) as TextView
+        mExtractBoxstyleView = mView.findViewById(R.id.btn_object_extractboxstyle) as ImageView
         mAlphaView = mView.findViewById(R.id.field_object_alpha) as EditText
         mShadowView = mView.findViewById(R.id.field_object_shadow) as CheckBox
         mShadowBlurView = mView.findViewById(R.id.field_object_shadowblur) as EditText
@@ -96,6 +98,14 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
             newObj.name = "copy of " + mObject.name
             mBoardObject.addObject(newObj)
             mBoardState.selected = newObj
+        }
+
+        mExtractBoxstyleView.setOnClickListener {
+            val bs = mObject.extractBoxStyle()
+            StyleExtractor<BoxStyle>().createStyle(bs, mView.context) {
+                mBoardObject.styles.boxStyles.put(bs.uid, bs)
+                mObject.boxStyle = bs
+            }
         }
 
         mObject.addChangeListener {
@@ -191,6 +201,18 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
             mHeightDisplayLayoutView.visibility = View.VISIBLE
             mHeightDisplayView.text = mObject.height.toString()
         }
+        if (mObject.canAcceptBoxStyle()) {
+            mExtractBoxstyleView.visibility = View.VISIBLE
+            if (mObject.boxStyle != null) {
+                val dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+                dr.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
+                mExtractBoxstyleView.setImageDrawable(dr)
+            } else {
+                val dr = ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp)
+                mExtractBoxstyleView.setImageDrawable(dr)
+            }
+        } else
+            mExtractBoxstyleView.visibility = View.GONE
         mAlphaView.setText(mObject.alpha.toString())
         if (mObject.shadow != null) {
             mShadowView.isChecked = true

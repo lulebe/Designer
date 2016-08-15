@@ -20,6 +20,7 @@ import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.StorageManager
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.propertyEditing.PropertyPanelManager
+import de.lulebe.designer.styleEditing.StylePanelManager
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
@@ -40,6 +41,7 @@ class BoardActivity : AppCompatActivity() {
 
     private var mPropertyPanelManager: PropertyPanelManager? = null
     private var mLeftPanelManager: LeftPanelManager? = null
+    private var mStylePanelManager: StylePanelManager? = null
 
     private var mBoardObject: BoardObject? = null
     private var mBoardState: BoardState? = null
@@ -103,6 +105,9 @@ class BoardActivity : AppCompatActivity() {
             mBoardState?.rightPanelExpanded = open
             if (open && mLeftpane.isExpanded())
                 mLeftpane.expand(false)
+        }
+        mBottompane.addOpenListener { open ->
+            mBoardState?.bottomPanelExpanded = open
         }
     }
 
@@ -227,12 +232,14 @@ class BoardActivity : AppCompatActivity() {
             val rightpane = mRightpane.findViewById(R.id.layout_properties) as ViewGroup
             mPropertyPanelManager = PropertyPanelManager(this, rightpane, mBoardObject!!, mBoardState!!)
             mLeftPanelManager = LeftPanelManager(mLeftpane, mBoardState!!, mBoardObject!!)
+            mStylePanelManager = StylePanelManager(mBottompane, mBoardObject!!, mBoardState!!)
             mLeftpane.visibility = View.VISIBLE
             mRightpane.visibility = View.VISIBLE
             mBottompane.visibility = View.VISIBLE
             findViewById(R.id.loading)?.visibility = View.GONE
             mLeftpane.expand(mBoardState!!.leftPanelExpanded, false)
             mRightpane.expand(mBoardState!!.rightPanelExpanded, false)
+            mBottompane.expand(mBoardState!!.bottomPanelExpanded, false)
         }
     }
 

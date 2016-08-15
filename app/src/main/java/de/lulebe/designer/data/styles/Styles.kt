@@ -15,5 +15,4 @@ class Styles {
     val textStyles: MutableMap<Long, TextStyle>
         get() = _textStyles
 
-
 }

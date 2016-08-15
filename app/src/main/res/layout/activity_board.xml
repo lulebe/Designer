@@ -70,6 +70,7 @@
         android:layout_gravity="bottom"
         android:translationY="256dp"
         android:elevation="6dp"
+        android:clipToPadding="false"
         app:direction="up"
         app:headertext="Styles"
         app:colorscheme="light"

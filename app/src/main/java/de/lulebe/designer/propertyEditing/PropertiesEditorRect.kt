@@ -1,11 +1,14 @@
 package de.lulebe.designer.propertyEditing
 
 import android.graphics.drawable.ColorDrawable
+import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import com.azeesoft.lib.colorpicker.ColorPickerDialog
 import de.lulebe.designer.R
@@ -17,10 +20,10 @@ import de.lulebe.designer.data.styles.ColorStyle
 class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mBoardObject: BoardObject) : TextView.OnEditorActionListener {
 
     private val mFillcolorView: View
-    private val mExtractfillcolorView: View
+    private val mExtractFillcolorView: ImageView
     private val mStrokewidthView: EditText
     private val mStrokecolorView: View
-    private val mExtractStrokecolorView: View
+    private val mExtractStrokecolorView: ImageView
     private val mCornerradiusView: EditText
 
     private val mColorpickerDialog = ColorPickerDialog.createColorPickerDialog(mView.context)
@@ -28,10 +31,10 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
 
     init {
         mFillcolorView = mView.findViewById(R.id.btn_object_fillcolor)
-        mExtractfillcolorView = mView.findViewById(R.id.btn_object_extractfillcolor)
+        mExtractFillcolorView = mView.findViewById(R.id.btn_object_extractfillcolor) as ImageView
         mStrokewidthView = mView.findViewById(R.id.field_object_strokewidth) as EditText
         mStrokecolorView = mView.findViewById(R.id.btn_object_strokecolor)
-        mExtractStrokecolorView = mView.findViewById(R.id.btn_object_extractstrokecolor)
+        mExtractStrokecolorView = mView.findViewById(R.id.btn_object_extractstrokecolor) as ImageView
         mCornerradiusView = mView.findViewById(R.id.field_object_cornerradius) as EditText
 
 
@@ -48,7 +51,7 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
             mColorpickerDialog.setInitialColor(mObject.fillColor)
             mColorpickerDialog.show()
         }
-        mExtractfillcolorView.setOnClickListener {
+        mExtractFillcolorView.setOnClickListener {
             val cs = mObject.extractFillcolorStyle()
             val se = StyleExtractor<ColorStyle>()
             se.createStyle(cs, mView.context) {
@@ -108,6 +111,22 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
         mStrokewidthView.setText(mObject.strokeWidth.toString())
         mStrokecolorView.background = ColorDrawable(mObject.strokeColor)
         mCornerradiusView.setText(mObject.cornerRadius.toString())
+        if (mObject.fillColorStyle != null) {
+            val dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+            dr.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
+            mExtractFillcolorView.setImageDrawable(dr)
+        } else {
+            val dr = ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp)
+            mExtractFillcolorView.setImageDrawable(dr)
+        }
+        if (mObject.strokeColorStyle != null) {
+            val dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+            dr.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
+            mExtractStrokecolorView.setImageDrawable(dr)
+        } else {
+            val dr = ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp)
+            mExtractStrokecolorView.setImageDrawable(dr)
+        }
     }
 
 }
