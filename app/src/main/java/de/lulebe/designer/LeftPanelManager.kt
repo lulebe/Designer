@@ -87,7 +87,7 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
             mBtnAddGroup -> {
                 val obj = BoardObject()
                 obj.parentBoard = mBoardObject
-                obj.init(mPanel.context, )
+                obj.init(mPanel.context, mBoardObject)
                 mBoardObject.addObject(obj)
                 mBoardState.selected = obj
             }

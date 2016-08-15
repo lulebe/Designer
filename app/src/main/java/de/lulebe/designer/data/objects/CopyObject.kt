@@ -19,8 +19,9 @@ class CopyObject : BaseObject() {
     override fun canDirectlyChangeHeight() = false
     override fun canAcceptBoxStyle() = false
 
-    fun init(ctx: Context, boardObject: BoardObject) {
-        this.source = boardObject.getObjectWithUID(sourceId) as SourceObject
+    override fun init(ctx: Context, board: BoardObject?) {
+        if (board != null)
+            this.source = board.getObjectWithUID(sourceId) as SourceObject
         if (source != null) {
             source!!.copies++
             _width = source!!.width
@@ -35,7 +36,7 @@ class CopyObject : BaseObject() {
             }
             source!!.addChangeListener(sourceListener)
         }
-        super.init(ctx, )
+        super.init(ctx, board)
     }
 
     override fun close() {

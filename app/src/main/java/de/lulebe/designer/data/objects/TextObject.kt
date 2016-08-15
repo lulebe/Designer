@@ -45,6 +45,8 @@ class TextObject : SourceObject() {
     var fontSize: Int
         get() = _fontSize
         set(value) {
+            if (_textStyle != null)
+                textStyle = null
             _fontSize = value
             calcSizes()
             change()
@@ -64,9 +66,9 @@ class TextObject : SourceObject() {
         }
 
 
-    protected var _textStyleUID: Long? = null
+    private var _textStyleUID: Long? = null
     @Transient
-    protected var _textStyle: TextStyle? = null
+    private var _textStyle: TextStyle? = null
     var textStyle: TextStyle?
         get() = _textStyle
         set(value) {

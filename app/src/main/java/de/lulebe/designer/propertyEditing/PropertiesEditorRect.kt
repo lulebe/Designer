@@ -9,14 +9,18 @@ import android.widget.EditText
 import android.widget.TextView
 import com.azeesoft.lib.colorpicker.ColorPickerDialog
 import de.lulebe.designer.R
+import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.objects.RectObject
+import de.lulebe.designer.data.styles.ColorStyle
 
 
-class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup) : TextView.OnEditorActionListener {
+class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mBoardObject: BoardObject) : TextView.OnEditorActionListener {
 
     private val mFillcolorView: View
+    private val mExtractfillcolorView: View
     private val mStrokewidthView: EditText
     private val mStrokecolorView: View
+    private val mExtractStrokecolorView: View
     private val mCornerradiusView: EditText
 
     private val mColorpickerDialog = ColorPickerDialog.createColorPickerDialog(mView.context)
@@ -24,8 +28,10 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup) : Text
 
     init {
         mFillcolorView = mView.findViewById(R.id.btn_object_fillcolor)
+        mExtractfillcolorView = mView.findViewById(R.id.btn_object_extractfillcolor)
         mStrokewidthView = mView.findViewById(R.id.field_object_strokewidth) as EditText
         mStrokecolorView = mView.findViewById(R.id.btn_object_strokecolor)
+        mExtractStrokecolorView = mView.findViewById(R.id.btn_object_extractstrokecolor)
         mCornerradiusView = mView.findViewById(R.id.field_object_cornerradius) as EditText
 
 
@@ -42,11 +48,27 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup) : Text
             mColorpickerDialog.setInitialColor(mObject.fillColor)
             mColorpickerDialog.show()
         }
+        mExtractfillcolorView.setOnClickListener {
+            val cs = mObject.extractFillcolorStyle()
+            val se = StyleExtractor<ColorStyle>()
+            se.createStyle(cs, mView.context) {
+                mBoardObject.styles.colorStyles.put(it.uid, it)
+                mObject.fillColorStyle = it
+            }
+        }
         mStrokecolorView.setOnClickListener {
             editingFillcolor = false
             mColorpickerDialog.setLastColor(mObject.strokeColor)
             mColorpickerDialog.setInitialColor(mObject.strokeColor)
             mColorpickerDialog.show()
+        }
+        mExtractStrokecolorView.setOnClickListener {
+            val cs = mObject.extractStrokecolorStyle()
+            val se = StyleExtractor<ColorStyle>()
+            se.createStyle(cs, mView.context) {
+                mBoardObject.styles.colorStyles.put(it.uid, it)
+                mObject.strokeColorStyle = it
+            }
         }
 
         mStrokewidthView.setOnEditorActionListener(this)

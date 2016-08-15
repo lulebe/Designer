@@ -89,7 +89,7 @@ abstract class SourceObject : BaseObject() {
 
     }
 
-    override fun init (ctx: Context, board: BoardObject) {
+    override fun init (ctx: Context, board: BoardObject?) {
         super.init(ctx, board)
         if (shadow != null) {
             shadow?.addChangeListener {

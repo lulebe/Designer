@@ -34,11 +34,11 @@ class PropertyPanelManager(val mActivity: BoardActivity, val mLayout: ViewGroup,
                 when (mBoardState.selected) {
                     is RectObject -> {
                         layoutInflater.inflate(R.layout.properties_object_rect, mLayout)
-                        PropertiesEditorRect(mBoardState.selected!! as RectObject, mLayout)
+                        PropertiesEditorRect(mBoardState.selected!! as RectObject, mLayout, mBoardObject)
                     }
                     is TextObject -> {
                         layoutInflater.inflate(R.layout.properties_object_text, mLayout)
-                        PropertiesEditorText(mBoardState.selected!! as TextObject, mLayout)
+                        PropertiesEditorText(mBoardState.selected!! as TextObject, mLayout, mBoardObject)
                     }
                     is ImageObject -> {
                         layoutInflater.inflate(R.layout.properties_object_image, mLayout)

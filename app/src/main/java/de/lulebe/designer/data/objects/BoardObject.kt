@@ -7,9 +7,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import de.lulebe.designer.Renderer
 import de.lulebe.designer.data.Deserializer
-import de.lulebe.designer.data.styles.BoxStyle
-import de.lulebe.designer.data.styles.ColorStyle
-import de.lulebe.designer.data.styles.TextStyle
+import de.lulebe.designer.data.styles.Styles
 
 
 class BoardObject() : SourceObject() {
@@ -106,17 +104,9 @@ class BoardObject() : SourceObject() {
             gridChange()
         }
 
-    private val _colorStyles: MutableMap<Long, ColorStyle> = mutableMapOf()
-    val colorStyles: MutableMap<Long, ColorStyle>
-        get() = _colorStyles
-
-    private val _boxStyles: MutableMap<Long, BoxStyle> = mutableMapOf()
-    val boxStyles: MutableMap<Long, BoxStyle>
-        get() = _boxStyles
-
-    private val _textStyles: MutableMap<Long, TextStyle> = mutableMapOf()
-    val textStyles: MutableMap<Long, TextStyle>
-        get() = _textStyles
+    private val _styles = Styles()
+    val styles: Styles
+        get() = _styles
 
     private val _objects: MutableList<BaseObject> = mutableListOf()
     val objects: MutableList<BaseObject>
@@ -165,7 +155,7 @@ class BoardObject() : SourceObject() {
         change()
     }
 
-    override fun init (ctx: Context, board: BoardObject) {
+    override fun init (ctx: Context, board: BoardObject?) {
         super.init(ctx, board)
         for (obj in _objects) {
             if (obj is CopyObject)
@@ -214,6 +204,7 @@ class BoardObject() : SourceObject() {
                     d.dipToPxF(shadow!!.xpos),
                     d.dipToPxF(shadow!!.ypos),
                     Color.parseColor("#99000000"))
+        paint.alpha = alpha
         renderables.add(Renderable(Renderable.Type.IMAGE, renderedBitmap!!, d.dipToPxF(xpos), d.dipToPxF(ypos), paint))
         return renderables.toTypedArray()
     }

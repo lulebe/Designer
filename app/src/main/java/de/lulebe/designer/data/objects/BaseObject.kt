@@ -107,10 +107,8 @@ abstract class BaseObject : IRenderable {
     open var width: Int
         get() = _width
         set(value) {
-            if (_boxStyle != null) {
-                _boxStyle = null
-                _boxStyleUID = null
-            }
+            if (_boxStyle != null)
+                boxStyle = null
             if (widthMoving == _width)
                 widthMoving = value
             _width = value
@@ -132,10 +130,8 @@ abstract class BaseObject : IRenderable {
     open var height: Int
         get() = _height
         set(value) {
-            if (_boxStyle != null) {
-                _boxStyle = null
-                _boxStyleUID = null
-            }
+            if (_boxStyle != null)
+                boxStyle = null
             if (heightMoving == _height)
                 heightMoving = value
             _height = value
@@ -158,17 +154,15 @@ abstract class BaseObject : IRenderable {
     var boxStyle: BoxStyle?
         get() = _boxStyle
         set(value) {
-            if (!canAcceptBoxStyle()) {
-                _boxStyle = null
-                _boxStyleUID = null
-            }
+            if (!canAcceptBoxStyle())
+                boxStyle = null
             else {
-                _boxStyle?.removeChangeListener(boxStyleChangeListener)
+                _boxStyle?.removeChangeListener(boxStyleChangeListener!!)
                 if (value != null) {
                     _boxStyle = value
                     _boxStyleUID = value.uid
-                    value.addChangeListener(boxStyleChangeListener)
-                    boxStyleChangeListener()
+                    value.addChangeListener(boxStyleChangeListener!!)
+                    boxStyleChangeListener!!()
                 } else {
                     _boxStyle = null
                     _boxStyleUID = null
@@ -177,20 +171,7 @@ abstract class BaseObject : IRenderable {
         }
 
     @Transient
-    open protected val boxStyleChangeListener = {
-        if (canDirectlyChangeWidth()) {
-            if (_widthMoving == _width)
-                _widthMoving = boxStyle!!.width
-            _width = boxStyle!!.width
-        }
-        if (canDirectlyChangeHeight()) {
-            if (_heightMoving == _height)
-                _heightMoving = boxStyle!!.height
-            _height = boxStyle!!.height
-        }
-        calculateHandles()
-        change()
-    }
+    open protected var boxStyleChangeListener: (() -> Unit)? = null
 
 
     constructor() {
@@ -273,8 +254,24 @@ abstract class BaseObject : IRenderable {
     }
 
 
-    open fun init (ctx: Context, board: BoardObject) {
-        boxStyle = board.boxStyles[_boxStyleUID]
+    open fun init (ctx: Context, board: BoardObject?) {
+        if (boxStyleChangeListener == null)
+            boxStyleChangeListener = {
+                if (canDirectlyChangeWidth()) {
+                    if (_widthMoving == _width)
+                        _widthMoving = boxStyle!!.width
+                    _width = boxStyle!!.width
+                }
+                if (canDirectlyChangeHeight()) {
+                    if (_heightMoving == _height)
+                        _heightMoving = boxStyle!!.height
+                    _height = boxStyle!!.height
+                }
+                calculateHandles()
+                change()
+            }
+        if (board != null)
+            boxStyle = board.styles.boxStyles[_boxStyleUID]
         _xposMoving = xpos
         _yposMoving = ypos
         _widthMoving = width

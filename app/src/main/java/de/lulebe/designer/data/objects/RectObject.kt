@@ -1,14 +1,14 @@
 package de.lulebe.designer.data.objects
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import de.lulebe.designer.data.Deserializer
 import de.lulebe.designer.data.styles.BoxStyle
+import de.lulebe.designer.data.styles.ColorStyle
 
-/**
- * Created by LuLeBe on 13/06/16.
- */
+
 class RectObject : SourceObject() {
 
 
@@ -65,24 +65,74 @@ class RectObject : SourceObject() {
         }
 
 
-    override val boxStyleChangeListener = {
-        if (widthMoving == _width)
-            _widthMoving = boxStyle!!.width
-        _width = boxStyle!!.width
-        if (heightMoving == _height)
-            _heightMoving = boxStyle!!.height
-        _height = boxStyle!!.height
-        _cornerRadius = boxStyle!!.cornerRadius
-        calculateHandles()
-        change()
-    }
 
 
 
+    private var _fillColorStyleUID: Long? = null
+    @Transient
+    protected var _fillColorStyle: ColorStyle? = null
+    var fillColorStyle: ColorStyle?
+        get() = _fillColorStyle
+        set(value) {
+            _fillColorStyle?.removeChangeListener(fillColorStyleChangeListener!!)
+            if (value != null) {
+                _fillColorStyle = value
+                _fillColorStyleUID = value.uid
+                value.addChangeListener(fillColorStyleChangeListener!!)
+                fillColorStyleChangeListener!!()
+            } else {
+                _fillColorStyle = null
+                _fillColorStyleUID = null
+            }
+        }
+
+    @Transient
+    private var fillColorStyleChangeListener: (() -> Unit)? = null
+
+
+    private var _strokeColorStyleUID: Long? = null
+    @Transient
+    protected var _strokeColorStyle: ColorStyle? = null
+    var strokeColorStyle: ColorStyle?
+        get() = _strokeColorStyle
+        set(value) {
+            _strokeColorStyle?.removeChangeListener(strokeColorStyleChangeListener!!)
+            if (value != null) {
+                _strokeColorStyle = value
+                _strokeColorStyleUID = value.uid
+                value.addChangeListener(strokeColorStyleChangeListener!!)
+                strokeColorStyleChangeListener!!()
+            } else {
+                _strokeColorStyle = null
+                _strokeColorStyleUID = null
+            }
+        }
+
+    @Transient
+    private var strokeColorStyleChangeListener: (() -> Unit)? = null
+    
+    
+    
+    
+    
     override fun extractBoxStyle() : BoxStyle {
         val bs = super.extractBoxStyle()
         bs.cornerRadius = cornerRadius
         return bs
+    }
+
+    fun extractFillcolorStyle() : ColorStyle {
+        val cs = ColorStyle()
+        cs.name = name + " fill color"
+        cs.color = fillColor
+        return cs
+    }
+
+    fun extractStrokecolorStyle() : ColorStyle {
+        val cs = ColorStyle()
+        cs.name = name + " stroke color"
+        cs.color = strokeColor
+        return cs
     }
 
 
@@ -128,6 +178,33 @@ class RectObject : SourceObject() {
 
     override fun getMainColor(): Int {
         return fillColor
+    }
+
+    override fun init (ctx: Context, board: BoardObject?) {
+        boxStyleChangeListener = {
+            if (widthMoving == _width)
+                _widthMoving = boxStyle!!.width
+            _width = boxStyle!!.width
+            if (heightMoving == _height)
+                _heightMoving = boxStyle!!.height
+            _height = boxStyle!!.height
+            _cornerRadius = boxStyle!!.cornerRadius
+            calculateHandles()
+            change()
+        }
+        fillColorStyleChangeListener = {
+            fillColor = fillColorStyle!!.color
+            change()
+        }
+        strokeColorStyleChangeListener = {
+            strokeColor = strokeColorStyle!!.color
+            change()
+        }
+        if (board != null) {
+            fillColorStyle = board.styles.colorStyles[_fillColorStyleUID]
+            strokeColorStyle = board.styles.colorStyles[_strokeColorStyleUID]
+        }
+        super.init(ctx, board)
     }
 
     override fun clone () : RectObject {

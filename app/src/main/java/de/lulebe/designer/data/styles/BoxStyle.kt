@@ -1,39 +1,7 @@
 package de.lulebe.designer.data.styles
 
-import java.util.*
 
-
-class BoxStyle {
-
-    //listeners
-    @Transient
-    private var listeners = mutableListOf<() -> Unit>()
-    fun addChangeListener (l: () -> Unit) {
-        listeners.add(l)
-    }
-    fun removeChangeListener (l: () -> Unit) {
-        listeners.remove(l)
-    }
-    fun removeAllChangeListeners () {
-        listeners.clear()
-    }
-    private fun change () {
-        for (listener in listeners) {
-            listener()
-        }
-    }
-
-
-    val uid: Long
-
-
-    private var _name = "BoxStyle"
-    var name: String
-        get() = _name
-        set(value) {
-            _name = value
-            change()
-        }
+class BoxStyle : BaseStyle() {
 
 
     private var _width = 50
@@ -61,10 +29,5 @@ class BoxStyle {
             _cornerRadius = value
             change()
         }
-
-
-    constructor() {
-        uid = System.currentTimeMillis() + Random().nextInt()
-    }
 
 }

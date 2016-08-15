@@ -64,7 +64,6 @@ class Pane : FrameLayout {
 
 
     private fun init (context: Context, attrs: AttributeSet?) {
-        calcWidths()
         var black = false
         if (attrs != null) {
             direction = context.obtainStyledAttributes(attrs, R.styleable.Pane).getInt(R.styleable.Pane_direction, 0)
@@ -77,6 +76,7 @@ class Pane : FrameLayout {
                 icons[3] = R.drawable.ic_keyboard_arrow_down_white_24dp
             }
         }
+        calcWidths()
 
         val dp224 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240F, resources.displayMetrics).toInt()
         val dp48 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48F, resources.displayMetrics).toInt()
@@ -145,7 +145,10 @@ class Pane : FrameLayout {
 
 
     private fun calcWidths() {
-        expandedTrans = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 176F, resources.displayMetrics)
+        if (direction in 0..1)
+            expandedTrans = Math.abs(translationX)
+        else
+            expandedTrans = Math.abs(translationY)
     }
 
     fun expand (expanded: Boolean?, anim: Boolean = true) {

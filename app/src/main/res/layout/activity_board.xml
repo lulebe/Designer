@@ -66,9 +66,9 @@
     <de.lulebe.designer.Pane
         android:id="@+id/bottompane"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="320dp"
         android:layout_gravity="bottom"
-        android:translationY="176dp"
+        android:translationY="256dp"
         android:elevation="6dp"
         app:direction="up"
         app:headertext="Styles"

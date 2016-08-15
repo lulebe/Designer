@@ -1,43 +1,13 @@
 package de.lulebe.designer.data.styles
 
-import java.util.*
+import android.graphics.Color
 
 
-class ColorStyle {
-
-    //listeners
-    @Transient
-    private var listeners = mutableListOf<() -> Unit>()
-    fun addChangeListener (l: () -> Unit) {
-        listeners.add(l)
-    }
-    fun removeChangeListener (l: () -> Unit) {
-        listeners.remove(l)
-    }
-    fun removeAllChangeListeners () {
-        listeners.clear()
-    }
-    private fun change () {
-        for (listener in listeners) {
-            listener()
-        }
-    }
+class ColorStyle: BaseStyle() {
 
 
-    val uid: Long
-
-
-    private var _name = "Color"
-    var name: String
-        get() = _name
-        set(value) {
-            _name = value
-            change()
-        }
-
-
-    private var _color = "ffffff"
-    var color: String
+    private var _color = Color.BLACK
+    var color: Int
         get() = _color
         set(value) {
             _color = value
@@ -52,11 +22,6 @@ class ColorStyle {
             _alpha = value
             change()
         }
-
-
-    constructor() {
-        uid = System.currentTimeMillis() + Random().nextInt()
-    }
 
 
 }

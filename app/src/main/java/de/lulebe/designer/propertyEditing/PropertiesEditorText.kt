@@ -9,12 +9,13 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import de.lulebe.designer.R
+import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.objects.TextObject
 
 /**
  * Created by LuLeBe on 13/07/16.
  */
-class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup) : TextView.OnEditorActionListener {
+class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mBoardObject: BoardObject) : TextView.OnEditorActionListener {
 
     private val mTextcolorView: EditText
     private val mFontsizeView: EditText
