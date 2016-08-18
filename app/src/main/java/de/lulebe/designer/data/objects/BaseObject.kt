@@ -5,7 +5,9 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
+import android.util.Log
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.BoxStyle
 import java.util.*
 
@@ -157,8 +159,7 @@ abstract class BaseObject : IRenderable {
             if (!canAcceptBoxStyle()) {
                 _boxStyle = null
                 _boxStyleUID = null
-            }
-            else {
+            } else {
                 _boxStyle?.removeChangeListener(boxStyleChangeListener!!)
                 if (value != null) {
                     _boxStyle = value
@@ -185,13 +186,9 @@ abstract class BaseObject : IRenderable {
     }
 
     open fun canDirectlyChangeWidth() : Boolean {
-        if (boxStyle != null)
-            return false
         return true
     }
     open fun canDirectlyChangeHeight() : Boolean {
-        if (boxStyle != null)
-            return false
         return true
     }
     open fun canAcceptBoxStyle() = true
@@ -202,6 +199,11 @@ abstract class BaseObject : IRenderable {
         bs.width = width
         bs.height = height
         return bs
+    }
+
+
+    open fun styleIsUsed (style: BaseStyle) : Boolean {
+        return style == boxStyle
     }
 
 

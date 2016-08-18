@@ -55,7 +55,7 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
             val cs = mObject.extractFillcolorStyle()
             val se = StyleExtractor<ColorStyle>()
             se.createStyle(cs, mView.context) {
-                mBoardObject.styles.colorStyles.put(it.uid, it)
+                mBoardObject.styles.addColorStyle(it)
                 mObject.fillColorStyle = it
             }
         }
@@ -69,7 +69,7 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
             val cs = mObject.extractStrokecolorStyle()
             val se = StyleExtractor<ColorStyle>()
             se.createStyle(cs, mView.context) {
-                mBoardObject.styles.colorStyles.put(it.uid, it)
+                mBoardObject.styles.addColorStyle(it)
                 mObject.strokeColorStyle = it
             }
         }
@@ -112,7 +112,8 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
         mStrokecolorView.background = ColorDrawable(mObject.strokeColor)
         mCornerradiusView.setText(mObject.cornerRadius.toString())
         if (mObject.fillColorStyle != null) {
-            val dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+            var dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+            dr = dr.mutate()
             dr.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
             mExtractFillcolorView.setImageDrawable(dr)
         } else {
@@ -120,7 +121,8 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
             mExtractFillcolorView.setImageDrawable(dr)
         }
         if (mObject.strokeColorStyle != null) {
-            val dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+            var dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+            dr = dr.mutate()
             dr.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
             mExtractStrokecolorView.setImageDrawable(dr)
         } else {

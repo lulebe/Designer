@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.util.Log
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.BoxStyle
 import de.lulebe.designer.data.styles.ColorStyle
 
@@ -205,6 +207,12 @@ class RectObject : SourceObject() {
             strokeColorStyle = board.styles.colorStyles[_strokeColorStyleUID]
         }
         super.init(ctx, board)
+    }
+
+
+    override fun styleIsUsed(style: BaseStyle): Boolean {
+        if (super.styleIsUsed(style) || style == fillColorStyle || style == strokeColorStyle) return true
+        return false
     }
 
     override fun clone () : RectObject {

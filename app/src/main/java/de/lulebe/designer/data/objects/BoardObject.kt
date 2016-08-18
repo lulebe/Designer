@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import de.lulebe.designer.Renderer
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.Styles
 
 
@@ -106,7 +107,12 @@ class BoardObject() : SourceObject() {
 
     private val _styles = Styles()
     val styles: Styles
-        get() = _styles
+        get() {
+            if (_parentBoard == null)
+                return  _styles
+            else
+                 return _parentBoard!!.styles
+        }
 
     private val _objects: MutableList<BaseObject> = mutableListOf()
     val objects: MutableList<BaseObject>
@@ -156,12 +162,10 @@ class BoardObject() : SourceObject() {
     }
 
     override fun init (ctx: Context, board: BoardObject?) {
+        styles.init()
         super.init(ctx, board)
         for (obj in _objects) {
-            if (obj is CopyObject)
-                obj.init(ctx, this)
-            else
-                obj.init(ctx, board)
+            obj.init(ctx, this)
             obj.addChangeListener {
                 change()
             }
@@ -226,6 +230,16 @@ class BoardObject() : SourceObject() {
                 return obj
         }
         return null
+    }
+
+
+    override fun styleIsUsed(style: BaseStyle): Boolean {
+        if (super.styleIsUsed(style)) return true
+        for (obj in _objects) {
+            if (obj.styleIsUsed(style))
+                return true
+        }
+        return false
     }
 
 

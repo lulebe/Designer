@@ -1,11 +1,14 @@
 package de.lulebe.designer.data.objects
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.styles.BaseStyle
+import de.lulebe.designer.data.styles.ColorStyle
 import de.lulebe.designer.data.styles.TextStyle
 
 
@@ -85,7 +88,30 @@ class TextObject : SourceObject() {
 
     @Transient
     protected val textStyleChangeListener = {
-        _fontSize = _textStyle!!.fontSize
+        fontSize = _textStyle!!.fontSize
+    }
+
+
+    private var _textColorStyleUID: Long? = null
+    @Transient
+    private var _textColorStyle: ColorStyle? = null
+    var textColorStyle: ColorStyle?
+        get() = _textColorStyle
+        set(value) {
+            _textColorStyle?.removeChangeListener(textColorStyleChangeListener)
+            if (value != null) {
+                _textColorStyle = value
+                _textColorStyleUID = value.uid
+                value.addChangeListener(textColorStyleChangeListener)
+                textColorStyleChangeListener()
+            } else {
+                _textColorStyleUID = null
+            }
+        }
+
+    @Transient
+    private var textColorStyleChangeListener = {
+        textColor = _textColorStyle!!.color
     }
 
 
@@ -104,6 +130,13 @@ class TextObject : SourceObject() {
         ts.name = name + " Text style"
         ts.fontSize = fontSize
         return ts
+    }
+
+    fun extractTextColorStyle(): ColorStyle {
+        val cs = ColorStyle()
+        cs.name = name + " Color style"
+        cs.color = textColor
+        return cs
     }
 
 
@@ -149,6 +182,23 @@ class TextObject : SourceObject() {
 
     override fun getMainColor(): Int {
         return textColor
+    }
+
+
+    override fun styleIsUsed(style: BaseStyle): Boolean {
+        if (super.styleIsUsed(style) || style == textStyle) return true
+        return false
+    }
+
+    override fun init(ctx: Context, board: BoardObject?) {
+        super.init(ctx, board)
+        textColorStyleChangeListener = {
+            textColor = _textColorStyle!!.color
+        }
+        if (board != null) {
+            textStyle = board.styles.textStyles[_textStyleUID]
+            textColorStyle = board.styles.colorStyles[_textColorStyleUID]
+        }
     }
 
     override fun clone(): TextObject {

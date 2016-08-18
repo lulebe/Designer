@@ -7,10 +7,7 @@ import android.widget.ImageView
 import com.woxthebox.draglistview.DragListView
 import de.lulebe.designer.adapters.BoardObjectsAdapter
 import de.lulebe.designer.data.BoardState
-import de.lulebe.designer.data.objects.BoardObject
-import de.lulebe.designer.data.objects.ImageObject
-import de.lulebe.designer.data.objects.RectObject
-import de.lulebe.designer.data.objects.TextObject
+import de.lulebe.designer.data.objects.*
 
 /**
  * Created by LuLeBe on 19/06/16.
@@ -71,25 +68,20 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
         when (v) {
             mBtnAddRect -> {
                 val obj = RectObject()
-                mBoardObject.addObject(obj)
-                mBoardState.selected = obj
+                createObj(obj)
             }
             mBtnAddText -> {
                 val obj = TextObject()
-                mBoardObject.addObject(obj)
-                mBoardState.selected = obj
+                createObj(obj)
             }
             mBtnAddImage -> {
                 val obj = ImageObject(mPanel.context)
-                mBoardObject.addObject(obj)
-                mBoardState.selected = obj
+                createObj(obj)
             }
             mBtnAddGroup -> {
                 val obj = BoardObject()
                 obj.parentBoard = mBoardObject
-                obj.init(mPanel.context, mBoardObject)
-                mBoardObject.addObject(obj)
-                mBoardState.selected = obj
+                createObj(obj)
             }
             mBtnToggleGrid -> {
                 mBoardState.showGrid = !mBoardState.showGrid
@@ -99,6 +91,12 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
             }
         }
         mPanel.expand(false)
+    }
+
+    private fun createObj(obj: BaseObject) {
+        obj.init(mPanel.context, mBoardObject)
+        mBoardObject.addObject(obj)
+        mBoardState.selected = obj
     }
 
 

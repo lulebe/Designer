@@ -5,8 +5,9 @@ import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.objects.BoardObject
 
 
-class StylePanelManager(val mView: ViewGroup, val mBoardObject: BoardObject, mBoardState: BoardState) {
+class StylePanelManager(val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState) {
     init {
+        ColorStyleManager(mView, mBoardObject, mBoardState)
         BoxStyleManager(mView, mBoardObject, mBoardState)
     }
 }

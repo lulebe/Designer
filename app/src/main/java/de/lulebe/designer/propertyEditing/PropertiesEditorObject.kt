@@ -14,9 +14,8 @@ import de.lulebe.designer.data.objects.CopyObject
 import de.lulebe.designer.data.objects.SourceObject
 import de.lulebe.designer.data.styles.BoxStyle
 
-/**
- * Created by LuLeBe on 18/06/16.
- */
+
+
 class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState) : TextView.OnEditorActionListener {
 
 
@@ -93,18 +92,22 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
             val newObj = CopyObject()
             newObj.sourceId = mObject.uid
             newObj.init(mView.context, mBoardObject)
-            newObj.xpos += 10
-            newObj.ypos += 10
+            newObj.xpos = mObject.xpos + 10
+            newObj.ypos = mObject.ypos + 10
             newObj.name = "copy of " + mObject.name
             mBoardObject.addObject(newObj)
             mBoardState.selected = newObj
         }
 
         mExtractBoxstyleView.setOnClickListener {
-            val bs = mObject.extractBoxStyle()
-            StyleExtractor<BoxStyle>().createStyle(bs, mView.context) {
-                mBoardObject.styles.boxStyles.put(bs.uid, bs)
-                mObject.boxStyle = bs
+            if (mObject.boxStyle != null)
+                mObject.boxStyle = null
+            else {
+                val bs = mObject.extractBoxStyle()
+                StyleExtractor<BoxStyle>().createStyle(bs, mView.context) {
+                    mBoardObject.styles.addBoxStyle(bs)
+                    mObject.boxStyle = bs
+                }
             }
         }
 
@@ -204,7 +207,8 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         if (mObject.canAcceptBoxStyle()) {
             mExtractBoxstyleView.visibility = View.VISIBLE
             if (mObject.boxStyle != null) {
-                val dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+                var dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+                dr = dr.mutate()
                 dr.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
                 mExtractBoxstyleView.setImageDrawable(dr)
             } else {
