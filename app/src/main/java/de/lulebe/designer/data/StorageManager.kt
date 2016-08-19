@@ -14,6 +14,7 @@ import net.lingala.zip4j.model.ZipParameters
 import net.lingala.zip4j.util.Zip4jConstants
 import org.apache.commons.io.FileUtils
 import java.io.*
+import java.util.*
 
 
 class StorageManager {
@@ -93,11 +94,15 @@ class StorageManager {
 
     fun share (act: Activity) : Intent {
         val zipPath = act.cacheDir.path + File.separator + mDir.name + ".zip"
+        if (File(zipPath).exists())
+            File(zipPath).delete()
         val zipFile = ZipFile(zipPath)
         val zipParams = ZipParameters()
         zipParams.compressionMethod = Zip4jConstants.COMP_DEFLATE
         zipParams.compressionLevel = Zip4jConstants.DEFLATE_LEVEL_NORMAL
-        zipFile.createZipFileFromFolder(mDir, zipParams, false, 0)
+        val l = ArrayList<Any>()
+        l.addAll(mDir.listFiles())
+        zipFile.createZipFile(l, zipParams)
         val uri = FileProvider.getUriForFile(act, "de.lulebe.designer", File(zipPath))
         return ShareCompat.IntentBuilder.from(act)
                 .setType("application/zip")
@@ -111,27 +116,28 @@ class StorageManager {
 
     companion object {
         @Throws(IllegalArgumentException::class)
-        fun createWithNameInternal(name: String, ctx: Context) : StorageManager {
-            val path = ctx.filesDir.path.plus(File.separator).plus(name)
-            if (File(path).exists()) {
-                throw IllegalArgumentException("this file exists already.")
-            } else {
-                val sm = StorageManager(path)
-                val board = BoardObject()
-                board.name = name
-                board.width = 360
-                board.height = 360
-                sm.save(board)
-                return sm
-            }
+        fun createWithNameInternal(name: String, path: String) : StorageManager {
+            val sm = StorageManager(path)
+            val board = BoardObject()
+            board.name = name
+            board.width = 360
+            board.height = 360
+            sm.save(board)
+            return sm
         }
 
         fun createFromZipInput (ctx: Context, inp: InputStream, filename: String) : StorageManager {
-            val zipPath = ctx.cacheDir.path + File.separator + filename
-            FileUtils.copyToFile(inp, File(zipPath))
-            val zipFile = ZipFile(zipPath)
-            val path = ctx.filesDir.path + File.separator + filename.replace(".zip", "")
-            zipFile.extractAll(path)
+            val zip = File(ctx.cacheDir.path + File.separator + Random().nextLong().toString() + ".zip")
+            val tmpPath = ctx.cacheDir.path + File.separator + zip.nameWithoutExtension
+            FileUtils.copyToFile(inp, zip)
+            val zipFile = ZipFile(zip)
+            zipFile.extractAll(tmpPath)
+            zip.delete()
+            val sm = StorageManager(tmpPath)
+            val name = sm.get(ctx).name
+            sm.close()
+            val path = ctx.filesDir.path + File.separator + filename
+            FileUtils.moveDirectory(File(tmpPath), File(path))
             return StorageManager(path)
         }
     }

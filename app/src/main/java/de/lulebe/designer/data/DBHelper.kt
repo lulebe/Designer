@@ -9,7 +9,7 @@ import java.util.*
 class DBHelper(val context: Context) : SQLiteOpenHelper(context, DBHelper.DB_NAME, null, DBHelper.DB_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL("CREATE TABLE boards (_id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(100), lastOpened INT, path TEXT)")
+        db.execSQL("CREATE TABLE boards (_id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(100), lastOpened INT)")
         db.execSQL("CREATE TABLE included_images (_id INTEGER PRIMARY KEY AUTOINCREMENT, dir VARCHAR(200), file VARCHAR(200))")
         indexIncludedImages(db)
     }

@@ -65,4 +65,6 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$support_version"
     compile "com.android.support:palette-v7:$support_version"
 
+    compile 'com.getbase:floatingactionbutton:1.10.1'
+
 }
