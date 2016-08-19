@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -86,7 +87,7 @@ class BoardActivity : AppCompatActivity() {
     override fun onDestroy () {
         val key = intent.getIntExtra("boardKey", 0)
         if (key != 0)
-            (application as Designer).boards.remove(key)
+            setResult(Activity.RESULT_OK, intent)
         if (intent.getBooleanExtra("isRoot", true)) {
             CloseBoard().execute()
         }
@@ -129,6 +130,16 @@ class BoardActivity : AppCompatActivity() {
         when (item?.itemId) {
             android.R.id.home -> {
                 finish()
+                return true
+            }
+            R.id.menu_showui -> {
+                if (mBoardState == null) return false
+                item!!.isChecked = !item!!.isChecked
+                mBoardState?.showUI = item!!.isChecked
+                if (mBoardState!!.showUI)
+                    mBoardState!!.boardScrollX += TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64F, resources.displayMetrics)
+                else
+                    mBoardState!!.boardScrollX += -TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64F, resources.displayMetrics)
                 return true
             }
             R.id.menu_resize -> {
@@ -205,9 +216,18 @@ class BoardActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (data == null || resultCode != Activity.RESULT_OK || requestCode != REQUEST_CODE_IMAGE) return
-        val input = contentResolver.openInputStream(data.data)
-        mStorageManager?.addImage(input, data.data.lastPathSegment)
+        if (data == null || resultCode != Activity.RESULT_OK) return
+        when (requestCode) {
+            REQUEST_CODE_GROUP -> {
+                val key = data.getIntExtra("boardKey", 0)
+                if (key != 0)
+                    (application as Designer).boards.remove(key)
+            }
+            REQUEST_CODE_IMAGE -> {
+                val input = contentResolver.openInputStream(data.data)
+                mStorageManager?.addImage(input, data.data.lastPathSegment)
+            }
+        }
     }
 
     private inner class LoadBoard(val savedInstanceState: Bundle?) : AsyncTask<Void, Void, Boolean>() {
@@ -231,10 +251,11 @@ class BoardActivity : AppCompatActivity() {
         if (mBoardObject != null) {
             supportActionBar?.title = mBoardObject!!.name
             mBoardState = BoardState.fromInstanceState(savedInstanceState, mBoardObject!!)
-            val boardView = BoardView(this, mBoardState!!, mBoardObject!!)
+            val boardView = BoardSurfaceView(this, mBoardState!!, mBoardObject!!)
             val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
             boardView.layoutParams = lp
             mLayout.addView(boardView)
+            val origLP = mLayout.layoutParams as FrameLayout.LayoutParams
             val rightpane = mRightpane.findViewById(R.id.layout_properties) as ViewGroup
             mPropertyPanelManager = PropertyPanelManager(this, rightpane, mBoardObject!!, mBoardState!!)
             mLeftPanelManager = LeftPanelManager(mLeftpane, mBoardState!!, mBoardObject!!)
@@ -246,6 +267,23 @@ class BoardActivity : AppCompatActivity() {
             mLeftpane.expand(mBoardState!!.leftPanelExpanded, false)
             mRightpane.expand(mBoardState!!.rightPanelExpanded, false)
             mBottompane.expand(mBoardState!!.bottomPanelExpanded, false)
+            mBoardState?.addListener(object: BoardState.BoardStateListener() {
+                override fun onShowUI(shown: Boolean) {
+                    if (shown) {
+                        mLeftpane.visibility = View.VISIBLE
+                        mRightpane.visibility = View.VISIBLE
+                        mBottompane.visibility = View.VISIBLE
+                        mLayout.layoutParams = origLP
+                    } else {
+                        mLeftpane.visibility = View.GONE
+                        mRightpane.visibility = View.GONE
+                        mBottompane.visibility = View.GONE
+                        val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+                        lp.topMargin = origLP.topMargin
+                        mLayout.layoutParams = lp
+                    }
+                }
+            })
         }
     }
 

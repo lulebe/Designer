@@ -61,4 +61,9 @@ class CopyObject : BaseObject() {
         }
         return renderables.toTypedArray()
     }
+
+    override fun getMainColor(): Int {
+        if (source == null) return super.getMainColor()
+        return source!!.getMainColor()
+    }
 }

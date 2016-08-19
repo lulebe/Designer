@@ -11,6 +11,7 @@ class BoardState {
         open fun onSelectObject (obj: BaseObject?) {}
         open fun onPanningActive (active: Boolean) {}
         open fun onShowGrid (shown: Boolean) {}
+        open fun onShowUI (shown: Boolean) {}
         open fun onBoardScrollX (scrollX: Float) {}
         open fun onBoardScrollY (scrollY: Float) {}
         open fun onExpandLeftPanel (expanded: Boolean) {}
@@ -62,6 +63,17 @@ class BoardState {
             _showGrid = value
             for (l in mListeners) {
                 l.onShowGrid(value)
+            }
+        }
+
+
+    private var _showUI: Boolean = true
+    var showUI: Boolean
+        get() = _showUI
+        set(value) {
+            _showUI = value
+            for (l in mListeners) {
+                l.onShowUI(value)
             }
         }
 
@@ -120,6 +132,7 @@ class BoardState {
         val b = Bundle()
         b.putBoolean("panningActive", panningActive)
         b.putBoolean("showGrid", showGrid)
+        b.putBoolean("showUI", showUI)
         b.putFloat("boardScrollX", boardScrollX)
         b.putFloat("boardScrollY", boardScrollY)
         b.putBoolean("leftPanelExpanded", leftPanelExpanded)
@@ -141,6 +154,7 @@ class BoardState {
             val b = sis.getBundle("BoardState")
             bs.panningActive = b.getBoolean("panningActive")
             bs.showGrid = b.getBoolean("showGrid")
+            bs.showUI = b.getBoolean("showUI")
             bs.boardScrollX = b.getFloat("boardScrollX")
             bs.boardScrollY = b.getFloat("boardScrollY")
             bs.leftPanelExpanded = b.getBoolean("leftPanelExpanded")

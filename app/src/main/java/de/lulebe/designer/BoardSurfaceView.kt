@@ -4,19 +4,24 @@ import android.content.Context
 import android.graphics.*
 import android.os.Build
 import android.support.v4.view.GestureDetectorCompat
+import android.util.Log
 import android.util.TypedValue
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.Deserializer
 import de.lulebe.designer.data.objects.BaseObject
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.objects.Renderable
+import kotlin.concurrent.thread
 
 
-class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject: BoardObject) : View(context) {
+class BoardSurfaceView(context: Context, val mBoardState: BoardState, val mBoardObject: BoardObject) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
+    override fun run() {
 
+    }
+
+
+    private val mDrawThread = DrawThread()
 
     private var mBufferBitmap: Bitmap? = null
     private var mDipRatio = 1F
@@ -65,8 +70,8 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
 
         override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
             if (!mBoardState.panningActive) return false
-                mBoardState.boardScrollX += distanceX
-                mBoardState.boardScrollY += distanceY
+            mBoardState.boardScrollX += distanceX
+            mBoardState.boardScrollY += distanceY
             return true
         }
     }//mGestureListener
@@ -79,11 +84,10 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
 
     init {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-            setLayerType(LAYER_TYPE_SOFTWARE, null)
+            setLayerType(View.LAYER_TYPE_SOFTWARE, null)
         mDipRatio = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1F, resources.displayMetrics)
         mDeserializer = Deserializer(mDipRatio)
 
-        setBackgroundColor(Color.LTGRAY)
         mRulerPaint.color = Color.BLACK
         mRulerPaint.strokeWidth = mDipRatio
         mRulerPaint.style = Paint.Style.STROKE
@@ -94,61 +98,61 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
 
         mBoardState.addListener(object: BoardState.BoardStateListener() {
             override fun onShowGrid (shown: Boolean) {
-                drawRulerPictures()
-                invalidate()
-            }
-            override fun onShowUI (shown: Boolean) {
-                invalidate()
-            }
-            override fun onBoardScrollX(scrollX: Float) {
-                invalidate()
-            }
-            override fun onBoardScrollY(scrollY: Float) {
-                invalidate()
-            }
-            override fun onSelectObject(obj: BaseObject?) {
-                invalidate()
+                thread { drawRulerPictures() }
             }
             override fun onPanningActive(active: Boolean) {
                 mObjectdragTouchee?.resetHandles()
-                invalidate()
             }
         })
 
+        mBufferBitmap = Bitmap.createBitmap((mBoardObject.width * mDipRatio).toInt(), (mBoardObject.height * mDipRatio).toInt(), Bitmap.Config.ARGB_8888)
         mBoardObject.addSizeChangeListener {
-            mBoardState.boardScrollX = 0F
-            mBoardState.boardScrollY = 0F
-            mBufferBitmap?.recycle()
-            mBufferBitmap = Bitmap.createBitmap((mBoardObject.width * mDipRatio).toInt(), (mBoardObject.height * mDipRatio).toInt(), Bitmap.Config.ARGB_8888)
-            Renderer.drawRenderables(mBoardObject.getRenderables(mDeserializer), Canvas(mBufferBitmap), true, false)
+                mBoardState.boardScrollX = 0F
+                mBoardState.boardScrollY = 0F
+                mBufferBitmap?.recycle()
+                mBufferBitmap = Bitmap.createBitmap((mBoardObject.width * mDipRatio).toInt(), (mBoardObject.height * mDipRatio).toInt(), Bitmap.Config.ARGB_8888)
         }
         mBoardObject.addGridChangeListener {
-            drawRulerPictures()
-            invalidate()
+            thread { drawRulerPictures() }
         }
         mBoardObject.addChangeListener {
-            Renderer.drawRenderables(mBoardObject.getRenderables(mDeserializer), Canvas(mBufferBitmap), true, false)
-            invalidate()
+            thread { render() }
         }
-        mBufferBitmap?.recycle()
-        mBufferBitmap = Bitmap.createBitmap((mBoardObject.width * mDipRatio).toInt(), (mBoardObject.height * mDipRatio).toInt(), Bitmap.Config.ARGB_8888)
-        drawRulerPictures()
-        Renderer.drawRenderables(mBoardObject.getRenderables(mDeserializer), Canvas(mBufferBitmap), true, false)
+        thread { drawRulerPictures(); render() }
+        holder.addCallback(this)
     }//init
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-        drawRulerPictures()
+        thread { drawRulerPictures() }
     }
 
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-        if (mBufferBitmap == null)
-            return
-        canvas.drawBitmap(mBufferBitmap, -mBoardState.boardScrollX, -mBoardState.boardScrollY, null)
+    private fun render () {
+        if (mBufferBitmap != null)
+            synchronized(mBufferBitmap!!) {
+                Renderer.drawRenderables(mBoardObject.getRenderables(mDeserializer), Canvas(mBufferBitmap), true, false)
+            }
+        else {
+            mBufferBitmap = Bitmap.createBitmap((mBoardObject.width * mDipRatio).toInt(), (mBoardObject.height * mDipRatio).toInt(), Bitmap.Config.ARGB_8888)
+            synchronized(mBufferBitmap!!) {
+                Renderer.drawRenderables(mBoardObject.getRenderables(mDeserializer), Canvas(mBufferBitmap), true, false)
+            }
+        }
+    }
+
+    private fun drawBoard (canvas: Canvas?) {
+        if (canvas == null) return
+        canvas.drawColor(Color.LTGRAY)
+        val scrollX = mBoardState.boardScrollX
+        val scrollY = mBoardState.boardScrollY
+        if (mBufferBitmap != null) {
+            synchronized(mBufferBitmap!!) {
+                canvas.drawBitmap(mBufferBitmap, -scrollX, -scrollY, null)
+            }
+        }
         if (mBoardState.showUI) {
-            drawRulers(canvas)
-            drawSelection(canvas)
+            drawRulers(canvas, scrollX, scrollY)
+            drawSelection(canvas, scrollX, scrollY)
         }
     }
 
@@ -175,22 +179,22 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
     }
 
 
-    private fun drawRulers (canvas: Canvas) {
+    private fun drawRulers (canvas: Canvas, scrollX: Float, scrollY: Float) {
         val interval = mDipRatio * mBoardObject.gridSize * mBoardObject.gridInterval
         canvas.save()
-        canvas.translate(- (mBoardState.boardScrollX % interval), 0F)
+        canvas.translate(- (scrollX % interval), 0F)
         canvas.drawPicture(mVertRulerPic)
         canvas.restore()
         canvas.save()
-        canvas.translate(0F, - (mBoardState.boardScrollY % interval))
+        canvas.translate(0F, - (scrollY % interval))
         canvas.drawPicture(mHorizRulerPic)
         canvas.restore()
     }
 
 
-    private fun drawSelection(canvas: Canvas) {
+    private fun drawSelection(canvas: Canvas, scrollX: Float, scrollY: Float) {
         if (mBoardState.selected == null) return
-        val renderables = mBoardState.selected!!.getHandleRenderables(mDeserializer, -mBoardState.boardScrollX, -mBoardState.boardScrollY, !mBoardState.panningActive)
+        val renderables = mBoardState.selected!!.getHandleRenderables(mDeserializer, -scrollX, -scrollY, !mBoardState.panningActive)
         for (renderable in renderables)
             Renderer.drawRenderable(renderable, canvas, true)
     }
@@ -279,7 +283,6 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
 
             mObjectdragLastX = snappedX
             mObjectdragLastY = snappedY
-            invalidate()
             return true
         }
         if (mObjectdragTouchee != null && event.action == MotionEvent.ACTION_UP) {
@@ -309,5 +312,45 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
                 return raw - distanceInverted
         }
         return raw //don't snap
+    }
+
+
+
+
+
+
+    override fun surfaceCreated(surfaceHolder: SurfaceHolder?) {
+        Log.d("SURFACE", "created")
+        mDrawThread.runnable = true
+        mDrawThread.r()
+    }
+    override fun surfaceDestroyed(surfaceHolder: SurfaceHolder?) {
+        Log.d("SURFACE", "destroyed")
+        mDrawThread.runnable = false
+    }
+    override fun surfaceChanged(surfaceHolder: SurfaceHolder?, format: Int, width: Int, height: Int) {}
+
+
+
+
+
+    private inner class DrawThread() {
+        var runnable = false
+        fun r () {
+            thread {
+                while (runnable) {
+                    Thread.sleep(5L)
+                    var canvas: Canvas? = null
+                    try {
+                        canvas = holder.lockCanvas()
+                        synchronized(holder) {
+                            drawBoard(canvas)
+                        }
+                        if (holder.surface.isValid)
+                            holder.unlockCanvasAndPost(canvas)
+                    } catch (e: Exception) {}
+                }
+            }
+        }
     }
 }
