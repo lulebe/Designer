@@ -67,8 +67,8 @@ class StorageManager {
         outs.close()
     }
 
-    fun addImageFile (file: File) {
-        FileUtils.copyFile(file, File(mDir.path + File.separator  + file.name))
+    fun addImage (inp: InputStream, filename: String) {
+        FileUtils.copyToFile(inp, File(mDir.path + File.separator + filename))
     }
 
     fun removeImageFile (name: String) {
@@ -78,11 +78,11 @@ class StorageManager {
     }
 
     @Throws(FileNotFoundException::class)
-    fun getImageFile (name: String) : String {
+    fun getImageFile (name: String) : File {
         val f = File(mDir.path + File.separator  + name)
         if (!f.exists())
             throw FileNotFoundException()
-        return f.path
+        return f
     }
 
     fun close () {
@@ -97,7 +97,7 @@ class StorageManager {
         val zipParams = ZipParameters()
         zipParams.compressionMethod = Zip4jConstants.COMP_DEFLATE
         zipParams.compressionLevel = Zip4jConstants.DEFLATE_LEVEL_NORMAL
-        zipFile.addFolder(mDir, zipParams)
+        zipFile.createZipFileFromFolder(mDir, zipParams, false, 0)
         val uri = FileProvider.getUriForFile(act, "de.lulebe.designer", File(zipPath))
         return ShareCompat.IntentBuilder.from(act)
                 .setType("application/zip")
@@ -124,6 +124,15 @@ class StorageManager {
                 sm.save(board)
                 return sm
             }
+        }
+
+        fun createFromZipInput (ctx: Context, inp: InputStream, filename: String) : StorageManager {
+            val zipPath = ctx.cacheDir.path + File.separator + filename
+            FileUtils.copyToFile(inp, File(zipPath))
+            val zipFile = ZipFile(zipPath)
+            val path = ctx.filesDir.path + File.separator + filename.replace(".zip", "")
+            zipFile.extractAll(path)
+            return StorageManager(path)
         }
     }
 }

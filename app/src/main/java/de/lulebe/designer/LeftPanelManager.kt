@@ -80,7 +80,6 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
             }
             mBtnAddGroup -> {
                 val obj = BoardObject()
-                obj.parentBoard = mBoardObject
                 createObj(obj)
             }
             mBtnToggleGrid -> {

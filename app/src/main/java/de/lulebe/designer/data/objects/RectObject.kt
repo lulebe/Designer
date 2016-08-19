@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
-import android.util.Log
 import de.lulebe.designer.data.Deserializer
 import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.BoxStyle
@@ -85,6 +84,7 @@ class RectObject : SourceObject() {
             } else {
                 _fillColorStyle = null
                 _fillColorStyleUID = null
+                change()
             }
         }
 
@@ -107,6 +107,7 @@ class RectObject : SourceObject() {
             } else {
                 _strokeColorStyle = null
                 _strokeColorStyleUID = null
+                change()
             }
         }
 

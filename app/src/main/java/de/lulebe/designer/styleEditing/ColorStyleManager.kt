@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import com.azeesoft.lib.colorpicker.ColorPickerDialog
 import de.lulebe.designer.R
 import de.lulebe.designer.data.BoardState
@@ -54,10 +55,10 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
                 AlertDialog.Builder(mView.context)
                         .setTitle("set Color Style")
                         .setMessage("Where do you want to apply the color?")
-                        .setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener { dialogInterface, i ->
+                        .setNeutralButton(android.R.string.cancel, DialogInterface.OnClickListener { dialogInterface, i ->
                             dialogInterface.cancel()
                         })
-                        .setNeutralButton("Stroke", DialogInterface.OnClickListener { dialogInterface, i ->
+                        .setNegativeButton("Stroke", DialogInterface.OnClickListener { dialogInterface, i ->
                             dialogInterface.dismiss()
                             (mBoardState.selected as RectObject?)?.strokeColorStyle = cs
                         })
@@ -65,6 +66,7 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
                             dialogInterface.dismiss()
                             (mBoardState.selected as RectObject?)?.fillColorStyle = cs
                         })
+                        .show()
             }
         }
     }
@@ -85,11 +87,13 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
             holder.delete.setOnClickListener {
                 if (!mBoardObject.styleIsUsed(cs))
                     mBoardObject.styles.removeColorStyle(cs)
+                else
+                    Toast.makeText(mView.context, "Style is still in use!", Toast.LENGTH_SHORT).show()
             }
         }
 
         override fun getItemCount(): Int {
-            return mBoardObject.styles.boxStyles.count()
+            return mBoardObject.styles.colorStyles.count()
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StyleViewHolder? {

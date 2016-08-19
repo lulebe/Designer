@@ -163,6 +163,7 @@ class BoardObject() : SourceObject() {
 
     override fun init (ctx: Context, board: BoardObject?) {
         styles.init()
+        parentBoard = board
         super.init(ctx, board)
         for (obj in _objects) {
             obj.init(ctx, this)

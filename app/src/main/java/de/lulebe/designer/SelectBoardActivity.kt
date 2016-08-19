@@ -7,12 +7,14 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ShareCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.widget.EditText
+import android.widget.Toast
 import de.lulebe.designer.adapters.BoardsAdapter
 import de.lulebe.designer.data.BoardMeta
 import de.lulebe.designer.data.DBHelper
@@ -34,11 +36,34 @@ class SelectBoardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initUI()
+
+        //import board
+        if (intent.data != null) {
+            val inp = ShareCompat.IntentReader.from(this).stream
+            val stream = contentResolver.openInputStream(inp)
+            val sm = StorageManager.createFromZipInput(this, stream, inp.lastPathSegment)
+            Toast.makeText(this, sm.getPath(), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mDBH = DBHelper(this)
+        mDB = mDBH!!.readableDatabase
+        BoardsLoader().execute()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mDB?.close()
+        mDBH?.close()
+    }
+
+    private fun initUI () {
         setContentView(R.layout.activity_select_board)
         val toolbar = findViewById(R.id.toolbar) as Toolbar?
         setSupportActionBar(toolbar)
-
-
         val fab = findViewById(R.id.fab) as FloatingActionButton
         fab.setOnClickListener {
             val dialogView = layoutInflater.inflate(R.layout.dialog_create_board, null)
@@ -58,19 +83,6 @@ class SelectBoardActivity : AppCompatActivity() {
         val boardsList = findViewById(R.id.boardslist) as RecyclerView
         boardsList.layoutManager = LinearLayoutManager(this)
         boardsList.adapter = mAdapter
-    }
-
-    override fun onStart() {
-        super.onStart()
-        mDBH = DBHelper(this)
-        mDB = mDBH!!.readableDatabase
-        BoardsLoader().execute()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mDB?.close()
-        mDBH?.close()
     }
 
     private fun openActionsDialog (boardMeta: BoardMeta) {
@@ -145,6 +157,7 @@ class SelectBoardActivity : AppCompatActivity() {
                 item.path = c.getString(c.getColumnIndex("path"))
                 items.add(item)
             }
+            c.close()
             return items
         }
         override fun onPostExecute (list: MutableList<BoardMeta>) {

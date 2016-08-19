@@ -52,11 +52,15 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
             mColorpickerDialog.show()
         }
         mExtractFillcolorView.setOnClickListener {
-            val cs = mObject.extractFillcolorStyle()
-            val se = StyleExtractor<ColorStyle>()
-            se.createStyle(cs, mView.context) {
-                mBoardObject.styles.addColorStyle(it)
-                mObject.fillColorStyle = it
+            if (mObject.fillColorStyle != null)
+                mObject.fillColorStyle = null
+            else {
+                val cs = mObject.extractFillcolorStyle()
+                val se = StyleExtractor<ColorStyle>()
+                se.createStyle(cs, mView.context) {
+                    mBoardObject.styles.addColorStyle(it)
+                    mObject.fillColorStyle = it
+                }
             }
         }
         mStrokecolorView.setOnClickListener {
@@ -66,11 +70,15 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
             mColorpickerDialog.show()
         }
         mExtractStrokecolorView.setOnClickListener {
-            val cs = mObject.extractStrokecolorStyle()
-            val se = StyleExtractor<ColorStyle>()
-            se.createStyle(cs, mView.context) {
-                mBoardObject.styles.addColorStyle(it)
-                mObject.strokeColorStyle = it
+            if (mObject.strokeColorStyle != null)
+                mObject.strokeColorStyle = null
+            else {
+                val cs = mObject.extractStrokecolorStyle()
+                val se = StyleExtractor<ColorStyle>()
+                se.createStyle(cs, mView.context) {
+                    mBoardObject.styles.addColorStyle(it)
+                    mObject.strokeColorStyle = it
+                }
             }
         }
 

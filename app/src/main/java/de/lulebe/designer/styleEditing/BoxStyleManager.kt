@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import de.lulebe.designer.R
 import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.objects.BoardObject
@@ -68,6 +69,8 @@ class BoxStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val m
             holder.delete.setOnClickListener {
                 if (!mBoardObject.styleIsUsed(bs))
                     mBoardObject.styles.removeBoxStyle(bs)
+                else
+                    Toast.makeText(mView.context, "Style is still in use!", Toast.LENGTH_SHORT).show()
             }
         }
 

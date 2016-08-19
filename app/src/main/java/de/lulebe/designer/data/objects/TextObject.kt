@@ -106,6 +106,8 @@ class TextObject : SourceObject() {
                 textColorStyleChangeListener()
             } else {
                 _textColorStyleUID = null
+                _textColorStyle = null
+                change()
             }
         }
 

@@ -1,12 +1,16 @@
 package de.lulebe.designer.propertyEditing
 
 import android.graphics.Color
+import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.text.Editable
+import android.text.Layout
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import de.lulebe.designer.R
 import de.lulebe.designer.data.objects.BoardObject
@@ -17,6 +21,9 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
 
     private val mTextcolorView: EditText
     private val mFontsizeView: EditText
+    private val mAlignleftView: ImageView
+    private val mAligncenterView: ImageView
+    private val mAlignrightView: ImageView
     private val mTextView: EditText
 
     private var mTextViewUpdate = true
@@ -25,10 +32,23 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
     init {
         mTextcolorView = mView.findViewById(R.id.field_object_textcolor) as EditText
         mFontsizeView = mView.findViewById(R.id.field_object_fontsize) as EditText
+        mAlignleftView = mView.findViewById(R.id.btn_object_alignleft) as ImageView
+        mAligncenterView = mView.findViewById(R.id.btn_object_aligncenter) as ImageView
+        mAlignrightView = mView.findViewById(R.id.btn_object_alignright) as ImageView
         mTextView = mView.findViewById(R.id.field_object_text) as EditText
 
         mTextcolorView.setOnEditorActionListener(this)
         mFontsizeView.setOnEditorActionListener(this)
+
+        mAlignleftView.setOnClickListener {
+            mObject.alignment = Layout.Alignment.ALIGN_NORMAL
+        }
+        mAligncenterView.setOnClickListener {
+            mObject.alignment = Layout.Alignment.ALIGN_CENTER
+        }
+        mAlignrightView.setOnClickListener {
+            mObject.alignment = Layout.Alignment.ALIGN_OPPOSITE
+        }
 
         mTextView.addTextChangedListener(object: TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -73,10 +93,38 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
     }
 
 
+    private fun setAlignmentImage (iv: ImageView, res: Int, checked: Boolean) {
+        val dr = ContextCompat.getDrawable(mView.context, res)
+        if (checked) {
+            val d = DrawableCompat.wrap(dr).mutate()
+            d.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
+            iv.setImageDrawable(d)
+        } else
+            iv.setImageDrawable(dr)
+    }
+
+
 
     private fun updateUI () {
         mTextcolorView.setText(String.format("%06X", (0xFFFFFF.and(mObject.textColor))))
         mFontsizeView.setText(mObject.fontSize.toString())
+        when (mObject.alignment) {
+            Layout.Alignment.ALIGN_NORMAL -> {
+                setAlignmentImage(mAlignleftView, R.drawable.ic_format_align_left_grey600_24dp, true)
+                setAlignmentImage(mAligncenterView, R.drawable.ic_format_align_center_grey600_24dp, false)
+                setAlignmentImage(mAlignrightView, R.drawable.ic_format_align_right_grey600_24dp, false)
+            }
+            Layout.Alignment.ALIGN_CENTER -> {
+                setAlignmentImage(mAlignleftView, R.drawable.ic_format_align_left_grey600_24dp, false)
+                setAlignmentImage(mAligncenterView, R.drawable.ic_format_align_center_grey600_24dp, true)
+                setAlignmentImage(mAlignrightView, R.drawable.ic_format_align_right_grey600_24dp, false)
+            }
+            Layout.Alignment.ALIGN_OPPOSITE -> {
+                setAlignmentImage(mAlignleftView, R.drawable.ic_format_align_left_grey600_24dp, false)
+                setAlignmentImage(mAligncenterView, R.drawable.ic_format_align_center_grey600_24dp, false)
+                setAlignmentImage(mAlignrightView, R.drawable.ic_format_align_right_grey600_24dp, true)
+            }
+        }
         if (mTextViewUpdate)
             mTextView.setText(mObject.text)
     }

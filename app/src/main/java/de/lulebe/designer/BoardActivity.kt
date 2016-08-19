@@ -9,6 +9,7 @@ import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -52,6 +53,7 @@ class BoardActivity : AppCompatActivity() {
         initUI()
 
         if (intent.getBooleanExtra("isRoot", true)) {
+            Log.d("PATH", intent.getStringExtra("path"))
             mStorageManager = StorageManager(intent.getStringExtra("path"))
             LoadBoard(savedInstanceState).execute()
         } else {
@@ -60,6 +62,8 @@ class BoardActivity : AppCompatActivity() {
                 finish()
             else {
                 mBoardObject = (application as Designer).boards[key]
+                Log.d("IS NULL", (mBoardObject == null).toString())
+                Log.d("BOARDS", (application as Designer).boards.size.toString())
                 postLoadBoard(savedInstanceState)
             }
         }
@@ -203,6 +207,7 @@ class BoardActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (data == null || resultCode != Activity.RESULT_OK || requestCode != REQUEST_CODE_IMAGE) return
         val input = contentResolver.openInputStream(data.data)
+        mStorageManager?.addImage(input, data.data.lastPathSegment)
     }
 
     private inner class LoadBoard(val savedInstanceState: Bundle?) : AsyncTask<Void, Void, Boolean>() {
@@ -224,6 +229,7 @@ class BoardActivity : AppCompatActivity() {
 
     private fun postLoadBoard (savedInstanceState: Bundle?) {
         if (mBoardObject != null) {
+            supportActionBar?.title = mBoardObject!!.name
             mBoardState = BoardState.fromInstanceState(savedInstanceState, mBoardObject!!)
             val boardView = BoardView(this, mBoardState!!, mBoardObject!!)
             val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)

@@ -49,6 +49,40 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginLeft="56dp">
+        <ImageView
+            android:id="@+id/btn_object_alignleft"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_format_align_left_grey600_24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"/>
+        <ImageView
+            android:id="@+id/btn_object_aligncenter"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:padding="12dp"
+            android:src="@drawable/ic_format_align_center_grey600_24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"/>
+        <ImageView
+            android:id="@+id/btn_object_alignright"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="right"
+            android:padding="12dp"
+            android:src="@drawable/ic_format_align_right_grey600_24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"/>
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="24dp">
         <ImageView
             android:layout_width="48dp"
