@@ -109,7 +109,6 @@ class BoardSurfaceView(context: Context, val mBoardState: BoardState, val mBoard
         mBoardObject.addSizeChangeListener {
                 mBoardState.boardScrollX = 0F
                 mBoardState.boardScrollY = 0F
-                mBufferBitmap?.recycle()
                 mBufferBitmap = Bitmap.createBitmap((mBoardObject.width * mDipRatio).toInt(), (mBoardObject.height * mDipRatio).toInt(), Bitmap.Config.ARGB_8888)
         }
         mBoardObject.addGridChangeListener {
