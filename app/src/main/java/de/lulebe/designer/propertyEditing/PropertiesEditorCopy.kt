@@ -63,13 +63,23 @@ class PropertiesEditorCopy (val mObject: CopyObject, val mView: ViewGroup, val m
                 return true
             }
             mXPosView -> {
-                val value = mXPosView.text.toString().toInt()
+                val value: Int
+                try {
+                    value = mXPosView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 0) return false
                 mObject.xpos = value
                 return true
             }
             mYPosView -> {
-                val value = mYPosView.text.toString().toInt()
+                val value: Int
+                try {
+                    value = mYPosView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 0) return false
                 mObject.ypos = value
                 return true

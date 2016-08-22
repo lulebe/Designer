@@ -5,12 +5,14 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.ViewCompat
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.ScrollView
 import android.widget.TextView
 
 
@@ -41,6 +43,7 @@ class Pane : FrameLayout {
 
     private val btnToggle = ImageView(context)
     private val tvTitle = TextView(context)
+    private val headerLayout = FrameLayout(context)
 
 
 
@@ -79,10 +82,13 @@ class Pane : FrameLayout {
         calcWidths()
 
         val dp224 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240F, resources.displayMetrics).toInt()
+        val dp64 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64F, resources.displayMetrics).toInt()
         val dp48 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48F, resources.displayMetrics).toInt()
         val dp12 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12F, resources.displayMetrics).toInt()
         val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8F, resources.displayMetrics).toInt()
-        setPadding(dp8, dp8, dp8, dp8)
+
+        headerLayout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, dp64)
+        headerLayout.setPadding(dp8, dp8, dp8, dp8)
         
         //default View
         val lpTitle = FrameLayout.LayoutParams(dp224-dp48-(dp8*2), dp48)
@@ -119,13 +125,13 @@ class Pane : FrameLayout {
         else
             tvTitle.gravity = Gravity.CENTER_VERTICAL
         @Suppress("DEPRECATION")
-        if (Build.VERSION.SDK_INT < 23)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             tvTitle.setTextAppearance(context, R.style.TextAppearance_Widget_AppCompat_Toolbar_Title)
         else
             tvTitle.setTextAppearance(R.style.TextAppearance_Widget_AppCompat_Toolbar_Title)
         if (black)
             tvTitle.setTextColor(Color.WHITE)
-        addView(tvTitle)
+        headerLayout.addView(tvTitle)
 
         //ToogleButton
         btnToggle.layoutParams = lpBtn
@@ -140,9 +146,22 @@ class Pane : FrameLayout {
             3 -> btnToggle.setImageResource(icons[3])
         }
         btnToggle.setOnClickListener { expand(null) }
-        addView(btnToggle)
+        headerLayout.addView(btnToggle)
+        headerLayout.background = background.constantState.newDrawable()
+        addView(headerLayout)
     }
 
+    override fun onFinishInflate() {
+        super.onFinishInflate()
+        val dp2 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2F, resources.displayMetrics).toInt()
+        val scv = findViewById(R.id.vert_scrollview) as ScrollView?
+        scv?.setOnScrollChangeListener { view, scrollX, scrollY, oldScrollX, oldScrollY ->
+            if (scrollY > 0 && ViewCompat.getElevation(headerLayout) == 0F)
+                ViewCompat.setElevation(headerLayout, dp2.toFloat())
+            else if (scrollY == 0 && ViewCompat.getElevation(headerLayout) != 0F)
+                ViewCompat.setElevation(headerLayout, 0F)
+        }
+    }
 
     private fun calcWidths() {
         if (direction in 0..1)

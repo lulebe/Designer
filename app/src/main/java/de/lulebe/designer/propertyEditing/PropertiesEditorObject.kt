@@ -127,51 +127,91 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
                 return true
             }
             mXPosView -> {
-                val value = mXPosView.text.toString().toInt()
+                val value: Int
+                try {
+                    value = mXPosView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 0) return false
                 mObject.xpos = value
                 return true
             }
             mYPosView -> {
-                val value = mYPosView.text.toString().toInt()
+                val value: Int
+                try {
+                    value = mYPosView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 0) return false
                 mObject.ypos = value
                 return true
             }
             mWidthView -> {
-                val value = mWidthView.text.toString().toInt()
+                val value: Int
+                try {
+                    value = mWidthView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 0) return false
                 if (!mObject.canDirectlyChangeWidth()) return false
                 mObject.width = value
                 return true
             }
             mHeightView -> {
-                val value = mHeightView.text.toString().toInt()
+                val value: Int
+                try {
+                    value = mHeightView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 0) return false
                 if (!mObject.canDirectlyChangeHeight()) return false
                 mObject.height = value
                 return true
             }
             mAlphaView -> {
-                val value = Integer.valueOf(mAlphaView.text.toString())
+                val value: Int
+                try {
+                    value = mAlphaView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 0 || value > 255) return false
                 mObject.alpha = value
                 return true
             }
             mShadowBlurView -> {
-                val value = Integer.valueOf(mShadowBlurView.text.toString())
+                val value: Int
+                try {
+                    value = mShadowBlurView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 0) return false
                 mObject.shadow?.blur = value
                 return true
             }
             mShadowXPosView -> {
-                val value = Integer.valueOf(mShadowXPosView.text.toString())
+                val value: Int
+                try {
+                    value = mShadowXPosView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 0) return false
                 mObject.shadow?.xpos = value
                 return true
             }
             mShadowYPosView -> {
-                val value = Integer.valueOf(mShadowYPosView.text.toString())
+                val value: Int
+                try {
+                    value = mShadowYPosView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 0) return false
                 mObject.shadow?.ypos = value
                 return true

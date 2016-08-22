@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.app.ShareCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
@@ -148,12 +149,12 @@ class BoardActivity : AppCompatActivity() {
             }
             R.id.menu_export -> {
                 if (mBoardObject == null) return false
-                val tmpFile = File.createTempFile("designer_img", ".jpeg", cacheDir)
+                val tmpFile = File.createTempFile("designer_img", ".png", cacheDir)
                 val os = FileOutputStream(tmpFile)
                 Renderer.renderJPEG(mBoardObject!!, 2, os)
                 os.close()
                 val intent = ShareCompat.IntentBuilder.from(this)
-                        .setType("image/jped")
+                        .setType("image/png")
                         .setStream(FileProvider.getUriForFile(this, "de.lulebe.designer", tmpFile))
                         .createChooserIntent()
                 startActivity(intent)
@@ -251,7 +252,12 @@ class BoardActivity : AppCompatActivity() {
         if (mBoardObject != null) {
             supportActionBar?.title = mBoardObject!!.name
             mBoardState = BoardState.fromInstanceState(savedInstanceState, mBoardObject!!)
-            val boardView = BoardSurfaceView(this, mBoardState!!, mBoardObject!!)
+            val sp = PreferenceManager.getDefaultSharedPreferences(this)
+            val boardView: View
+            if (sp.getBoolean("surfaceview", true))
+                boardView = BoardViewAsync(this, mBoardState!!, mBoardObject!!)
+            else
+                boardView = BoardView(this, mBoardState!!, mBoardObject!!)
             val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
             boardView.layoutParams = lp
             mLayout.addView(boardView)

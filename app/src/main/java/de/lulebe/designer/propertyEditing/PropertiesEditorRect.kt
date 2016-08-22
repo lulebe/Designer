@@ -97,13 +97,23 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
         if (v == null || actionId != EditorInfo.IME_ACTION_DONE) return false
         when (v) {
             mStrokewidthView -> {
-                val value = Integer.valueOf(mStrokewidthView.text.toString())
+                val value: Int
+                try {
+                    value = mStrokewidthView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 0 || value > 99) return false
                 mObject.strokeWidth = value
                 return true
             }
             mCornerradiusView -> {
-                val value = Integer.valueOf(mCornerradiusView.text.toString())
+                val value: Int
+                try {
+                    value = mCornerradiusView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 0) return false
                 mObject.cornerRadius = value
                 return true

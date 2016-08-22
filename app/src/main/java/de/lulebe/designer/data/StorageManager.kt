@@ -72,6 +72,13 @@ class StorageManager {
         FileUtils.copyToFile(inp, File(mDir.path + File.separator + filename))
     }
 
+    fun listImages () : List<String> {
+        val files = mDir.listFiles()
+        return files.toList().map {
+            it.canonicalPath
+        }
+    }
+
     fun removeImageFile (name: String) {
         val f = File(mDir.path + File.separator + name)
         if (f.exists())

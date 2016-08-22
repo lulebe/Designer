@@ -13,6 +13,8 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.EditText
 import de.lulebe.designer.adapters.BoardsAdapter
 import de.lulebe.designer.data.BoardMeta
@@ -49,6 +51,23 @@ class SelectBoardActivity : AppCompatActivity() {
         if (data == null || resultCode != Activity.RESULT_OK || requestCode != REQUEST_CODE_IMPORT) return
         BoardImporter(data.data).execute()
     }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_select_board, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
 
     private fun initUI () {
         setContentView(R.layout.activity_select_board)

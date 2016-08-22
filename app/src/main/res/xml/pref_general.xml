@@ -1,0 +1,9 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="surfaceview"
+        android:summary="Use experimental off-UI-Thread drawing"
+        android:title="draw on 2nd Thread" />
+
+</PreferenceScreen>

@@ -66,7 +66,7 @@ class Renderer {
                     Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             drawRenderables(board.getRenderables(deserializer, true), canvas)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         }
 
 
