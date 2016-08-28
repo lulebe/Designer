@@ -69,24 +69,45 @@ class StorageManager {
     }
 
     fun addImage (inp: InputStream, filename: String) {
+        if (mBoardObject == null) return
+        mBoardObject!!.images.put(System.currentTimeMillis() + Random().nextInt(), filename)
         FileUtils.copyToFile(inp, File(mDir.path + File.separator + filename))
     }
 
-    fun listImages () : List<String> {
-        val files = mDir.listFiles()
-        return files.toList().map {
-            it.canonicalPath
-        }
-    }
-
-    fun removeImageFile (name: String) {
-        val f = File(mDir.path + File.separator + name)
+    fun removeImage (key: Long) {
+        if (mBoardObject == null) return
+        val filename = mBoardObject!!.images.remove(key)
+        val f = File(mDir.path + File.separator + filename)
         if (f.exists())
             f.delete()
     }
 
+    fun addFont (inp: InputStream, filename: String) {
+        if (mBoardObject == null) return
+        mBoardObject!!.fonts.put(System.currentTimeMillis() + Random().nextInt(), filename)
+        FileUtils.copyToFile(inp, File(mDir.path + File.separator + filename))
+    }
+
+    fun removeFont (key: Long) {
+        if (mBoardObject == null) return
+        val filename = mBoardObject!!.fonts.remove(key)
+        val f = File(mDir.path + File.separator + filename)
+        if (f.exists())
+            f.delete()
+    }
+
+
+
     @Throws(FileNotFoundException::class)
     fun getImageFile (name: String) : File {
+        val f = File(mDir.path + File.separator  + name)
+        if (!f.exists())
+            throw FileNotFoundException()
+        return f
+    }
+
+    @Throws(FileNotFoundException::class)
+    fun getFontFile (name: String) : File {
         val f = File(mDir.path + File.separator  + name)
         if (!f.exists())
             throw FileNotFoundException()

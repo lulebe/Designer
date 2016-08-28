@@ -114,6 +114,24 @@ class BoardObject() : SourceObject() {
                  return _parentBoard!!.styles
         }
 
+    private val _images: MutableMap<Long, String> = mutableMapOf()
+    val images: MutableMap<Long, String>
+        get() {
+            if (_parentBoard == null)
+                return _images
+            else
+                return _parentBoard!!.images
+        }
+
+    private val _fonts: MutableMap<Long, String> = mutableMapOf()
+    val fonts: MutableMap<Long, String>
+        get() {
+            if (_parentBoard == null)
+                return _fonts
+            else
+                return _parentBoard!!.fonts
+        }
+
     private val _objects: MutableList<BaseObject> = mutableListOf()
     val objects: MutableList<BaseObject>
         get() = _objects

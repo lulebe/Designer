@@ -72,8 +72,7 @@ class ImageObject() : SourceObject() {
         }
         val rawBmp : Bitmap
         if (included) {
-            val path = "material-design-icons" + File.separator + src
-            rawBmp = BitmapFactory.decodeStream(ctx!!.get().assets.open(path))
+            rawBmp = BitmapFactory.decodeStream(ctx!!.get().assets.open(src))
         } else {
             if (!File(src).exists() || !File(src).canRead()) {
                 hasChanged = false

@@ -1,7 +1,11 @@
 package de.lulebe.designer.propertyEditing
 
 import android.os.AsyncTask
+import android.support.v7.app.AlertDialog
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -9,19 +13,23 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
 import de.lulebe.designer.R
+import de.lulebe.designer.adapters.ImageChooserAdapter
 import de.lulebe.designer.data.DBHelper
+import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.objects.ImageObject
 import java.io.File
 
 
-class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup) : TextView.OnEditorActionListener {
+class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val mBoardObject: BoardObject) : TextView.OnEditorActionListener {
 
-    private val mInclimagesView : Spinner
+    private val mBtnchooseimageView: View
 
     init {
-        mInclimagesView = mView.findViewById(R.id.field_object_inclimg) as Spinner
+        mBtnchooseimageView = mView.findViewById(R.id.btn_choose_image)
 
-        initSpinners()
+        mBtnchooseimageView.setOnClickListener {
+            openImageChooserDialog()
+        }
 
         mObject.addChangeListener {
             updateUI()
@@ -38,31 +46,52 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup) : Te
 
 
     private fun updateUI () {
-        if (mInclimagesView.adapter != null) {
-            val adapter = mInclimagesView.adapter as ArrayAdapter<String>
-            if (mObject.included) {
-                mInclimagesView.setSelection(adapter.getPosition(mObject.src), false)
+    }
+
+    private fun openImageChooserDialog () {
+        val v = LayoutInflater.from(mView.context).inflate(R.layout.dialog_imagechooser, null)
+        val rv = v.findViewById(R.id.list) as RecyclerView
+        val rvAdapter = ImageChooserAdapter(mView.context, mBoardObject)
+        val spinner = v.findViewById(R.id.category) as Spinner
+        val spinnerAdapter = ArrayAdapter<String>(mView.context, android.R.layout.simple_spinner_item)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        SpinnerLoader(spinnerAdapter).execute()
+        spinner.adapter = spinnerAdapter
+        spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selection = (spinner.adapter.getItem(position) as String).split("/")
+                rvAdapter.imageCategory = selection[1]
+                if (selection[0] == "Google")
+                    rvAdapter.imageSource = ImageChooserAdapter.ImageSource.GOOGLE
+                else if (selection[0] == "iOS")
+                    rvAdapter.imageSource = ImageChooserAdapter.ImageSource.APPLE
             }
         }
+        val dialog = AlertDialog.Builder(mView.context)
+                .setView(v)
+                .setNegativeButton(android.R.string.cancel) {dialogInterface, i ->
+                    dialogInterface.cancel()
+                }
+                .create()
+        rvAdapter.clickListener = { path ->
+            mObject.setIncludedImage(path)
+            dialog.dismiss()
+        }
+        rv.layoutManager = GridLayoutManager(mView.context, 2)
+        rv.adapter = rvAdapter
+        dialog.show()
     }
 
 
-    private fun initSpinners () {
-        val adapter = ArrayAdapter<String>(mInclimagesView.context, android.R.layout.simple_spinner_item)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        mInclimagesView.adapter = adapter
-        SpinnerLoader().execute()
-    }
-
-
-    inner class SpinnerLoader : AsyncTask<Void, Void, List<String>>() {
+    inner class SpinnerLoader(val adapter: ArrayAdapter<String>) : AsyncTask<Void, Void, List<String>>() {
         override fun doInBackground(vararg params: Void?): List<String> {
-            val dbh = DBHelper(mInclimagesView.context)
+            val dbh = DBHelper(mView.context)
             val db = dbh.readableDatabase
-            val c = db.rawQuery("SELECT * FROM included_images", null)
+            val c = db.rawQuery("SELECT source,dir FROM included_images GROUP BY dir ORDER BY source, dir", null)
             val list = mutableListOf<String>()
             while (c.moveToNext()) {
-                list.add(c.getString(c.getColumnIndex("dir")) + File.separator + c.getString(c.getColumnIndex("file")))
+                list.add(c.getString(c.getColumnIndex("source")) + File.separator + c.getString(c.getColumnIndex("dir")))
             }
             c.close()
             db.close()
@@ -70,15 +99,7 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup) : Te
             return list
         }
         override fun onPostExecute(result: List<String>) {
-            val adapter = mInclimagesView.adapter as ArrayAdapter<String>
             adapter.addAll(result)
-            mInclimagesView.setSelection(adapter.getPosition(mObject.src), false)
-            mInclimagesView.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    mObject.setIncludedImage(adapter.getItem(position))
-                }
-            }
         }
     }
 

@@ -10,19 +10,25 @@ class DBHelper(val context: Context) : SQLiteOpenHelper(context, DBHelper.DB_NAM
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("CREATE TABLE boards (_id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(100), lastOpened INT)")
-        db.execSQL("CREATE TABLE included_images (_id INTEGER PRIMARY KEY AUTOINCREMENT, dir VARCHAR(200), file VARCHAR(200))")
         indexIncludedImages(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        indexIncludedImages(db)
     }
 
     fun indexIncludedImages (db: SQLiteDatabase) {
-        db.execSQL("DELETE FROM included_images")
+        db.execSQL("DROP TABLE included_images")
+        db.execSQL("CREATE TABLE included_images (_id INTEGER PRIMARY KEY AUTOINCREMENT, source VARCHAR(200), dir VARCHAR(200), file VARCHAR(200))")
+        indexLibrary(db, "Google")
+        indexLibrary(db, "iOS")
+    }
+
+    fun indexLibrary (db: SQLiteDatabase, path: String) {
         var dirline = true
         var d = ""
         var f = ""
-        val input = context.assets.open("material-design-icons/included_images.txt")
+        val input = context.assets.open(path + "/included_images.txt")
         val scan = Scanner(input)
         db.beginTransaction()
         try {
@@ -31,7 +37,7 @@ class DBHelper(val context: Context) : SQLiteOpenHelper(context, DBHelper.DB_NAM
                     d = scan.next()
                 } else {
                     f = scan.next()
-                    db.execSQL("INSERT INTO included_images (dir, file) VALUES ('" + d + "', '" + f + "')")
+                    db.execSQL("INSERT INTO included_images (source, dir, file) VALUES ('" + path + "', '" + d + "', '" + f + "')")
                 }
                 dirline = !dirline
             }
@@ -47,6 +53,6 @@ class DBHelper(val context: Context) : SQLiteOpenHelper(context, DBHelper.DB_NAM
 
     companion object {
         private val DB_NAME = "Designer.db"
-        private val DB_VERSION = 1
+        private val DB_VERSION = 3
     }
 }
