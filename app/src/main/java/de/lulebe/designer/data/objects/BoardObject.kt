@@ -243,7 +243,7 @@ class BoardObject() : SourceObject() {
         return null
     }
 
-    fun getObjectWithUID (uid: Long) : BaseObject? {
+    fun getObjectWithUID (uid: String) : BaseObject? {
         for (obj in _objects) {
             if (obj.uid == uid)
                 return obj

@@ -162,7 +162,7 @@ class BoardState {
             bs.bottomPanelExpanded = b.getBoolean("bottomPanelExpanded")
             val s = b.getString("selectedUID")
             if (s != null)
-                bs.selected = boardObject.getObjectWithUID(s.toLong())
+                bs.selected = boardObject.getObjectWithUID(s)
             return bs
         }
     }

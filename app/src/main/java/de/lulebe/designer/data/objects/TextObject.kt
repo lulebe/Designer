@@ -69,7 +69,7 @@ class TextObject : SourceObject() {
         }
 
 
-    private var _textStyleUID: Long? = null
+    private var _textStyleUID: String? = null
     @Transient
     private var _textStyle: TextStyle? = null
     var textStyle: TextStyle?
@@ -92,7 +92,7 @@ class TextObject : SourceObject() {
     }
 
 
-    private var _textColorStyleUID: Long? = null
+    private var _textColorStyleUID: String? = null
     @Transient
     private var _textColorStyle: ColorStyle? = null
     var textColorStyle: ColorStyle?

@@ -8,6 +8,7 @@ import android.graphics.RectF
 import de.lulebe.designer.data.Deserializer
 import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.BoxStyle
+import org.apache.commons.lang.RandomStringUtils
 import java.util.*
 
 
@@ -48,7 +49,7 @@ abstract class BaseObject : IRenderable {
     var copies = 0
 
     //id
-    val uid: Long
+    val uid: String
 
 
     //name
@@ -149,7 +150,7 @@ abstract class BaseObject : IRenderable {
         }
 
 
-    private var _boxStyleUID: Long? = null
+    private var _boxStyleUID: String? = null
     @Transient
     protected var _boxStyle: BoxStyle? = null
     var boxStyle: BoxStyle?
@@ -179,7 +180,7 @@ abstract class BaseObject : IRenderable {
 
 
     constructor() {
-        uid = System.currentTimeMillis() + Random().nextInt()
+        uid = RandomStringUtils.random(32)
     }
 
     open fun close () {

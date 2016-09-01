@@ -20,16 +20,16 @@ class Styles {
         }
     }
 
-    private val _colorStyles: MutableMap<Long, ColorStyle> = mutableMapOf()
-    val colorStyles: MutableMap<Long, ColorStyle>
+    private val _colorStyles: MutableMap<String, ColorStyle> = mutableMapOf()
+    val colorStyles: MutableMap<String, ColorStyle>
         get() = _colorStyles
 
-    private val _boxStyles: MutableMap<Long, BoxStyle> = mutableMapOf()
-    val boxStyles: MutableMap<Long, BoxStyle>
+    private val _boxStyles: MutableMap<String, BoxStyle> = mutableMapOf()
+    val boxStyles: MutableMap<String, BoxStyle>
         get() = _boxStyles
 
-    private val _textStyles: MutableMap<Long, TextStyle> = mutableMapOf()
-    val textStyles: MutableMap<Long, TextStyle>
+    private val _textStyles: MutableMap<String, TextStyle> = mutableMapOf()
+    val textStyles: MutableMap<String, TextStyle>
         get() = _textStyles
 
     fun addColorStyle (cs: ColorStyle) {

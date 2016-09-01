@@ -12,7 +12,7 @@ class CopyObject : BaseObject() {
     @Transient
     var sourceListener: () -> Unit = {}
 
-    var sourceId: Long = 0
+    var sourceId: String = ""
 
 
     override fun canDirectlyChangeWidth() = false

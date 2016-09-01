@@ -69,7 +69,7 @@ class RectObject : SourceObject() {
 
 
 
-    private var _fillColorStyleUID: Long? = null
+    private var _fillColorStyleUID: String? = null
     @Transient
     protected var _fillColorStyle: ColorStyle? = null
     var fillColorStyle: ColorStyle?
@@ -92,7 +92,7 @@ class RectObject : SourceObject() {
     private var fillColorStyleChangeListener: (() -> Unit)? = null
 
 
-    private var _strokeColorStyleUID: Long? = null
+    private var _strokeColorStyleUID: String? = null
     @Transient
     protected var _strokeColorStyle: ColorStyle? = null
     var strokeColorStyle: ColorStyle?
