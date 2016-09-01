@@ -120,6 +120,10 @@ class StorageManager {
 
     fun delete () = mDir.deleteRecursively()
 
+    fun duplicate (newDirPath: String) {
+        FileUtils.copyDirectory(mDir, File(newDirPath))
+    }
+
     fun share (act: Activity) : Intent {
         val zipPath = act.cacheDir.path + File.separator + mDir.name + ".zip"
         if (File(zipPath).exists())

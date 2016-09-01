@@ -15,6 +15,7 @@ import android.widget.TextView
 import de.lulebe.designer.R
 import de.lulebe.designer.adapters.ImageChooserAdapter
 import de.lulebe.designer.data.DBHelper
+import de.lulebe.designer.data.ImageSource
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.objects.ImageObject
 import java.io.File
@@ -45,13 +46,13 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val 
 
 
 
-    private fun updateUI () {
-    }
+    private fun updateUI () {}
 
     private fun openImageChooserDialog () {
         val v = LayoutInflater.from(mView.context).inflate(R.layout.dialog_imagechooser, null)
         val rv = v.findViewById(R.id.list) as RecyclerView
-        val rvAdapter = ImageChooserAdapter(mView.context, mBoardObject)
+        val lm = GridLayoutManager(mView.context, 2)
+        val rvAdapter = ImageChooserAdapter(mView.context, mBoardObject, lm)
         val spinner = v.findViewById(R.id.category) as Spinner
         val spinnerAdapter = ArrayAdapter<String>(mView.context, android.R.layout.simple_spinner_item)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -60,12 +61,9 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val 
         spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selection = (spinner.adapter.getItem(position) as String).split("/")
-                rvAdapter.imageCategory = selection[1]
-                if (selection[0] == "Google")
-                    rvAdapter.imageSource = ImageChooserAdapter.ImageSource.GOOGLE
-                else if (selection[0] == "iOS")
-                    rvAdapter.imageSource = ImageChooserAdapter.ImageSource.APPLE
+                val selection = imageSources[position]
+                rvAdapter.imageCategory = selection.second
+                rvAdapter.imageSource = selection.first
             }
         }
         val dialog = AlertDialog.Builder(mView.context)
@@ -75,31 +73,33 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val 
                 }
                 .create()
         rvAdapter.clickListener = { path ->
-            mObject.setIncludedImage(path)
+            mObject.setIncludedImage(path.first, path.second)
             dialog.dismiss()
         }
-        rv.layoutManager = GridLayoutManager(mView.context, 2)
+        rv.layoutManager = lm
         rv.adapter = rvAdapter
         dialog.show()
     }
 
+    private var imageSources = mutableListOf<Pair<ImageSource, String>>()
 
-    inner class SpinnerLoader(val adapter: ArrayAdapter<String>) : AsyncTask<Void, Void, List<String>>() {
-        override fun doInBackground(vararg params: Void?): List<String> {
+    inner class SpinnerLoader(val adapter: ArrayAdapter<String>) : AsyncTask<Void, Void, List<Pair<ImageSource, String>>>() {
+        override fun doInBackground(vararg params: Void?): List<Pair<ImageSource, String>> {
             val dbh = DBHelper(mView.context)
             val db = dbh.readableDatabase
             val c = db.rawQuery("SELECT source,dir FROM included_images GROUP BY dir ORDER BY source, dir", null)
-            val list = mutableListOf<String>()
             while (c.moveToNext()) {
-                list.add(c.getString(c.getColumnIndex("source")) + File.separator + c.getString(c.getColumnIndex("dir")))
+                val src = ImageSource.valueOf(c.getString(c.getColumnIndex("source")))
+                val dir = c.getString(c.getColumnIndex("dir"))
+                imageSources.add(Pair(src, dir))
             }
             c.close()
             db.close()
             dbh.close()
-            return list
+            return imageSources
         }
-        override fun onPostExecute(result: List<String>) {
-            adapter.addAll(result)
+        override fun onPostExecute(result: List<Pair<ImageSource, String>>) {
+            adapter.addAll(result.map { it.first.name + File.separator + it.second })
         }
     }
 

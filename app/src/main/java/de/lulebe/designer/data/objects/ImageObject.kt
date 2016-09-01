@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.support.v7.graphics.Palette
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.ImageSource
 import java.io.File
 import java.lang.ref.WeakReference
 
@@ -25,11 +26,11 @@ class ImageObject() : SourceObject() {
     @Transient
     private var mainColorCached = Color.BLACK
 
-    private var _included = true
-    var included: Boolean
-        get() = _included
+    private var _imageSource: ImageSource = ImageSource.USER
+    var imageSource: ImageSource
+        get() = _imageSource
         set(value) {
-            _included = value
+            _imageSource = value
             change()
         }
 
@@ -42,14 +43,14 @@ class ImageObject() : SourceObject() {
         }
 
 
-    fun setIncludedImage (file: String) {
-        _included = true
+    fun setIncludedImage (imageSource: ImageSource, file: String) {
+        _imageSource = imageSource
         _src = file
         change()
     }
 
     fun setExternalImage (file: String) {
-        _included = false
+        _imageSource = ImageSource.USER
         _src = file
         change()
     }
@@ -71,8 +72,9 @@ class ImageObject() : SourceObject() {
             return emptyArray()
         }
         val rawBmp : Bitmap
-        if (included) {
-            rawBmp = BitmapFactory.decodeStream(ctx!!.get().assets.open(src))
+        if (imageSource != ImageSource.USER) {
+            val path = imageSource.name + File.separator + src
+            rawBmp = BitmapFactory.decodeStream(ctx!!.get().assets.open(path))
         } else {
             if (!File(src).exists() || !File(src).canRead()) {
                 hasChanged = false
@@ -110,7 +112,7 @@ class ImageObject() : SourceObject() {
     override fun clone(): ImageObject {
         val obj = ImageObject()
         applyBaseClone(obj)
-        obj.included = included
+        obj.imageSource = imageSource
         obj.src = src
         return obj
     }

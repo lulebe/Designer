@@ -3,6 +3,7 @@ package de.lulebe.designer.adapters
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +13,17 @@ import android.widget.TextView
 import com.squareup.picasso.Picasso
 import de.lulebe.designer.R
 import de.lulebe.designer.data.DBHelper
+import de.lulebe.designer.data.ImageSource
 import de.lulebe.designer.data.objects.BoardObject
 import java.io.File
 
 
-class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject) : RecyclerView.Adapter<ImageChooserAdapter.ViewHolder>() {
+class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val layoutManager: GridLayoutManager) : RecyclerView.Adapter<ImageChooserAdapter.ViewHolder>() {
+
+    /*
+    FIELDS
+     */
+
 
     val TYPE_ADD_BTN = 1
     val TYPE_IMAGE = 2
@@ -24,10 +31,6 @@ class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject) : Rec
     var mDBHelper: DBHelper? = null
     var mDB: SQLiteDatabase? = null
     var mCursor: Cursor? = null
-
-    enum class ImageSource {
-        USER, GOOGLE, APPLE
-    }
 
     private var _imageSource = ImageSource.GOOGLE
     var imageSource: ImageSource
@@ -45,27 +48,14 @@ class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject) : Rec
             updateCursor()
         }
 
-    var clickListener = {path: String -> }
+    var clickListener = {path: Pair<ImageSource, String> -> }
 
-    private fun updateCursor () {
-        if (mDB != null) {
-            mCursor?.close()
-            val category: String
-            if (_imageCategory != "")
-                category = " AND dir='$_imageCategory'"
-            else
-                category = ""
-            when (_imageSource) {
-                ImageSource.GOOGLE -> {
-                        mCursor = mDB!!.rawQuery("SELECT * FROM included_images WHERE source='Google'" + category, null)
-                }
-                ImageSource.APPLE -> {
-                    mCursor = mDB!!.rawQuery("SELECT * FROM included_images WHERE source='iOS'" + category, null)
-                }
-            }
-        }
-        notifyDataSetChanged()
-    }
+
+
+    /*
+    OVERRIDES
+     */
+
 
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
@@ -117,8 +107,8 @@ class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject) : Rec
         } else if (mCursor != null && !mCursor!!.isClosed) {
             mCursor!!.moveToPosition(position)
             val name = mCursor!!.getString(mCursor!!.getColumnIndex("file"))
-            val assetPath = mCursor!!.getString(mCursor!!.getColumnIndex("source")) + File.separator +
-                    mCursor!!.getString(mCursor!!.getColumnIndex("dir")) + File.separator + name
+            val assetPath = Pair(ImageSource.valueOf(mCursor!!.getString(mCursor!!.getColumnIndex("source"))),
+                    mCursor!!.getString(mCursor!!.getColumnIndex("dir")) + File.separator + name)
             val uri = "file:///android_asset" + File.separator + assetPath
             v.txtView.text = name
             Picasso.with(v.imgView.context).load(uri).into(v.imgView)
@@ -133,6 +123,33 @@ class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject) : Rec
             return TYPE_ADD_BTN
         return TYPE_IMAGE
     }
+
+
+    /*
+    CUSTOM METHODS
+     */
+
+
+
+    private fun updateCursor () {
+        if (mDB != null) {
+            mCursor?.close()
+            val category: String
+            if (_imageCategory != "")
+                category = " AND dir='$_imageCategory'"
+            else
+                category = ""
+            mCursor = mDB!!.rawQuery("SELECT * FROM included_images WHERE source='" + imageSource.name + "'" + category, null)
+        }
+        notifyDataSetChanged()
+    }
+
+
+    /*
+    VIEWHOLDER CLASSES
+     */
+
+
 
     inner class AddBtnViewHolder(itemView: View) : ViewHolder(itemView) {}
 

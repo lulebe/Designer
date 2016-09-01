@@ -20,8 +20,8 @@ class DBHelper(val context: Context) : SQLiteOpenHelper(context, DBHelper.DB_NAM
     fun indexIncludedImages (db: SQLiteDatabase) {
         db.execSQL("DROP TABLE included_images")
         db.execSQL("CREATE TABLE included_images (_id INTEGER PRIMARY KEY AUTOINCREMENT, source VARCHAR(200), dir VARCHAR(200), file VARCHAR(200))")
-        indexLibrary(db, "Google")
-        indexLibrary(db, "iOS")
+        indexLibrary(db, "GOOGLE")
+        indexLibrary(db, "IOS")
     }
 
     fun indexLibrary (db: SQLiteDatabase, path: String) {
