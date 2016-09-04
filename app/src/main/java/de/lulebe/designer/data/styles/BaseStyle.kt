@@ -1,7 +1,6 @@
 package de.lulebe.designer.data.styles
 
-import org.apache.commons.lang.RandomStringUtils
-import java.util.*
+import de.lulebe.designer.data.UIDGenerator
 
 
 open class BaseStyle {
@@ -25,7 +24,7 @@ open class BaseStyle {
     }
 
 
-    val uid: String = RandomStringUtils.random(32)
+    val uid: Long = UIDGenerator.generateUID()
 
 
     protected var _name = "Style"

@@ -70,28 +70,30 @@ class StorageManager {
 
     fun addImage (inp: InputStream, filename: String) {
         if (mBoardObject == null) return
-        mBoardObject!!.images.put(System.currentTimeMillis() + Random().nextInt(), filename)
-        FileUtils.copyToFile(inp, File(mDir.path + File.separator + filename))
+        val uid = UIDGenerator.generateUID()
+        mBoardObject!!.images.put(uid, filename)
+        FileUtils.copyToFile(inp, File(mDir.path + File.separator + uid + File(filename).extension))
     }
 
     fun removeImage (key: Long) {
         if (mBoardObject == null) return
         val filename = mBoardObject!!.images.remove(key)
-        val f = File(mDir.path + File.separator + filename)
+        val f = File(mDir.path + File.separator + key + File(filename).extension)
         if (f.exists())
             f.delete()
     }
 
     fun addFont (inp: InputStream, filename: String) {
         if (mBoardObject == null) return
-        mBoardObject!!.fonts.put(System.currentTimeMillis() + Random().nextInt(), filename)
-        FileUtils.copyToFile(inp, File(mDir.path + File.separator + filename))
+        val uid = UIDGenerator.generateUID()
+        mBoardObject!!.fonts.put(uid, filename)
+        FileUtils.copyToFile(inp, File(mDir.path + File.separator + uid + File(filename).extension))
     }
 
     fun removeFont (key: Long) {
         if (mBoardObject == null) return
         val filename = mBoardObject!!.fonts.remove(key)
-        val f = File(mDir.path + File.separator + filename)
+        val f = File(mDir.path + File.separator + key + File(filename).extension)
         if (f.exists())
             f.delete()
     }

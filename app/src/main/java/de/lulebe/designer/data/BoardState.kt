@@ -139,9 +139,9 @@ class BoardState {
         b.putBoolean("rightPanelExpanded", rightPanelExpanded)
         b.putBoolean("bottomPanelExpanded", bottomPanelExpanded)
         if (selected != null)
-            b.putString("selectedUID", selected?.uid.toString())
+            b.putLong("selectedUID", selected?.uid!!)
         else
-            b.putString("selectedUID", null)
+            b.putLong("selectedUID", 0L)
         instanceState.putBundle("BoardState", b)
     }
 
@@ -160,8 +160,8 @@ class BoardState {
             bs.leftPanelExpanded = b.getBoolean("leftPanelExpanded")
             bs.rightPanelExpanded = b.getBoolean("rightPanelExpanded")
             bs.bottomPanelExpanded = b.getBoolean("bottomPanelExpanded")
-            val s = b.getString("selectedUID")
-            if (s != null)
+            val s = b.getLong("selectedUID")
+            if (s != 0L)
                 bs.selected = boardObject.getObjectWithUID(s)
             return bs
         }

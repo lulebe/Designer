@@ -69,7 +69,7 @@ class TextObject : SourceObject() {
         }
 
 
-    private var _textStyleUID: String? = null
+    private var _textStyleUID: Long? = null
     @Transient
     private var _textStyle: TextStyle? = null
     var textStyle: TextStyle?
@@ -92,7 +92,7 @@ class TextObject : SourceObject() {
     }
 
 
-    private var _textColorStyleUID: String? = null
+    private var _textColorStyleUID: Long? = null
     @Transient
     private var _textColorStyle: ColorStyle? = null
     var textColorStyle: ColorStyle?
@@ -113,7 +113,7 @@ class TextObject : SourceObject() {
 
     @Transient
     private var textColorStyleChangeListener = {
-        textColor = _textColorStyle!!.color
+        textColor = textColorStyle!!.color
     }
 
 
@@ -182,6 +182,13 @@ class TextObject : SourceObject() {
         calculateHandles()
     }
 
+    fun extractTextcolorStyle() : ColorStyle {
+        val cs = ColorStyle()
+        cs.name = name + " text color"
+        cs.color = textColor
+        return cs
+    }
+
     override fun getMainColor(): Int {
         return textColor
     }
@@ -195,7 +202,7 @@ class TextObject : SourceObject() {
     override fun init(ctx: Context, board: BoardObject?) {
         super.init(ctx, board)
         textColorStyleChangeListener = {
-            textColor = _textColorStyle!!.color
+            textColor = textColorStyle!!.color
         }
         if (board != null) {
             textStyle = board.styles.textStyles[_textStyleUID]

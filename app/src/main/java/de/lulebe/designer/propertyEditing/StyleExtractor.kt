@@ -11,12 +11,12 @@ import de.lulebe.designer.data.styles.BaseStyle
 
 class StyleExtractor<Style: BaseStyle> {
     fun createStyle(style: Style, context: Context, cb: (Style) -> Unit) {
-        val v = LayoutInflater.from(context).inflate(R.layout.dialog_styleextractor, null)
+        val v = LayoutInflater.from(context).inflate(R.layout.dialog_namechooser, null)
         AlertDialog.Builder(context)
                 .setView(v)
                 .setTitle("extract Style")
                 .setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener { dialogInterface, i ->
-                    style.name = (v.findViewById(R.id.field_style_name) as EditText).text.toString()
+                    style.name = (v.findViewById(R.id.field_name) as EditText).text.toString()
                     cb(style)
                 })
                 .show()

@@ -243,7 +243,7 @@ class BoardObject() : SourceObject() {
         return null
     }
 
-    fun getObjectWithUID (uid: String) : BaseObject? {
+    fun getObjectWithUID (uid: Long) : BaseObject? {
         for (obj in _objects) {
             if (obj.uid == uid)
                 return obj
@@ -274,8 +274,6 @@ class BoardObject() : SourceObject() {
     }
 
 
-    class CannotDeleteCopiedObjectException : Exception() {
-
-    }
+    class CannotDeleteCopiedObjectException : Exception() {}
 
 }

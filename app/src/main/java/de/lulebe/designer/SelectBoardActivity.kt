@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
@@ -108,12 +109,29 @@ class SelectBoardActivity : AppCompatActivity() {
                     dialogInterface.cancel()
                 })
                 .setNeutralButton("delete", DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
                     BoardDeleter(boardMeta).execute()
                 })
                 .setPositiveButton("duplicate", DialogInterface.OnClickListener { dialogInterface, i ->
-
+                    dialogInterface.dismiss()
+                    duplicateBoard(boardMeta)
                 })
                 .show()
+    }
+
+    private fun duplicateBoard (boardMeta: BoardMeta) {
+        val v = LayoutInflater.from(this).inflate(R.layout.dialog_namechooser, null)
+        AlertDialog.Builder(this)
+            .setTitle("Duplicate Board")
+            .setView(v)
+            .setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener { dialogInterface, i ->
+                dialogInterface.cancel()
+            })
+            .setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener { dialogInterface, i ->
+                val name = (v.findViewById(R.id.field_name) as EditText).text.toString()
+                dialogInterface.dismiss()
+                BoardDuplicator(boardMeta, name).execute()
+            })
     }
 
     private inner class BoardCreator(val name: String) : AsyncTask<Void, Void, String>() {
@@ -137,6 +155,30 @@ class SelectBoardActivity : AppCompatActivity() {
             val intent = Intent(this@SelectBoardActivity, BoardActivity::class.java)
             intent.putExtra("path", path)
             startActivity(intent)
+        }
+    }
+
+    private inner class BoardDuplicator(val boardMeta: BoardMeta, val newName: String) : AsyncTask<Void, Void, Void>() {
+        val loadDialog: AlertDialog = AlertDialog.Builder(this@SelectBoardActivity)
+                .setTitle("Duplicating")
+                .setView(R.layout.dialog_loadingtext)
+                .setCancelable(false)
+                .show()
+        override fun doInBackground(vararg p0: Void?): Void? {
+            val dbh = DBHelper(this@SelectBoardActivity)
+            val db = dbh.writableDatabase
+            val cv = ContentValues()
+            cv.put("name", newName)
+            cv.put("lastOpened", System.currentTimeMillis()/1000L)
+            val newId = db.insert("boards", null, cv)
+            val origSM = StorageManager(filesDir.path + File.separator + boardMeta._id.toString())
+            origSM.duplicate(filesDir.path + File.separator + newId.toString())
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            loadDialog.dismiss()
+            BoardsLoader().execute()
         }
     }
 

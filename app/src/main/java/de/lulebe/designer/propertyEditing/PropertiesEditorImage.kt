@@ -8,10 +8,7 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import de.lulebe.designer.R
 import de.lulebe.designer.adapters.ImageChooserAdapter
 import de.lulebe.designer.data.DBHelper
@@ -61,9 +58,14 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val 
         spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selection = imageSources[position]
-                rvAdapter.imageCategory = selection.second
-                rvAdapter.imageSource = selection.first
+                if (position == 0) { //user images
+                    rvAdapter.imageSource = ImageSource.USER
+                    rvAdapter.imageCategory = ""
+                } else {
+                    val selection = imageSources[position - 1]
+                    rvAdapter.imageCategory = selection.second
+                    rvAdapter.imageSource = selection.first
+                }
             }
         }
         val dialog = AlertDialog.Builder(mView.context)
@@ -73,12 +75,20 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val 
                 }
                 .create()
         rvAdapter.clickListener = { path ->
-            mObject.setIncludedImage(path.first, path.second)
             dialog.dismiss()
+            mObject.setIncludedImage(path.first, path.second)
+        }
+        rvAdapter.addUserImageListener = {
+            dialog.dismiss()
+            chooseImageFromDisk()
         }
         rv.layoutManager = lm
         rv.adapter = rvAdapter
         dialog.show()
+    }
+
+    private fun chooseImageFromDisk () {
+        Toast.makeText(mView.context, "choose Image from Disk", Toast.LENGTH_SHORT).show()
     }
 
     private var imageSources = mutableListOf<Pair<ImageSource, String>>()
@@ -99,6 +109,7 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val 
             return imageSources
         }
         override fun onPostExecute(result: List<Pair<ImageSource, String>>) {
+            adapter.add("user images")
             adapter.addAll(result.map { it.first.name + File.separator + it.second })
         }
     }

@@ -50,6 +50,8 @@ class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val l
 
     var clickListener = {path: Pair<ImageSource, String> -> }
 
+    var addUserImageListener = {}
+
 
 
     /*
@@ -86,20 +88,18 @@ class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val l
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        if (viewType == TYPE_ADD_BTN) {
-            val v = LayoutInflater.from(parent.context).inflate(R.layout.listitem_object, parent, false)
-            return AddBtnViewHolder(v)
-        }
         val v = LayoutInflater.from(parent.context).inflate(R.layout.listitem_image, parent, false)
         return ImageViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val v = (holder as ImageViewHolder)
         if (getItemViewType(position) == TYPE_ADD_BTN) {
-
+            v.txtView.text = "add Image"
+            Picasso.with(v.imgView.context).load(R.drawable.ic_add_circle_outline_white_24dp).into(v.imgView)
+            v.click = addUserImageListener
             return
         }
-        val v = (holder as ImageViewHolder)
         if (imageSource == ImageSource.USER) {
             val key = mBoardObject.images.keys.toList().get(position)
             v.txtView.text = mBoardObject.images[key]
@@ -148,10 +148,6 @@ class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val l
     /*
     VIEWHOLDER CLASSES
      */
-
-
-
-    inner class AddBtnViewHolder(itemView: View) : ViewHolder(itemView) {}
 
     inner class ImageViewHolder(itemView: View) : ViewHolder(itemView) {
         var click = {}
