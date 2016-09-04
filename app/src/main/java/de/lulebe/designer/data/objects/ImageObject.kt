@@ -3,11 +3,13 @@ package de.lulebe.designer.data.objects
 import android.content.Context
 import android.graphics.*
 import android.support.v7.graphics.Palette
+import android.util.Log
 import de.lulebe.designer.data.Deserializer
 import de.lulebe.designer.data.ImageSource
 import de.lulebe.designer.data.styles.ColorStyle
 import java.io.File
 import java.lang.ref.WeakReference
+import kotlin.concurrent.thread
 
 
 class ImageObject() : SourceObject() {
@@ -20,6 +22,9 @@ class ImageObject() : SourceObject() {
 
     @Transient
     private var ctx: WeakReference<Context>? = null
+
+    @Transient
+    private var board: WeakReference<BoardObject>? = null
 
     @Transient
     private var mainColorCached = Color.BLACK
@@ -37,6 +42,14 @@ class ImageObject() : SourceObject() {
         get() = _src
         set(value) {
             _src = value
+            change()
+        }
+
+    private var _keepRatio: Boolean = true
+    var keepRatio: Boolean
+        get() = _keepRatio
+        set(value) {
+            _keepRatio = value
             change()
         }
 
@@ -81,14 +94,8 @@ class ImageObject() : SourceObject() {
     }
 
 
-    fun setIncludedImage (imageSource: ImageSource, file: String) {
+    fun setImage (imageSource: ImageSource, file: String) {
         _imageSource = imageSource
-        _src = file
-        change()
-    }
-
-    fun setExternalImage (file: String) {
-        _imageSource = ImageSource.USER
         _src = file
         change()
     }
@@ -114,26 +121,64 @@ class ImageObject() : SourceObject() {
             val path = imageSource.name + File.separator + src
             rawBmp = BitmapFactory.decodeStream(ctx!!.get().assets.open(path))
         } else {
-            if (!File(src).exists() || !File(src).canRead()) {
+            var imageUID = 0L
+            try {
+                imageUID = src.toLong()
+            } catch (e: NumberFormatException) {
+                Log.d("IS", "bad number")
+            }
+            if (imageUID == 0L || board == null || board!!.get() == null) {
+                Log.d("IS", "nully stuff")
                 hasChanged = false
                 return emptyArray()
             }
-            rawBmp = BitmapFactory.decodeFile(src)
+            val path = board!!.get().getImagePath(imageUID)
+            Log.d("IS", path)
+            if (!File(path).exists() || !File(path).canRead()) {
+                Log.d("IS", "path not good")
+                hasChanged = false
+                return emptyArray()
+            }
+            rawBmp = BitmapFactory.decodeFile(path)
+        }
+        val maxWidth = d.dipToPxI(width)
+        val maxHeight = d.dipToPxI(height)
+        val finalWidth: Int
+        val finalHeight: Int
+        var finalXPos = d.dipToPxF(xpos)
+        var finalYPos = d.dipToPxF(ypos)
+        if (keepRatio) {
+            val targetRatio = width.toFloat() / height.toFloat()
+            val sourceRatio = rawBmp.width.toFloat() / rawBmp.height.toFloat()
+            if (sourceRatio < targetRatio) { //fit height
+                finalHeight = maxHeight
+                finalWidth = (rawBmp.width.toFloat() * (maxHeight.toFloat() / rawBmp.height.toFloat())).toInt()
+                finalXPos += (maxWidth - finalWidth) / 2
+            } else { //fit width
+                finalWidth = maxWidth
+                finalHeight = (rawBmp.height.toFloat() * (maxWidth.toFloat() / rawBmp.width.toFloat())).toInt()
+                finalYPos += (maxHeight - finalHeight) / 2
+            }
+        } else {
+            finalWidth = maxWidth
+            finalHeight = maxHeight
         }
         val bmp = Bitmap.createScaledBitmap(
                 rawBmp,
-                d.dipToPxI(width),
-                d.dipToPxI(height),
+                finalWidth,
+                finalHeight,
                 true)
         rawBmp.recycle()
-        val palette = Palette.from(bmp).clearFilters().maximumColorCount(1).generate()
-        if (palette.swatches.size > 0)
-            mainColorCached = palette.swatches[0].rgb
+        thread {
+            val palette = Palette.from(bmp).clearFilters().maximumColorCount(1).generate()
+            if (palette.swatches.size > 0)
+                mainColorCached = palette.swatches[0].rgb
+        }
         val paint = Paint()
         paint.alpha = alpha
         if (tinted)
             paint.colorFilter = PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
-        renderables.add(Renderable(Renderable.Type.IMAGE, bmp, d.dipToPxF(xpos), d.dipToPxF(ypos), paint))
+        renderables.add(Renderable(Renderable.Type.IMAGE, bmp, finalXPos, finalYPos, paint))
         hasChanged = false
         return renderables.toTypedArray()
     }
@@ -141,9 +186,22 @@ class ImageObject() : SourceObject() {
     override fun init(ctx: Context, board: BoardObject?) {
         super.init(ctx, board)
         this.ctx = WeakReference(ctx)
+        if (board != null)
+            this.board = WeakReference(board)
         tintColorStyleChangeListener = {
             tintColor = tintColorStyle!!.color
         }
+        if (board != null) {
+            tintColorStyle = board.styles.colorStyles[_tintColorStyleUID]
+        }
+    }
+
+
+    fun extractTintcolorStyle() : ColorStyle {
+        val cs = ColorStyle()
+        cs.name = name + " tint color"
+        cs.color = tintColor
+        return cs
     }
 
 

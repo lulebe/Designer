@@ -14,6 +14,7 @@ import com.azeesoft.lib.colorpicker.ColorPickerDialog
 import de.lulebe.designer.R
 import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.objects.BoardObject
+import de.lulebe.designer.data.objects.ImageObject
 import de.lulebe.designer.data.objects.RectObject
 import de.lulebe.designer.data.objects.TextObject
 import de.lulebe.designer.data.styles.ColorStyle
@@ -50,6 +51,11 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
         when (mBoardState.selected) {
             is TextObject -> {
                 (mBoardState.selected!! as TextObject).textColorStyle = cs
+            }
+            is ImageObject -> {
+                val obj = (mBoardState.selected!! as ImageObject)
+                obj.tintColorStyle = cs
+                obj.tinted = true
             }
             is RectObject -> {
                 AlertDialog.Builder(mView.context)

@@ -1,33 +1,86 @@
 package de.lulebe.designer.propertyEditing
 
+import android.graphics.drawable.ColorDrawable
 import android.os.AsyncTask
+import android.os.Build
+import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.azeesoft.lib.colorpicker.ColorPickerDialog
+import de.lulebe.designer.BoardActivity
 import de.lulebe.designer.R
 import de.lulebe.designer.adapters.ImageChooserAdapter
 import de.lulebe.designer.data.DBHelper
 import de.lulebe.designer.data.ImageSource
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.objects.ImageObject
+import de.lulebe.designer.data.styles.ColorStyle
 import java.io.File
 
 
-class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val mBoardObject: BoardObject) : TextView.OnEditorActionListener {
+class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val mBoardObject: BoardObject, val mActivity: BoardActivity) : TextView.OnEditorActionListener {
 
     private val mBtnchooseimageView: View
+    private val mCbkeepratioView: CheckBox
+    private val mCbtintView: CheckBox
+    private val mTintcolorView: View
+    private val mExtractTintcolorView: ImageView
+
+    private val mColorpickerDialog = ColorPickerDialog.createColorPickerDialog(mView.context)
+
+    private var updatingUI = false
 
     init {
         mBtnchooseimageView = mView.findViewById(R.id.btn_choose_image)
+        mCbkeepratioView = mView.findViewById(R.id.cb_keepratio) as CheckBox
+        mCbtintView = mView.findViewById(R.id.cb_tint) as CheckBox
+        mTintcolorView = mView.findViewById(R.id.btn_object_tintcolor)
+        mExtractTintcolorView = mView.findViewById(R.id.btn_object_extracttintcolor) as ImageView
 
         mBtnchooseimageView.setOnClickListener {
             openImageChooserDialog()
         }
+
+        mCbkeepratioView.setOnCheckedChangeListener { compoundButton, checked ->
+            if (!updatingUI)
+                mObject.keepRatio = checked
+        }
+
+        mCbtintView.setOnCheckedChangeListener { compoundButton, checked ->
+            if (!updatingUI)
+                mObject.tinted = checked
+        }
+
+        mColorpickerDialog.hideOpacityBar()
+        mColorpickerDialog.setOnColorPickedListener { colorInt, colorString ->
+            mObject.tintColor = colorInt
+        }
+        mTintcolorView.setOnClickListener {
+            mColorpickerDialog.setLastColor(mObject.tintColor)
+            mColorpickerDialog.setInitialColor(mObject.tintColor)
+            mColorpickerDialog.show()
+        }
+        mExtractTintcolorView.setOnClickListener {
+            if (mObject.tintColorStyle != null)
+                mObject.tintColorStyle = null
+            else {
+                val cs = mObject.extractTintcolorStyle()
+                val se = StyleExtractor<ColorStyle>()
+                se.createStyle(cs, mView.context) {
+                    mBoardObject.styles.addColorStyle(it)
+                    mObject.tintColorStyle = it
+                }
+            }
+        }
+        
 
         mObject.addChangeListener {
             updateUI()
@@ -43,7 +96,31 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val 
 
 
 
-    private fun updateUI () {}
+    private fun updateUI () {
+        updatingUI = true
+        mCbkeepratioView.isChecked = mObject.keepRatio
+        mCbtintView.isChecked = mObject.tinted
+        mTintcolorView.background = ColorDrawable(mObject.tintColor)
+        if (mObject.tintColorStyle != null) {
+            var dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+            dr = dr.mutate()
+            dr.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
+            mExtractTintcolorView.setImageDrawable(dr)
+        } else {
+            val dr = ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp)
+            mExtractTintcolorView.setImageDrawable(dr)
+        }
+        mTintcolorView.isEnabled = mObject.tinted
+        mExtractTintcolorView.isEnabled = mObject.tinted
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (mObject.tinted)
+                mTintcolorView.elevation = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2F, mView.resources.displayMetrics)
+            else
+                mTintcolorView.elevation = 0F
+        }
+        updatingUI = false
+
+    }
 
     private fun openImageChooserDialog () {
         val v = LayoutInflater.from(mView.context).inflate(R.layout.dialog_imagechooser, null)
@@ -76,19 +153,17 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val 
                 .create()
         rvAdapter.clickListener = { path ->
             dialog.dismiss()
-            mObject.setIncludedImage(path.first, path.second)
+            mObject.setImage(path.first, path.second)
         }
         rvAdapter.addUserImageListener = {
             dialog.dismiss()
-            chooseImageFromDisk()
+            mActivity.requestImage { uid: Long ->
+                mObject.setImage(ImageSource.USER, uid.toString())
+            }
         }
         rv.layoutManager = lm
         rv.adapter = rvAdapter
         dialog.show()
-    }
-
-    private fun chooseImageFromDisk () {
-        Toast.makeText(mView.context, "choose Image from Disk", Toast.LENGTH_SHORT).show()
     }
 
     private var imageSources = mutableListOf<Pair<ImageSource, String>>()

@@ -51,6 +51,7 @@ class StorageManager {
         inr.close()
         ins.close()
         mBoardObject!!.init(ctx, null)
+        mBoardObject!!.storageManager = this
         return mBoardObject!!
     }
 
@@ -68,32 +69,34 @@ class StorageManager {
         outs.close()
     }
 
-    fun addImage (inp: InputStream, filename: String) {
-        if (mBoardObject == null) return
+    fun addImage (inp: InputStream, filename: String) : Long {
+        if (mBoardObject == null) return 0L
         val uid = UIDGenerator.generateUID()
         mBoardObject!!.images.put(uid, filename)
-        FileUtils.copyToFile(inp, File(mDir.path + File.separator + uid + File(filename).extension))
+        FileUtils.copyToFile(inp, File(mDir.path + File.separator + uid + "." + File(filename).extension))
+        return uid;
     }
 
     fun removeImage (key: Long) {
         if (mBoardObject == null) return
         val filename = mBoardObject!!.images.remove(key)
-        val f = File(mDir.path + File.separator + key + File(filename).extension)
+        val f = File(mDir.path + File.separator + key + "." + File(filename).extension)
         if (f.exists())
             f.delete()
     }
 
-    fun addFont (inp: InputStream, filename: String) {
-        if (mBoardObject == null) return
+    fun addFont (inp: InputStream, filename: String) : Long {
+        if (mBoardObject == null) return 0L
         val uid = UIDGenerator.generateUID()
         mBoardObject!!.fonts.put(uid, filename)
-        FileUtils.copyToFile(inp, File(mDir.path + File.separator + uid + File(filename).extension))
+        FileUtils.copyToFile(inp, File(mDir.path + File.separator + uid + "." + File(filename).extension))
+        return uid
     }
 
     fun removeFont (key: Long) {
         if (mBoardObject == null) return
         val filename = mBoardObject!!.fonts.remove(key)
-        val f = File(mDir.path + File.separator + key + File(filename).extension)
+        val f = File(mDir.path + File.separator + key + "." + File(filename).extension)
         if (f.exists())
             f.delete()
     }

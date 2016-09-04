@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.provider.OpenableColumns
 import android.support.v4.app.ShareCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
@@ -24,6 +25,8 @@ import de.lulebe.designer.data.StorageManager
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.propertyEditing.PropertyPanelManager
 import de.lulebe.designer.styleEditing.StylePanelManager
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
@@ -149,21 +152,28 @@ class BoardActivity : AppCompatActivity() {
             }
             R.id.menu_export -> {
                 if (mBoardObject == null) return false
-                val tmpFile = File.createTempFile("designer_img", ".png", cacheDir)
-                val os = FileOutputStream(tmpFile)
-                Renderer.renderJPEG(mBoardObject!!, 2, os)
-                os.close()
-                val intent = ShareCompat.IntentBuilder.from(this)
-                        .setType("image/png")
-                        .setStream(FileProvider.getUriForFile(this, "de.lulebe.designer", tmpFile))
-                        .createChooserIntent()
-                startActivity(intent)
+                doAsync {
+                    val tmpFile = File.createTempFile("designer_img", ".png", cacheDir)
+                    val os = FileOutputStream(tmpFile)
+                    Renderer.renderJPEG(mBoardObject!!, 2, os)
+                    os.close()
+                    val intent = ShareCompat.IntentBuilder.from(this@BoardActivity)
+                            .setType("image/png")
+                            .setStream(FileProvider.getUriForFile(this@BoardActivity, "de.lulebe.designer", tmpFile))
+                            .createChooserIntent()
+                    uiThread { startActivity(intent) }
+                }
                 return true
             }
             R.id.menu_share -> {
                 if (intent.getBooleanExtra("isRoot", true) && mStorageManager != null && mBoardObject != null) {
-                    mStorageManager!!.save(mBoardObject!!)
-                    startActivity(mStorageManager!!.share(this))
+                    doAsync {
+                        mStorageManager!!.save(mBoardObject!!)
+                        val intent = mStorageManager!!.share(this@BoardActivity)
+                        uiThread {
+                            startActivity(intent)
+                        }
+                    }
                     return true
                 }
                 return false
@@ -197,11 +207,16 @@ class BoardActivity : AppCompatActivity() {
                 .create().show()
     }
 
-    fun requestImage () {
+    private var imageRequestCallback: ((uid: Long) -> Unit)? = null
+
+    fun requestImage (cb: (uid: Long) -> Unit) : Boolean {
+        if (imageRequestCallback != null) return false
+        imageRequestCallback = cb
         val intent = Intent()
         intent.action = Intent.ACTION_GET_CONTENT
         intent.type = "image/*"
         startActivityForResult(intent, REQUEST_CODE_IMAGE)
+        return true
     }
 
 
@@ -225,8 +240,25 @@ class BoardActivity : AppCompatActivity() {
                     (application as Designer).boards.remove(key)
             }
             REQUEST_CODE_IMAGE -> {
-                val input = contentResolver.openInputStream(data.data)
-                mStorageManager?.addImage(input, data.data.lastPathSegment)
+                doAsync {
+                    if (mStorageManager != null) {
+                        val input = contentResolver.openInputStream(data.data)
+                        val meta = contentResolver.query(data.data, null, null, null, null, null)
+                        try {
+                            if (meta != null && meta.moveToFirst()) {
+                                val name = meta.getString(meta.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                                val imageUID = mStorageManager!!.addImage(input, name)
+                                uiThread {
+                                    if (imageRequestCallback != null)
+                                        imageRequestCallback!!(imageUID)
+                                    imageRequestCallback = null
+                                }
+                            }
+                        } finally {
+                            meta.close()
+                        }
+                    }
+                }
             }
         }
     }

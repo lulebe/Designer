@@ -7,8 +7,10 @@ import android.graphics.Color
 import android.graphics.Paint
 import de.lulebe.designer.Renderer
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.StorageManager
 import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.Styles
+import java.io.File
 
 
 class BoardObject() : SourceObject() {
@@ -66,6 +68,19 @@ class BoardObject() : SourceObject() {
         get() = _parentBoard
         set(value) {
             _parentBoard = value
+        }
+
+    @Transient
+    private var _storageManager: StorageManager? = null
+    var storageManager: StorageManager?
+        get() {
+            if (_parentBoard == null)
+                return _storageManager
+            else
+               return _parentBoard?.storageManager
+        }
+        set(value) {
+            _storageManager = value
         }
 
 
@@ -177,6 +192,18 @@ class BoardObject() : SourceObject() {
 
     fun reorderedObjects () {
         change()
+    }
+
+    fun getImagePath(uid: Long) : String? {
+        if (images.containsKey(uid) && storageManager != null)
+            return storageManager!!.getPath() + File.separator + uid + "." + File(images[uid]).extension
+        return null
+    }
+
+    fun getFontPath(uid: Long) : String? {
+        if (fonts.containsKey(uid) && storageManager != null)
+            return storageManager!!.getPath() + File.separator + uid + "." + File(images[uid]).extension
+        return null
     }
 
     override fun init (ctx: Context, board: BoardObject?) {

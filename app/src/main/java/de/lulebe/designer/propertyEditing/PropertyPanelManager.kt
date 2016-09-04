@@ -42,7 +42,7 @@ class PropertyPanelManager(val mActivity: BoardActivity, val mLayout: ViewGroup,
                     }
                     is ImageObject -> {
                         layoutInflater.inflate(R.layout.properties_object_image, mLayout)
-                        PropertiesEditorImage(mBoardState.selected!! as ImageObject, mLayout, mBoardObject)
+                        PropertiesEditorImage(mBoardState.selected!! as ImageObject, mLayout, mBoardObject, mActivity)
                     }
                     is BoardObject -> {
                         layoutInflater.inflate(R.layout.properties_object_board, mLayout)

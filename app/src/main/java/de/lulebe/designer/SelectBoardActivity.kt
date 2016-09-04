@@ -132,6 +132,7 @@ class SelectBoardActivity : AppCompatActivity() {
                 dialogInterface.dismiss()
                 BoardDuplicator(boardMeta, name).execute()
             })
+            .show()
     }
 
     private inner class BoardCreator(val name: String) : AsyncTask<Void, Void, String>() {
@@ -173,6 +174,10 @@ class SelectBoardActivity : AppCompatActivity() {
             val newId = db.insert("boards", null, cv)
             val origSM = StorageManager(filesDir.path + File.separator + boardMeta._id.toString())
             origSM.duplicate(filesDir.path + File.separator + newId.toString())
+            val newSM = StorageManager(filesDir.path + File.separator + newId.toString())
+            val board = newSM.get(this@SelectBoardActivity)
+            board.name = newName
+            newSM.save(board)
             return null
         }
 

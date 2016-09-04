@@ -101,18 +101,22 @@ class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val l
             return
         }
         if (imageSource == ImageSource.USER) {
-            val key = mBoardObject.images.keys.toList().get(position)
+            val key = mBoardObject.images.keys.toList().get(position - 1)
             v.txtView.text = mBoardObject.images[key]
-            Picasso.with(v.imgView.context).load(mBoardObject.images[key]).into(v.imgView)
+            val path = mBoardObject.getImagePath(key)
+            Picasso.with(v.imgView.context).load(File(path)).into(v.imgView)
+            v.click = {
+                clickListener(Pair(ImageSource.USER, key.toString()))
+            }
         } else if (mCursor != null && !mCursor!!.isClosed) {
             mCursor!!.moveToPosition(position)
             val name = mCursor!!.getString(mCursor!!.getColumnIndex("file"))
             val assetPath = Pair(ImageSource.valueOf(mCursor!!.getString(mCursor!!.getColumnIndex("source"))),
                     mCursor!!.getString(mCursor!!.getColumnIndex("dir")) + File.separator + name)
-            val uri = "file:///android_asset" + File.separator + assetPath
+            val uri = "file:///android_asset" + File.separator + assetPath.first + File.separator + assetPath.second
             v.txtView.text = name
             Picasso.with(v.imgView.context).load(uri).into(v.imgView)
-            holder.click = {
+            v.click = {
                 clickListener(assetPath)
             }
         }
