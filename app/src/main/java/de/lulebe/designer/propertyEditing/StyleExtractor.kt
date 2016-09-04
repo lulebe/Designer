@@ -14,7 +14,7 @@ class StyleExtractor<Style: BaseStyle> {
         val v = LayoutInflater.from(context).inflate(R.layout.dialog_namechooser, null)
         AlertDialog.Builder(context)
                 .setView(v)
-                .setTitle("extract Style")
+                .setTitle(R.string.extract_style)
                 .setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener { dialogInterface, i ->
                     style.name = (v.findViewById(R.id.field_name) as EditText).text.toString()
                     cb(style)

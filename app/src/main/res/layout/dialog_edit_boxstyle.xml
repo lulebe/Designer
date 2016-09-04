@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionDone"
-            android:hint="Width"
+            android:hint="@string/width"
             android:inputType="number"
             android:maxLines="1"
             android:maxLength="5"
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionDone"
-            android:hint="Height"
+            android:hint="@string/height"
             android:inputType="number"
             android:maxLines="1"
             android:text="0"/>
@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionDone"
-            android:hint="Corner Radius"
+            android:hint="@string/corner_radius"
             android:inputType="number"
             android:maxLines="1"
             android:text="0"/>

@@ -3,18 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_showui"
-        android:title="Show Interface"
+        android:title="@string/show_interface"
         android:checkable="true"
         android:checked="true" />
     <item
         android:id="@+id/menu_resize"
-        android:title="Board Settings" />
+        android:title="@string/board_settings" />
     <item
         android:id="@+id/menu_export"
-        android:title="export"
+        android:title="@string/export"
         />
     <item
         android:id="@+id/menu_share"
-        android:title="share"
+        android:title="@string/share"
         />
 </menu>

@@ -39,11 +39,11 @@ class BoxStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val m
         (view.findViewById(R.id.field_cornerradius) as EditText).setText(bs.cornerRadius.toString())
         AlertDialog.Builder(mView.context)
                 .setView(view)
-                .setTitle("Edit Box Style")
+                .setTitle(R.string.edit_box_style)
                 .setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener { dialogInterface, i ->
                     dialogInterface.cancel()
                 })
-                .setPositiveButton("save", DialogInterface.OnClickListener { dialogInterface, i ->
+                .setPositiveButton(R.string.save, DialogInterface.OnClickListener { dialogInterface, i ->
                     dialogInterface.dismiss()
                     bs.width = (view.findViewById(R.id.field_width) as EditText).text.toString().toInt()
                     bs.height = (view.findViewById(R.id.field_height) as EditText).text.toString().toInt()
@@ -57,7 +57,8 @@ class BoxStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val m
         override fun onBindViewHolder(holder: StyleViewHolder, position: Int) {
             val bs = mBoardObject.styles.boxStyles.values.toList().get(position)
             holder.name.text = bs.name
-            holder.dimensions.text = bs.width.toString() + " * " + bs.height.toString() + ", radius: " + bs.cornerRadius.toString()
+            holder.dimensions.text = bs.width.toString() + " * " + bs.height.toString() +
+                    ", " + mView.resources.getString(R.string.corner_radius) + ": " + bs.cornerRadius.toString()
             holder.view.setOnClickListener {
                 if (mBoardState.selected != null)
                     mBoardState.selected!!.boxStyle = bs
@@ -70,7 +71,7 @@ class BoxStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val m
                 if (!mBoardObject.styleIsUsed(bs))
                     mBoardObject.styles.removeBoxStyle(bs)
                 else
-                    Toast.makeText(mView.context, "Style is still in use!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(mView.context, R.string.style_in_use, Toast.LENGTH_SHORT).show()
             }
         }
 

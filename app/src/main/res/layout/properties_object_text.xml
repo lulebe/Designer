@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
-                android:hint="Size"
+                android:hint="@string/size"
                 android:inputType="number"
                 android:maxLines="1"
                 android:maxLength="3"
@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:translationY="-4dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:text="Color"/>
+                android:text="@string/color"/>
             <Button
                 android:id="@+id/btn_object_textcolor"
                 android:layout_width="match_parent"
@@ -115,7 +115,7 @@
                 android:id="@+id/field_object_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="text"
+                android:hint="@string/text"
                 android:inputType="textMultiLine"
                 android:text="text"/>
         </android.support.design.widget.TextInputLayout>

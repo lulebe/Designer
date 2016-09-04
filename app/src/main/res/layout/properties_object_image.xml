@@ -17,7 +17,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="56dp"
-                android:text="choose Image"/>
+                android:text="@string/choose_image"/>
     </FrameLayout>
     <CheckBox
         android:id="@+id/cb_keepratio"
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:layout_marginLeft="56dp"
-        android:text="keep aspect ratio"/>
+        android:text="@string/keep_aspect_ratio"/>
 
 
     <FrameLayout
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:layout_marginLeft="56dp"
-            android:text="Tint Image"/>
+            android:text="@string/tint_image"/>
     </FrameLayout>
     <FrameLayout
         android:layout_width="match_parent"
@@ -59,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:text="Tint Color"/>
+                android:text="@string/tint_color"/>
             <Button
                 android:id="@+id/btn_object_tintcolor"
                 android:layout_width="116dp"

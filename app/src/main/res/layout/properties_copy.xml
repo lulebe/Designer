@@ -21,10 +21,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
-                android:hint="Name"
+                android:hint="@string/name"
                 android:maxLines="1"
                 android:inputType="text"
-                android:text="Object name"/>
+                android:text="@string/object_name"/>
         </android.support.design.widget.TextInputLayout>
     </FrameLayout>
 
@@ -40,6 +40,7 @@
             android:padding="12dp"
             android:src="@drawable/ic_delete_forever_grey600_24dp"
             android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/delete"
             android:clickable="true" />
         <ImageView
             android:id="@+id/btn_object_unlock"
@@ -51,6 +52,7 @@
             android:padding="12dp"
             android:src="@drawable/ic_lock_open_grey600_24dp"
             android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/create_standalone_item"
             android:clickable="true" />
     </FrameLayout>
 
@@ -73,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
-                android:hint="Left"
+                android:hint="@string/left"
                 android:inputType="number"
                 android:maxLines="1"
                 android:maxLength="5"
@@ -89,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
-                android:hint="Top"
+                android:hint="@string/top"
                 android:inputType="number"
                 android:maxLines="1"
                 android:text="0"/>
@@ -108,7 +110,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:text="Width"/>
+                android:text="@string/width"/>
             <TextView
                 android:id="@+id/display_object_width"
                 android:layout_width="wrap_content"
@@ -126,7 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:text="Height"/>
+                android:text="@string/height"/>
             <TextView
                 android:id="@+id/display_object_height"
                 android:layout_width="wrap_content"

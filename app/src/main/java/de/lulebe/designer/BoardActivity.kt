@@ -192,7 +192,7 @@ class BoardActivity : AppCompatActivity() {
         yField.setText(mBoardObject?.height.toString())
         gridsizeField.setText(mBoardObject?.gridSize.toString())
         gridintervalField.setText(mBoardObject?.gridInterval.toString())
-        AlertDialog.Builder(this).setTitle("Board Settings").setView(dialogView)
+        AlertDialog.Builder(this).setTitle(R.string.board_settings).setView(dialogView)
                 .setPositiveButton(android.R.string.ok, { dialogInterface, someInt ->
 
                     mBoardObject?.width = xField.text.toString().toInt()

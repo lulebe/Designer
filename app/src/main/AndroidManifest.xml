@@ -39,7 +39,7 @@
 
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"
+            android:label="@string/settings"
             android:parentActivityName=".SelectBoardActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

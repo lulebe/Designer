@@ -3,7 +3,7 @@
     <SwitchPreference
         android:defaultValue="true"
         android:key="surfaceview"
-        android:summary="Use experimental off-UI-Thread drawing"
-        android:title="draw on 2nd Thread" />
+        android:summary="@string/off_ui_drawing_long"
+        android:title="@string/off_ui_drawing" />
 
 </PreferenceScreen>

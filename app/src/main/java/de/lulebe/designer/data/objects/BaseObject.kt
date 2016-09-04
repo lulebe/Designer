@@ -304,14 +304,18 @@ abstract class BaseObject : IRenderable {
     }
 
     fun getHandleAt (x: Int, y: Int) : Int {
-        var found = 0
-        var i = 1
-        for (handle in handles) {
-            if (x >= handle.left && x <= handle.right && y >= handle.top && y <= handle.bottom) {
-                found = i
-                break
+        var found = -1
+        if (x >= xpos && x <= xpos+width && y >= ypos && y <= ypos+height)
+            found = 0
+        else {
+            var i = 1
+            for (handle in handles) {
+                if (x >= handle.left && x <= handle.right && y >= handle.top && y <= handle.bottom) {
+                    found = i
+                    break
+                }
+                i++
             }
-            i++
         }
         if (found % 2 == 1 && !canDirectlyChangeWidth())
             found = 0

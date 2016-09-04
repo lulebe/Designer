@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:text="Fill Color"/>
+                android:text="@string/fill_color"/>
             <Button
                 android:id="@+id/btn_object_fillcolor"
                 android:layout_width="116dp"
@@ -65,7 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
-                android:hint="Width"
+                android:hint="@string/width"
                 android:inputType="number"
                 android:maxLines="1"
                 android:maxLength="2"
@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:translationY="-4dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:text="Color"/>
+                android:text="@string/color"/>
             <Button
                 android:id="@+id/btn_object_strokecolor"
                 android:layout_width="match_parent"
@@ -125,7 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
-                android:hint="Corner Radius"
+                android:hint="@string/corner_radius"
                 android:inputType="number"
                 android:maxLines="1"
                 android:maxLength="3"

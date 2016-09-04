@@ -77,14 +77,14 @@ class SelectBoardActivity : AppCompatActivity() {
         val fabAdd = findViewById(R.id.fab_add) as FloatingActionButton
         fabAdd.setOnClickListener {
             val dialogView = layoutInflater.inflate(R.layout.dialog_create_board, null)
-            AlertDialog.Builder(this).setTitle("Create new Board").setView(dialogView)
-                    .setPositiveButton("Create", { di: DialogInterface, i: Int ->
+            AlertDialog.Builder(this).setTitle(R.string.create_new_board).setView(dialogView)
+                    .setPositiveButton(R.string.create, { di: DialogInterface, i: Int ->
                         val name = (dialogView.findViewById(R.id.field_board_name) as EditText).text.toString()
                         if (name.length > 0)
                             BoardCreator(name).execute()
                         di.dismiss()
                     })
-                    .setNegativeButton("cancel", { di: DialogInterface, i: Int ->
+                    .setNegativeButton(android.R.string.cancel, { di: DialogInterface, i: Int ->
                         di.cancel()
                     })
                     .create().show()
@@ -103,16 +103,16 @@ class SelectBoardActivity : AppCompatActivity() {
 
     private fun openActionsDialog (boardMeta: BoardMeta) {
         AlertDialog.Builder(this)
-                .setTitle("Edit Board")
-                .setMessage("Choose an Option")
+                .setTitle(R.string.edit_board)
+                .setMessage(R.string.choose_option)
                 .setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener { dialogInterface, i ->
                     dialogInterface.cancel()
                 })
-                .setNeutralButton("delete", DialogInterface.OnClickListener { dialogInterface, i ->
+                .setNeutralButton(R.string.delete, DialogInterface.OnClickListener { dialogInterface, i ->
                     dialogInterface.dismiss()
                     BoardDeleter(boardMeta).execute()
                 })
-                .setPositiveButton("duplicate", DialogInterface.OnClickListener { dialogInterface, i ->
+                .setPositiveButton(R.string.duplicate, DialogInterface.OnClickListener { dialogInterface, i ->
                     dialogInterface.dismiss()
                     duplicateBoard(boardMeta)
                 })
@@ -122,7 +122,7 @@ class SelectBoardActivity : AppCompatActivity() {
     private fun duplicateBoard (boardMeta: BoardMeta) {
         val v = LayoutInflater.from(this).inflate(R.layout.dialog_namechooser, null)
         AlertDialog.Builder(this)
-            .setTitle("Duplicate Board")
+            .setTitle(R.string.duplicate_board)
             .setView(v)
             .setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener { dialogInterface, i ->
                 dialogInterface.cancel()
@@ -161,7 +161,7 @@ class SelectBoardActivity : AppCompatActivity() {
 
     private inner class BoardDuplicator(val boardMeta: BoardMeta, val newName: String) : AsyncTask<Void, Void, Void>() {
         val loadDialog: AlertDialog = AlertDialog.Builder(this@SelectBoardActivity)
-                .setTitle("Duplicating")
+                .setTitle(R.string.duplicating)
                 .setView(R.layout.dialog_loadingtext)
                 .setCancelable(false)
                 .show()

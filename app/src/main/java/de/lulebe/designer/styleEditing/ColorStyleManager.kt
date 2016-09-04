@@ -59,16 +59,16 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
             }
             is RectObject -> {
                 AlertDialog.Builder(mView.context)
-                        .setTitle("set Color Style")
-                        .setMessage("Where do you want to apply the color?")
+                        .setTitle(R.string.set_color_style)
+                        .setMessage(R.string.apply_color_style_to)
                         .setNeutralButton(android.R.string.cancel, DialogInterface.OnClickListener { dialogInterface, i ->
                             dialogInterface.cancel()
                         })
-                        .setNegativeButton("Stroke", DialogInterface.OnClickListener { dialogInterface, i ->
+                        .setNegativeButton(R.string.stroke, DialogInterface.OnClickListener { dialogInterface, i ->
                             dialogInterface.dismiss()
                             (mBoardState.selected as RectObject?)?.strokeColorStyle = cs
                         })
-                        .setPositiveButton("Fill", DialogInterface.OnClickListener { dialogInterface, i ->
+                        .setPositiveButton(R.string.fill, DialogInterface.OnClickListener { dialogInterface, i ->
                             dialogInterface.dismiss()
                             (mBoardState.selected as RectObject?)?.fillColorStyle = cs
                         })
@@ -94,7 +94,7 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
                 if (!mBoardObject.styleIsUsed(cs))
                     mBoardObject.styles.removeColorStyle(cs)
                 else
-                    Toast.makeText(mView.context, "Style is still in use!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(mView.context, R.string.style_in_use, Toast.LENGTH_SHORT).show()
             }
         }
 

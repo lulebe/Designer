@@ -16,7 +16,7 @@
                 android:id="@+id/field_board_sizex"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Width"
+                android:hint="@string/width"
                 android:inputType="number"
                 android:maxLines="1"
                 android:maxLength="4"/>
@@ -29,7 +29,7 @@
                 android:id="@+id/field_board_sizey"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Height"
+                android:hint="@string/height"
                 android:inputType="number"
                 android:maxLines="1"
                 android:maxLength="4"/>
@@ -38,7 +38,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Grid &amp; Rulers"/>
+        android:text="@string/grid_and_rulers"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -50,7 +50,7 @@
                 android:id="@+id/field_board_gridsize"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ruler every X px"
+                android:hint="@string/ruler_every"
                 android:inputType="number"
                 android:maxLines="1"
                 android:maxLength="2"/>
@@ -63,7 +63,7 @@
                 android:id="@+id/field_board_gridlargeinterval"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Grid every X marks"
+                android:hint="@string/grid_every"
                 android:inputType="number"
                 android:maxLines="1"
                 android:maxLength="2"/>

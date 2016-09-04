@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import de.lulebe.designer.CheatSheet
 import de.lulebe.designer.R
 import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.objects.BoardObject
@@ -60,6 +61,8 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         mShadowXPosView = mView.findViewById(R.id.field_object_shadowx) as EditText
         mShadowYPosView = mView.findViewById(R.id.field_object_shadowy) as EditText
 
+        initCheatSheets()
+
         mNameView.setOnEditorActionListener(this)
         mXPosView.setOnEditorActionListener(this)
         mYPosView.setOnEditorActionListener(this)
@@ -84,7 +87,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
             try {
                 mBoardObject.removeObject(mBoardState.selected!!)
             } catch (e: BoardObject.CannotDeleteCopiedObjectException) {
-                Toast.makeText(mView.context, "Can't delete copied object.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(mView.context, R.string.cant_delete_copied_object, Toast.LENGTH_SHORT).show()
             }
             mBoardState.selected = null
         }
@@ -94,7 +97,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
             newObj.init(mView.context, mBoardObject)
             newObj.xpos = mObject.xpos + 10
             newObj.ypos = mObject.ypos + 10
-            newObj.name = "copy of " + mObject.name
+            newObj.name = mView.resources.getString(R.string.copy_of) + mObject.name
             mBoardObject.addObject(newObj)
             mBoardState.selected = newObj
         }
@@ -275,6 +278,12 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
             mShadowYPosView.setText("")
             mShadowBlurView.setText("")
         }
+    }
+
+
+    private fun initCheatSheets () {
+        CheatSheet.setup(mDeleteView)
+        CheatSheet.setup(mDuplicateView)
     }
 
 }

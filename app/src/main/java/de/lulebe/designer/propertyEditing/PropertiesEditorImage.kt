@@ -184,7 +184,7 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val 
             return imageSources
         }
         override fun onPostExecute(result: List<Pair<ImageSource, String>>) {
-            adapter.add("user images")
+            adapter.add(mView.resources.getString(R.string.user_images))
             adapter.addAll(result.map { it.first.name + File.separator + it.second })
         }
     }

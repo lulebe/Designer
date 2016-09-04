@@ -9,9 +9,7 @@ import de.lulebe.designer.adapters.BoardObjectsAdapter
 import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.objects.*
 
-/**
- * Created by LuLeBe on 19/06/16.
- */
+
 class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoardObject: BoardObject) : View.OnClickListener {
 
 
@@ -37,6 +35,8 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
 
 
         mObjectslistView = mPanel.findViewById(R.id.list_objects) as DragListView
+
+        initCheatSheets()
 
         mBtnAddRect.setOnClickListener(this)
         mBtnAddText.setOnClickListener(this)
@@ -128,5 +128,14 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
                 mBoardObject.reorderedObjects()
             }
         })
+    }
+
+    private fun initCheatSheets () {
+        CheatSheet.setup(mBtnAddRect)
+        CheatSheet.setup(mBtnAddText)
+        CheatSheet.setup(mBtnAddImage)
+        CheatSheet.setup(mBtnAddGroup)
+        CheatSheet.setup(mBtnToggleEditpan)
+        CheatSheet.setup(mBtnToggleGrid)
     }
 }

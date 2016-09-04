@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import de.lulebe.designer.CheatSheet
 import de.lulebe.designer.R
 import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.objects.BoardObject
@@ -30,6 +31,8 @@ class PropertiesEditorCopy (val mObject: CopyObject, val mView: ViewGroup, val m
         mYPosView = mView.findViewById(R.id.field_object_ypos) as EditText
         mWidthDisplayView = mView.findViewById(R.id.display_object_width) as TextView
         mHeightDisplayView = mView.findViewById(R.id.display_object_height) as TextView
+
+        initCheatSheets()
 
         mDeleteView.setOnClickListener {
             if (mObject.source != null)
@@ -95,6 +98,13 @@ class PropertiesEditorCopy (val mObject: CopyObject, val mView: ViewGroup, val m
         mYPosView.setText(mObject.ypos.toString())
         mWidthDisplayView.text = mObject.source?.width.toString()
         mHeightDisplayView.text = mObject.source?.height.toString()
+    }
+
+
+
+    private fun initCheatSheets () {
+        CheatSheet.setup(mDeleteView)
+        CheatSheet.setup(mUnlockView)
     }
 
 

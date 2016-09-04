@@ -39,7 +39,7 @@
         android:translationX="-176dp"
         android:elevation="4dp"
         app:direction="right"
-        app:headertext="Tools"
+        app:headertext="@string/tools"
         app:colorscheme="dark"
         android:background="@color/darkpanelbg"
         android:visibility="gone">
@@ -56,7 +56,7 @@
         android:translationX="176dp"
         android:elevation="4dp"
         app:direction="left"
-        app:headertext="Properties"
+        app:headertext="@string/properties"
         app:colorscheme="light"
         android:background="@color/lightpanelbg"
         android:visibility="gone">
@@ -72,7 +72,7 @@
         android:elevation="6dp"
         android:clipToPadding="false"
         app:direction="up"
-        app:headertext="Styles"
+        app:headertext="@string/styles"
         app:colorscheme="light"
         android:background="@color/lightpanelbg"
         android:visibility="gone">

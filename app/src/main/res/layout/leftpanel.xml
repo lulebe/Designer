@@ -21,6 +21,7 @@
             android:padding="12dp"
             android:src="@drawable/ic_shape_rectangle_plus_white_24dp"
             android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/add_rectangle"
             android:clickable="true"/>
 
         <ImageView
@@ -32,6 +33,7 @@
             android:padding="12dp"
             android:src="@drawable/ic_format_annotation_plus_white_24dp"
             android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/add_text"
             android:clickable="true"/>
 
         <ImageView
@@ -43,6 +45,7 @@
             android:padding="12dp"
             android:src="@drawable/ic_image_white_24dp"
             android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/add_image"
             android:clickable="true"/>
 
         <ImageView
@@ -54,6 +57,7 @@
             android:padding="12dp"
             android:src="@drawable/ic_shape_plus_white_24dp"
             android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/add_group"
             android:clickable="true"/>
 
     </FrameLayout>
@@ -72,6 +76,7 @@
             android:padding="12dp"
             android:src="@drawable/ic_move_resize_variant_white_24dp"
             android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/toggle_pan_move_item"
             android:clickable="true"/>
 
         <ImageView
@@ -84,6 +89,7 @@
             android:padding="12dp"
             android:src="@drawable/ic_grid_white_24dp"
             android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/toggle_grid"
             android:clickable="true"/>
 
     </FrameLayout>

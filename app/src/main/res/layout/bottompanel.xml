@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:text="Colors"/>
+                android:text="@string/colors"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_colorstyles"
@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:text="Boxes"/>
+                android:text="@string/boxes"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_boxstyles"
@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:text="Textstyles"/>
+                android:text="@string/textstyles"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_textstyles"
