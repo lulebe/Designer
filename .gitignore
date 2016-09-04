@@ -6,3 +6,4 @@
 /captures
 keystore.jks
 /app/app-release.apk
+*.iml
