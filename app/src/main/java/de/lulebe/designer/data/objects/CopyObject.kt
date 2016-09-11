@@ -2,6 +2,7 @@ package de.lulebe.designer.data.objects
 
 import android.content.Context
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.ExportContainer
 
 
 class CopyObject : BaseObject() {
@@ -45,7 +46,9 @@ class CopyObject : BaseObject() {
     }
 
     override fun clone(): CopyObject {
-        throw UnsupportedOperationException()
+        val c = CopyObject()
+        c.sourceId = sourceId
+        return c
     }
 
     override fun getRenderables(d: Deserializer, forceReload: Boolean): Array<Renderable> {
@@ -65,5 +68,11 @@ class CopyObject : BaseObject() {
     override fun getMainColor(): Int {
         if (source == null) return super.getMainColor()
         return source!!.getMainColor()
+    }
+
+    override fun export(ec: ExportContainer) {
+        super.export(ec)
+        if (source != null)
+            ec.objects.put(source!!.uid, source!!)
     }
 }

@@ -12,6 +12,7 @@ import de.lulebe.designer.data.styles.BaseStyle
 class StyleExtractor<Style: BaseStyle> {
     fun createStyle(style: Style, context: Context, cb: (Style) -> Unit) {
         val v = LayoutInflater.from(context).inflate(R.layout.dialog_namechooser, null)
+        (v.findViewById(R.id.field_name) as EditText).setText(style.name)
         AlertDialog.Builder(context)
                 .setView(v)
                 .setTitle(R.string.extract_style)

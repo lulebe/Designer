@@ -6,10 +6,10 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.ExportContainer
 import de.lulebe.designer.data.UIDGenerator
 import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.BoxStyle
-
 
 
 abstract class BaseObject : IRenderable {
@@ -367,6 +367,13 @@ abstract class BaseObject : IRenderable {
 
     open fun getMainColor () : Int {
         return Color.parseColor("#000000")
+    }
+
+    open fun export (ec: ExportContainer) {
+        val newObj = this.clone()
+        ec.objects.put(newObj.uid, newObj)
+        if (boxStyle != null)
+            ec.boxStyles.put(boxStyle!!.uid, boxStyle!!)
     }
 
     abstract fun clone () : BaseObject

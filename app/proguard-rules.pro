@@ -16,3 +16,4 @@
 #   public *;
 #}
 -keep class com.woxthebox.draglistview.** { *; }
+-dontwarn com.squareup.okhttp.**

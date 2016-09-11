@@ -68,4 +68,5 @@
     <string name="export">export</string>
     <string name="share">share</string>
     <string name="title_app">Designer</string>
+    <string name="choose_font">choose Font</string>
 </resources>

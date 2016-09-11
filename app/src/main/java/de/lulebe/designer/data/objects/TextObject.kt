@@ -3,10 +3,13 @@ package de.lulebe.designer.data.objects
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.ExportContainer
+import de.lulebe.designer.data.FontCache
 import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.ColorStyle
 import de.lulebe.designer.data.styles.TextStyle
@@ -14,8 +17,13 @@ import de.lulebe.designer.data.styles.TextStyle
 
 class TextObject : SourceObject() {
 
+    @Transient
+    private var ctx: Context? = null
 
-    private var _text = ""
+    @Transient
+    private var board: BoardObject? = null
+
+    private var _text = "Text"
     var text: String
         get() = _text
         set(value) {
@@ -55,6 +63,23 @@ class TextObject : SourceObject() {
             change()
         }
 
+    private var _fontUID: Long = 0
+    var fontUID: Long
+        get() = _fontUID
+        set(value) {
+            if (ctx != null && board != null) {
+                FontCache.loadFont(value, board!!, ctx!!) {
+                    _fontUID = value
+                    typeFace = it
+                    calcSizes()
+                    change()
+                }
+            }
+        }
+
+    @Transient
+    private var typeFace: Typeface = Typeface.DEFAULT
+
     override var height: Int
         get() = super.height
         set(value) {
@@ -87,8 +112,9 @@ class TextObject : SourceObject() {
         }
 
     @Transient
-    protected val textStyleChangeListener = {
-        fontSize = _textStyle!!.fontSize
+    private var textStyleChangeListener = {
+        fontSize = textStyle!!.fontSize
+        fontUID = textStyle!!.font
     }
 
 
@@ -120,7 +146,6 @@ class TextObject : SourceObject() {
 
 
     init {
-        _text = "Text"
         _width = 100
     }
 
@@ -131,6 +156,7 @@ class TextObject : SourceObject() {
         val ts = TextStyle()
         ts.name = name + " Text style"
         ts.fontSize = fontSize
+        ts.font = fontUID
         return ts
     }
 
@@ -164,6 +190,7 @@ class TextObject : SourceObject() {
         paint.color = textColor
         paint.textSize = d.dipToPxF(fontSize)
         paint.alpha = alpha
+        paint.typeface = typeFace
         val layout = StaticLayout(_text, paint, d.dipToPxI(width), alignment, 1F, 0F, false)
         val r = Renderable(Renderable.Type.TEXT, layout, d.dipToPxF(xpos), d.dipToPxF(ypos), paint)
         renderables.add(r)
@@ -174,19 +201,13 @@ class TextObject : SourceObject() {
     private fun calcSizes () {
         val paint = TextPaint()
         paint.textSize = fontSize.toFloat()
+        paint.typeface = typeFace
         val layout = StaticLayout(_text, paint, width.toInt(), alignment, 1F, 0F, false)
         _width = layout.width
         _widthMoving = layout.width
         _height = layout.height
         _heightMoving = layout.height
         calculateHandles()
-    }
-
-    fun extractTextcolorStyle() : ColorStyle {
-        val cs = ColorStyle()
-        cs.name = name + " text color"
-        cs.color = textColor
-        return cs
     }
 
     override fun getMainColor(): Int {
@@ -201,12 +222,19 @@ class TextObject : SourceObject() {
 
     override fun init(ctx: Context, board: BoardObject?) {
         super.init(ctx, board)
+        this.ctx = ctx
+        this.board = board
         textColorStyleChangeListener = {
             textColor = textColorStyle!!.color
+        }
+        textStyleChangeListener = {
+            fontSize = textStyle!!.fontSize
+            fontUID = textStyle!!.font
         }
         if (board != null) {
             textStyle = board.styles.textStyles[_textStyleUID]
             textColorStyle = board.styles.colorStyles[_textColorStyleUID]
+            fontUID = _fontUID
         }
     }
 
@@ -218,6 +246,12 @@ class TextObject : SourceObject() {
         obj.textColor = textColor
         obj.fontSize = fontSize
         return obj
+    }
+
+    override fun export(ec: ExportContainer) {
+        super.export(ec)
+        if (fontUID != 0L)
+            ec.fonts.add(fontUID)
     }
 
 }

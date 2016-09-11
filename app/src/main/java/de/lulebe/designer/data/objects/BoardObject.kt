@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import de.lulebe.designer.Renderer
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.ExportContainer
 import de.lulebe.designer.data.StorageManager
 import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.Styles
@@ -202,7 +203,7 @@ class BoardObject() : SourceObject() {
 
     fun getFontPath(uid: Long) : String? {
         if (fonts.containsKey(uid) && storageManager != null)
-            return storageManager!!.getPath() + File.separator + uid + "." + File(images[uid]).extension
+            return storageManager!!.getPath() + File.separator + uid + "." + File(fonts[uid]).extension
         return null
     }
 
@@ -298,6 +299,13 @@ class BoardObject() : SourceObject() {
             obj.addObject(o.clone())
         }
         return obj
+    }
+
+    override fun export(ec: ExportContainer) {
+        super.export(ec)
+        for (obj in objects) {
+            obj.export(ec)
+        }
     }
 
 

@@ -3,8 +3,8 @@ package de.lulebe.designer.data.objects
 import android.content.Context
 import android.graphics.*
 import android.support.v7.graphics.Palette
-import android.util.Log
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.ExportContainer
 import de.lulebe.designer.data.ImageSource
 import de.lulebe.designer.data.styles.ColorStyle
 import java.io.File
@@ -124,18 +124,13 @@ class ImageObject() : SourceObject() {
             var imageUID = 0L
             try {
                 imageUID = src.toLong()
-            } catch (e: NumberFormatException) {
-                Log.d("IS", "bad number")
-            }
+            } catch (e: NumberFormatException) {}
             if (imageUID == 0L || board == null || board!!.get() == null) {
-                Log.d("IS", "nully stuff")
                 hasChanged = false
                 return emptyArray()
             }
             val path = board!!.get().getImagePath(imageUID)
-            Log.d("IS", path)
             if (!File(path).exists() || !File(path).canRead()) {
-                Log.d("IS", "path not good")
                 hasChanged = false
                 return emptyArray()
             }
@@ -216,6 +211,14 @@ class ImageObject() : SourceObject() {
         obj.imageSource = imageSource
         obj.src = src
         return obj
+    }
+
+    override fun export(ec: ExportContainer) {
+        super.export(ec)
+        if (imageSource == ImageSource.USER && src != "")
+            try {
+                ec.images.add(src.toLong())
+            } catch (e: NumberFormatException) {}
     }
 
 }

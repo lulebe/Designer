@@ -3,6 +3,9 @@ package de.lulebe.designer.propertyEditing
 import android.graphics.drawable.ColorDrawable
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
+import android.support.v7.app.AlertDialog
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.Layout
 import android.text.TextWatcher
@@ -14,20 +17,25 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.azeesoft.lib.colorpicker.ColorPickerDialog
+import de.lulebe.designer.BoardActivity
 import de.lulebe.designer.R
+import de.lulebe.designer.adapters.FontChooserAdapter
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.objects.TextObject
 import de.lulebe.designer.data.styles.ColorStyle
+import de.lulebe.designer.data.styles.TextStyle
 
 
-class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mBoardObject: BoardObject) : TextView.OnEditorActionListener {
+class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mBoardObject: BoardObject, val mActivity: BoardActivity) : TextView.OnEditorActionListener {
 
     private val mTextcolorView: View
     private val mExtractTextcolorView: ImageView
-    private val mFontsizeView: EditText
+    private val mFontView: View
     private val mAlignleftView: ImageView
     private val mAligncenterView: ImageView
     private val mAlignrightView: ImageView
+    private val mFontsizeView: EditText
+    private val mExtractTextstyleView: ImageView
     private val mTextView: EditText
 
     private val mColorpickerDialog = ColorPickerDialog.createColorPickerDialog(mView.context)
@@ -37,12 +45,17 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
     init {
         mTextcolorView = mView.findViewById(R.id.btn_object_textcolor)
         mExtractTextcolorView = mView.findViewById(R.id.btn_object_extracttextcolor) as ImageView
-        mFontsizeView = mView.findViewById(R.id.field_object_fontsize) as EditText
+        mFontView = mView.findViewById(R.id.btn_choose_font) as View
         mAlignleftView = mView.findViewById(R.id.btn_object_alignleft) as ImageView
         mAligncenterView = mView.findViewById(R.id.btn_object_aligncenter) as ImageView
         mAlignrightView = mView.findViewById(R.id.btn_object_alignright) as ImageView
+        mFontsizeView = mView.findViewById(R.id.field_object_fontsize) as EditText
+        mExtractTextstyleView = mView.findViewById(R.id.btn_object_extracttextstyle) as ImageView
         mTextView = mView.findViewById(R.id.field_object_text) as EditText
 
+        mFontView.setOnClickListener {
+            openFontChooserDialog()
+        }
 
         mColorpickerDialog.hideOpacityBar()
         mColorpickerDialog.setOnColorPickedListener { colorInt, colorString ->
@@ -57,11 +70,23 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
             if (mObject.textColorStyle != null)
                 mObject.textColorStyle = null
             else {
-                val cs = mObject.extractTextcolorStyle()
+                val cs = mObject.extractTextColorStyle()
                 val se = StyleExtractor<ColorStyle>()
                 se.createStyle(cs, mView.context) {
                     mBoardObject.styles.addColorStyle(it)
                     mObject.textColorStyle = it
+                }
+            }
+        }
+        mExtractTextstyleView.setOnClickListener {
+            if (mObject.textStyle != null)
+                mObject.textStyle = null
+            else {
+                val ts = mObject.extractTextStyle()
+                val se = StyleExtractor<TextStyle>()
+                se.createStyle(ts, mView.context) {
+                    mBoardObject.styles.addTextStyle(it)
+                    mObject.textStyle = it
                 }
             }
         }
@@ -159,5 +184,31 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
         }
         if (mTextViewUpdate)
             mTextView.setText(mObject.text)
+    }
+
+
+    private fun openFontChooserDialog () {
+        val rv = RecyclerView(mView.context)
+        val lm = GridLayoutManager(mView.context, 2)
+        val rvAdapter = FontChooserAdapter(mView.context, mBoardObject, lm)
+        val dialog = AlertDialog.Builder(mView.context)
+                .setView(rv)
+                .setNegativeButton(android.R.string.cancel) {dialogInterface, i ->
+                    dialogInterface.cancel()
+                }
+                .create()
+        rvAdapter.clickListener = { uid ->
+            dialog.dismiss()
+            mObject.fontUID = uid
+        }
+        rvAdapter.addUserFontListener = {
+            dialog.dismiss()
+            mActivity.requestFont { uid: Long ->
+                mObject.fontUID = uid
+            }
+        }
+        rv.layoutManager = lm
+        rv.adapter = rvAdapter
+        dialog.show()
     }
 }

@@ -11,7 +11,6 @@ import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
@@ -35,6 +34,7 @@ class BoardActivity : AppCompatActivity() {
 
     val REQUEST_CODE_IMAGE = 1
     val REQUEST_CODE_GROUP = 2
+    val REQUEST_CODE_FONT = 3
 
     private val mToolbar: Toolbar by bindView(R.id.toolbar)
     private val mLeftpane: Pane by bindView(R.id.leftpane)
@@ -58,7 +58,6 @@ class BoardActivity : AppCompatActivity() {
         initUI()
 
         if (intent.getBooleanExtra("isRoot", true)) {
-            Log.d("PATH", intent.getStringExtra("path"))
             mStorageManager = StorageManager(intent.getStringExtra("path"))
             LoadBoard(savedInstanceState).execute()
         } else {
@@ -67,8 +66,6 @@ class BoardActivity : AppCompatActivity() {
                 finish()
             else {
                 mBoardObject = (application as Designer).boards[key]
-                Log.d("IS NULL", (mBoardObject == null).toString())
-                Log.d("BOARDS", (application as Designer).boards.size.toString())
                 postLoadBoard(savedInstanceState)
             }
         }
@@ -219,6 +216,18 @@ class BoardActivity : AppCompatActivity() {
         return true
     }
 
+    private var fontRequestCallback: ((uid: Long) -> Unit)? = null
+
+    fun requestFont (cb: (uid: Long) -> Unit) : Boolean {
+        if (fontRequestCallback != null) return false
+        fontRequestCallback = cb
+        val intent = Intent()
+        intent.action = Intent.ACTION_GET_CONTENT
+        intent.type = "*/*"
+        startActivityForResult(intent, REQUEST_CODE_FONT)
+        return true
+    }
+
 
     fun openGroup (group: BoardObject) {
         val key = Random().nextInt()
@@ -252,6 +261,27 @@ class BoardActivity : AppCompatActivity() {
                                     if (imageRequestCallback != null)
                                         imageRequestCallback!!(imageUID)
                                     imageRequestCallback = null
+                                }
+                            }
+                        } finally {
+                            meta.close()
+                        }
+                    }
+                }
+            }
+            REQUEST_CODE_FONT -> {
+                doAsync {
+                    if (mStorageManager != null) {
+                        val input = contentResolver.openInputStream(data.data)
+                        val meta = contentResolver.query(data.data, null, null, null, null, null)
+                        try {
+                            if (meta != null && meta.moveToFirst()) {
+                                val name = meta.getString(meta.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                                val fontUID = mStorageManager!!.addFont(input, name)
+                                uiThread {
+                                    if (fontRequestCallback != null)
+                                        fontRequestCallback!!(fontUID)
+                                    fontRequestCallback = null
                                 }
                             }
                         } finally {

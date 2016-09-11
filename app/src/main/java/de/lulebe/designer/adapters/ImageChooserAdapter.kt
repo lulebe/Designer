@@ -96,7 +96,7 @@ class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val l
         val v = (holder as ImageViewHolder)
         if (getItemViewType(position) == TYPE_ADD_BTN) {
             v.txtView.text = "add Image"
-            Picasso.with(v.imgView.context).load(R.drawable.ic_add_circle_outline_white_24dp).into(v.imgView)
+            Picasso.with(v.imgView.context).load(R.drawable.ic_plus_grey600_48dp).into(v.imgView)
             v.click = addUserImageListener
             return
         }
@@ -104,7 +104,7 @@ class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val l
             val key = mBoardObject.images.keys.toList().get(position - 1)
             v.txtView.text = mBoardObject.images[key]
             val path = mBoardObject.getImagePath(key)
-            Picasso.with(v.imgView.context).load(File(path)).into(v.imgView)
+            Picasso.with(v.imgView.context).load(File(path)).resize(250, 150).onlyScaleDown().centerInside().into(v.imgView)
             v.click = {
                 clickListener(Pair(ImageSource.USER, key.toString()))
             }

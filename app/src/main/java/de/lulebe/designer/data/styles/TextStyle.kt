@@ -13,8 +13,8 @@ class TextStyle : BaseStyle() {
         }
 
 
-    private var _font = 0
-    var font: Int
+    private var _font: Long = 0L
+    var font: Long
         get() = _font
         set(value) {
             _font = value

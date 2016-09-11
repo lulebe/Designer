@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.ExportContainer
 import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.BoxStyle
 import de.lulebe.designer.data.styles.ColorStyle
@@ -225,6 +226,14 @@ class RectObject : SourceObject() {
         obj.strokeColor = strokeColor
         obj.cornerRadius = cornerRadius
         return obj
+    }
+
+    override fun export(ec: ExportContainer) {
+        super.export(ec)
+        if (fillColorStyle != null)
+            ec.colorStyles.put(fillColorStyle!!.uid, fillColorStyle!!)
+        if (strokeColorStyle != null)
+            ec.colorStyles.put(strokeColorStyle!!.uid, strokeColorStyle!!)
     }
 
 }
