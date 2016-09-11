@@ -9,5 +9,6 @@ class StylePanelManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
     init {
         ColorStyleManager(mView, mBoardObject, mBoardState)
         BoxStyleManager(mView, mBoardObject, mBoardState)
+        TextStyleManager(mView, mBoardObject, mBoardState)
     }
 }

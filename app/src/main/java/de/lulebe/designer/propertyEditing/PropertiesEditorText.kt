@@ -182,6 +182,15 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
                 setAlignmentImage(mAlignrightView, R.drawable.ic_format_align_right_grey600_24dp, true)
             }
         }
+        if (mObject.textStyle != null) {
+            var dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+            dr = dr.mutate()
+            dr.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
+            mExtractTextstyleView.setImageDrawable(dr)
+        } else {
+            val dr = ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp)
+            mExtractTextstyleView.setImageDrawable(dr)
+        }
         if (mTextViewUpdate)
             mTextView.setText(mObject.text)
     }

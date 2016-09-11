@@ -1,5 +1,7 @@
 package de.lulebe.designer.data.styles
 
+import android.text.Layout
+
 
 class TextStyle : BaseStyle() {
 
@@ -21,5 +23,12 @@ class TextStyle : BaseStyle() {
             change()
         }
 
+    private var _alignment = Layout.Alignment.ALIGN_NORMAL
+    var alignment: Layout.Alignment
+        get() = _alignment
+        set(value) {
+            _alignment = value
+            change()
+        }
 
 }

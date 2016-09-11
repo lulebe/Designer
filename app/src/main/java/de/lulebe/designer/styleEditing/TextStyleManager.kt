@@ -2,6 +2,7 @@ package de.lulebe.designer.styleEditing
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,12 +45,17 @@ class TextStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val 
         override fun onBindViewHolder(holder: StyleViewHolder, position: Int) {
             val ts = mBoardObject.styles.textStyles.values.toList().get(position)
             holder.name.text = ts.name
+            val alignment = when (ts.alignment) {
+                Layout.Alignment.ALIGN_CENTER -> "center"
+                Layout.Alignment.ALIGN_OPPOSITE -> "right"
+                else -> "left"
+            }
             val fontName: String
             if (ts.font == 0L || !mBoardObject.fonts.containsKey(ts.font))
                 fontName = "default Font"
             else
                 fontName = mBoardObject.fonts[ts.font]!!
-            holder.properties.text = "${ts.fontSize.toString()}px; $fontName"
+            holder.properties.text = "${ts.fontSize.toString()}px; $alignment; $fontName"
             holder.view.setOnClickListener {
                 applyTextStyle(ts)
             }

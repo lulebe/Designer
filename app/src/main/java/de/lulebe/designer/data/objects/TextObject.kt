@@ -112,10 +112,7 @@ class TextObject : SourceObject() {
         }
 
     @Transient
-    private var textStyleChangeListener = {
-        fontSize = textStyle!!.fontSize
-        fontUID = textStyle!!.font
-    }
+    private var textStyleChangeListener = {}
 
 
     private var _textColorStyleUID: Long? = null
@@ -138,9 +135,7 @@ class TextObject : SourceObject() {
         }
 
     @Transient
-    private var textColorStyleChangeListener = {
-        textColor = textColorStyle!!.color
-    }
+    private var textColorStyleChangeListener = {}
 
 
 
@@ -228,6 +223,7 @@ class TextObject : SourceObject() {
             textColor = textColorStyle!!.color
         }
         textStyleChangeListener = {
+            alignment = textStyle!!.alignment
             fontSize = textStyle!!.fontSize
             fontUID = textStyle!!.font
         }
