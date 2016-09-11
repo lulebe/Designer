@@ -157,6 +157,7 @@ class TextObject : SourceObject() {
     fun extractTextStyle(): TextStyle {
         val ts = TextStyle()
         ts.name = name + " Text style"
+        ts.alignment = alignment
         ts.fontSize = fontSize
         ts.font = fontUID
         return ts
