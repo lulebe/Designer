@@ -1,9 +1,7 @@
 package de.lulebe.designer.data.objects
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import de.lulebe.designer.data.Deserializer
 import de.lulebe.designer.data.ExportContainer
 import de.lulebe.designer.data.styles.BaseStyle
@@ -25,16 +23,6 @@ class RectObject : SourceObject() {
             change()
         }
 
-
-    //fillAlpha
-    private var _fillAlpha: Int = 255
-    var fillAlpha: Int
-        get() = _fillAlpha
-        set(value) {
-            _fillAlpha = value
-            change()
-
-        }
 
 
     //strokeColor
@@ -70,10 +58,23 @@ class RectObject : SourceObject() {
             change()
         }
 
+    private var _gradient: Gradient? = null
+    //gradient fill
+    var gradient: Gradient?
+        get() = _gradient
+        set(value) {
+            _gradient?.removeAllChangeListeners()
+            value?.addChangeListener {
+                change()
+            }
+            _gradient = value
+            change()
+        }
+
 
     //shadow
-    protected var _shadow: ObjectShadow? = null
-    var shadow: ObjectShadow?
+    private var _shadow: Shadow? = null
+    var shadow: Shadow?
         get() = _shadow
         set(value) {
             _shadow?.removeAllChangeListeners()
@@ -85,9 +86,136 @@ class RectObject : SourceObject() {
         }
 
 
+    
+    
+    
+    
+    class Gradient {
+        //listeners
+        @Transient
+        private var listeners: MutableList<() -> Unit> = mutableListOf()
+        fun addChangeListener (l: () -> Unit) {
+            if (listeners == null)
+                listeners = mutableListOf()
+            listeners.add(l)
+        }
+        fun removeChangeListener (l: () -> Unit) {
+            listeners.remove(l)
+        }
+        fun removeAllChangeListeners () {
+            listeners.clear()
+        }
+        fun change () {
+            for (listener in listeners) {
+                listener()
+            }
+        }
+
+        private var _direction: Direction = Direction.VERTICAL
+        var direction: Direction
+            get() = _direction
+            set(value) {
+                _direction = value
+                change()
+            }
+
+        private var _startColor: Int = Color.BLACK
+        var startColor: Int
+            get() = _startColor
+            set(value) {
+                _startColor = value
+                if (_startColorStyle != null)
+                    startColorStyle = null
+                change()
+            }
+
+        private var _endColor: Int = Color.WHITE
+        var endColor: Int
+            get() = _endColor
+            set(value) {
+                _endColor = value
+                if (_endColorStyle != null)
+                    endColorStyle = null
+                change()
+            }
+
+        enum class Direction {
+            HORIZONTAL, VERTICAL, CIRCLE
+        }
+
+        var _startColorStyleUID: Long? = null
+        @Transient
+        private var _startColorStyle: ColorStyle? = null
+        var startColorStyle: ColorStyle?
+            get() = _startColorStyle
+            set(value) {
+                _startColorStyle?.removeChangeListener(startColorStyleChangeListener!!)
+                if (value != null) {
+                    _startColorStyle = value
+                    _startColorStyleUID = value.uid
+                    value.addChangeListener(startColorStyleChangeListener!!)
+                    startColorStyleChangeListener!!()
+                } else {
+                    _startColorStyle = null
+                    _startColorStyleUID = null
+                    change()
+                }
+            }
+        @Transient
+        private var startColorStyleChangeListener: (() -> Unit)? = null
+        
+        
+        var _endColorStyleUID: Long? = null
+        @Transient
+        private var _endColorStyle: ColorStyle? = null
+        var endColorStyle: ColorStyle?
+            get() = _endColorStyle
+            set(value) {
+                _endColorStyle?.removeChangeListener(endColorStyleChangeListener!!)
+                if (value != null) {
+                    _endColorStyle = value
+                    _endColorStyleUID = value.uid
+                    value.addChangeListener(endColorStyleChangeListener!!)
+                    endColorStyleChangeListener!!()
+                } else {
+                    _endColorStyle = null
+                    _endColorStyleUID = null
+                    change()
+                }
+            }
+        @Transient
+        private var endColorStyleChangeListener: (() -> Unit)? = null
+
+        fun extractStartcolorStyle() : ColorStyle {
+            val cs = ColorStyle()
+            cs.name = "Gradient start color"
+            cs.color = startColor
+            return cs
+        }
+        fun extractEndcolorStyle() : ColorStyle {
+            val cs = ColorStyle()
+            cs.name = "Gradient end color"
+            cs.color = endColor
+            return cs
+        }
+
+        fun init () {
+            startColorStyleChangeListener = {
+                _startColor = startColorStyle!!.color
+                change()
+            }
+            endColorStyleChangeListener = {
+                _endColor = endColorStyle!!.color
+                change()
+            }
+        }
+    }
 
 
-    final class ObjectShadow {
+    
+    
+    
+    class Shadow {
 
         //listeners
         @Transient
@@ -148,7 +276,7 @@ class RectObject : SourceObject() {
 
     private var _fillColorStyleUID: Long? = null
     @Transient
-    protected var _fillColorStyle: ColorStyle? = null
+    private var _fillColorStyle: ColorStyle? = null
     var fillColorStyle: ColorStyle?
         get() = _fillColorStyle
         set(value) {
@@ -171,7 +299,7 @@ class RectObject : SourceObject() {
 
     private var _strokeColorStyleUID: Long? = null
     @Transient
-    protected var _strokeColorStyle: ColorStyle? = null
+    private var _strokeColorStyle: ColorStyle? = null
     var strokeColorStyle: ColorStyle?
         get() = _strokeColorStyle
         set(value) {
@@ -225,28 +353,44 @@ class RectObject : SourceObject() {
             hasChanged = false
             return emptyArray()
         }
-
+        val calcXpos = d.dipToPxF(xpos)
+        val calcYpos = d.dipToPxF(ypos)
+        val calcWidth = d.dipToPxF(width)
+        val calcHeight = d.dipToPxF(height)
         var type = Renderable.Type.RECT
-        var shape: Any = RectF(0F, 0F, d.dipToPxF(width), d.dipToPxF(height))
+        var shape: Any = RectF(0F, 0F, calcWidth, calcHeight)
         if (cornerRadius > 0F) {
             type = Renderable.Type.ROUNDRECT
             shape = RoundRect(shape as RectF, d.dipToPxF(cornerRadius))
         }
-        if (fillAlpha != 0 || shadow != null) {
-            val paintFill = Paint(Paint.ANTI_ALIAS_FLAG)
-            paintFill.style = Paint.Style.FILL
-            paintFill.color = fillColor
-            paintFill.alpha = alpha * fillAlpha / 255
-            if (shadow != null) {
-                paintFill.setShadowLayer(d.dipToPxF(shadow!!.blur), d.dipToPxF(shadow!!.xpos), d.dipToPxF(shadow!!.ypos), Color.parseColor("#99000000"))
+        val paintFill = Paint(Paint.ANTI_ALIAS_FLAG)
+        paintFill.style = Paint.Style.FILL
+        if (gradient != null) {
+            paintFill.isDither = true
+            when (gradient!!.direction) {
+                Gradient.Direction.HORIZONTAL -> {
+                    paintFill.shader = LinearGradient(0F, 0F, calcWidth, 0F, gradient!!.startColor, gradient!!.endColor, Shader.TileMode.CLAMP)
+                }
+                Gradient.Direction.VERTICAL -> {
+                    paintFill.shader = LinearGradient(0F, 0F, 0F, calcHeight, gradient!!.startColor, gradient!!.endColor, Shader.TileMode.CLAMP)
+                }
+                Gradient.Direction.CIRCLE -> {
+                    paintFill.shader = RadialGradient(calcWidth / 2F, calcHeight / 2F, Math.min(calcWidth, calcHeight) / 2F, gradient!!.startColor, gradient!!.endColor, Shader.TileMode.CLAMP)
+                }
             }
-            renderables.add(Renderable(type, shape, d.dipToPxF(xpos), d.dipToPxF(ypos), paintFill))
+        } else {
+            paintFill.color = fillColor
+            paintFill.alpha = (alpha * paintFill.alpha) / 255
         }
+        if (shadow != null) {
+            paintFill.setShadowLayer(d.dipToPxF(shadow!!.blur), d.dipToPxF(shadow!!.xpos), d.dipToPxF(shadow!!.ypos), Color.parseColor("#99000000"))
+        }
+        renderables.add(Renderable(type, shape, calcXpos, calcYpos, paintFill))
         if (strokeWidth > 0) {
             val paintStroke = Paint(Paint.ANTI_ALIAS_FLAG)
             paintStroke.style = Paint.Style.STROKE
             paintStroke.color = strokeColor
-            paintStroke.alpha = alpha
+            paintStroke.alpha = (alpha * paintStroke.alpha) / 255
             paintStroke.strokeWidth = d.dipToPxF(strokeWidth)
             renderables.add(Renderable(type, shape, d.dipToPxF(xpos), d.dipToPxF(ypos), paintStroke))
         }
@@ -261,10 +405,11 @@ class RectObject : SourceObject() {
     }
 
     override fun init (ctx: Context, board: BoardObject?) {
-        if (shadow != null) {
-            shadow?.addChangeListener {
-                change()
-            }
+        shadow?.addChangeListener {
+            change()
+        }
+        gradient?.addChangeListener {
+            change()
         }
         boxStyleChangeListener = {
             if (widthMoving == _width)
@@ -288,6 +433,8 @@ class RectObject : SourceObject() {
         if (board != null) {
             fillColorStyle = board.styles.colorStyles[_fillColorStyleUID]
             strokeColorStyle = board.styles.colorStyles[_strokeColorStyleUID]
+            gradient?.startColorStyle = board.styles.colorStyles[gradient?._startColorStyleUID]
+            gradient?.endColorStyle = board.styles.colorStyles[gradient?._endColorStyleUID]
         }
         super.init(ctx, board)
     }
@@ -307,10 +454,9 @@ class RectObject : SourceObject() {
         val obj = RectObject()
         applyBaseClone(obj)
         if (shadow != null) {
-            obj.shadow = ObjectShadow(shadow!!.blur, shadow!!.xpos, shadow!!.ypos)
+            obj.shadow = Shadow(shadow!!.blur, shadow!!.xpos, shadow!!.ypos)
         }
         obj.fillColor = fillColor
-        obj.fillAlpha = fillAlpha
         obj.strokeWidth = strokeWidth
         obj.strokeColor = strokeColor
         obj.cornerRadius = cornerRadius

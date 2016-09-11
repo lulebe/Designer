@@ -15,13 +15,4 @@ class ColorStyle: BaseStyle() {
         }
 
 
-    private var _alpha = 0xff
-    var alpha: Int
-        get() = _alpha
-        set(value) {
-            _alpha = value
-            change()
-        }
-
-
 }

@@ -1,5 +1,6 @@
 package de.lulebe.designer.propertyEditing
 
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
@@ -7,10 +8,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.azeesoft.lib.colorpicker.ColorPickerDialog
 import de.lulebe.designer.R
 import de.lulebe.designer.data.objects.BoardObject
@@ -18,10 +16,21 @@ import de.lulebe.designer.data.objects.RectObject
 import de.lulebe.designer.data.styles.ColorStyle
 
 
-class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mBoardObject: BoardObject) : TextView.OnEditorActionListener {
+class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mBoardObject: BoardObject) : View.OnClickListener, TextView.OnEditorActionListener {
 
+    private val mFilliconView: ImageView
+    private val mToggleFillView: Switch
+    private val mFillcolorLayout: View
     private val mFillcolorView: View
     private val mExtractFillcolorView: ImageView
+    private val mGradientLayout: View
+    private val mGradienthorizontalView: ImageView
+    private val mGradientverticalView: ImageView
+    private val mGradientcircleView: ImageView
+    private val mGradientstartcolorView: View
+    private val mExtractGradientstartcolorView: ImageView
+    private val mGradientendcolorView: View
+    private val mExtractGradientendcolorView: ImageView
     private val mStrokewidthView: EditText
     private val mStrokecolorView: View
     private val mExtractStrokecolorView: ImageView
@@ -32,11 +41,22 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
     private val mShadowYPosView: EditText
 
     private val mColorpickerDialog = ColorPickerDialog.createColorPickerDialog(mView.context)
-    private var editingFillcolor = true
+    private var currentEditingColor = 0 //fill, stroke, gradientStart, gradientEnd
 
     init {
+        mFilliconView = mView.findViewById(R.id.icon_object_fill) as ImageView
+        mToggleFillView = mView.findViewById(R.id.toggle_object_fill) as Switch
+        mFillcolorLayout = mView.findViewById(R.id.layout_object_fill_solid)
         mFillcolorView = mView.findViewById(R.id.btn_object_fillcolor)
         mExtractFillcolorView = mView.findViewById(R.id.btn_object_extractfillcolor) as ImageView
+        mGradientLayout = mView.findViewById(R.id.layout_object_fill_gradient)
+        mGradienthorizontalView = mView.findViewById(R.id.btn_object_gradient_horizontal) as ImageView
+        mGradientverticalView = mView.findViewById(R.id.btn_object_gradient_vertical) as ImageView
+        mGradientcircleView = mView.findViewById(R.id.btn_object_gradient_circle) as ImageView
+        mGradientstartcolorView = mView.findViewById(R.id.btn_object_gradient_startcolor)
+        mExtractGradientstartcolorView = mView.findViewById(R.id.btn_object_extractgradientstartcolor) as ImageView
+        mGradientendcolorView = mView.findViewById(R.id.btn_object_gradient_endcolor)
+        mExtractGradientendcolorView = mView.findViewById(R.id.btn_object_extractgradientendcolor) as ImageView
         mStrokewidthView = mView.findViewById(R.id.field_object_strokewidth) as EditText
         mStrokecolorView = mView.findViewById(R.id.btn_object_strokecolor)
         mExtractStrokecolorView = mView.findViewById(R.id.btn_object_extractstrokecolor) as ImageView
@@ -47,49 +67,41 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
         mShadowYPosView = mView.findViewById(R.id.field_object_shadowy) as EditText
 
 
-        mColorpickerDialog.hideOpacityBar()
         mColorpickerDialog.setOnColorPickedListener { colorInt, colorString ->
-            if (editingFillcolor)
-                mObject.fillColor = colorInt
-            else
-                mObject.strokeColor = colorInt
-        }
-        mFillcolorView.setOnClickListener {
-            editingFillcolor = true
-            mColorpickerDialog.setLastColor(mObject.fillColor)
-            mColorpickerDialog.setInitialColor(mObject.fillColor)
-            mColorpickerDialog.show()
-        }
-        mExtractFillcolorView.setOnClickListener {
-            if (mObject.fillColorStyle != null)
-                mObject.fillColorStyle = null
-            else {
-                val cs = mObject.extractFillcolorStyle()
-                val se = StyleExtractor<ColorStyle>()
-                se.createStyle(cs, mView.context) {
-                    mBoardObject.styles.addColorStyle(it)
-                    mObject.fillColorStyle = it
+            try {
+                Color.alpha(colorInt)
+                Color.red(colorInt)
+                Color.green(colorInt)
+                Color.blue(colorInt)
+                when (currentEditingColor) {
+                    0 -> mObject.fillColor = colorInt
+                    1 -> mObject.strokeColor = colorInt
+                    2 -> mObject.gradient?.startColor = colorInt
+                    3 -> mObject.gradient?.endColor = colorInt
                 }
+            } catch (e: IllegalArgumentException) {}
+        }
+        
+        mToggleFillView.setOnCheckedChangeListener { compoundButton, checked -> 
+            if (checked != (mObject.gradient != null)) {
+                if (checked)
+                    mObject.gradient = RectObject.Gradient()
+                else
+                    mObject.gradient = null
             }
         }
-        mStrokecolorView.setOnClickListener {
-            editingFillcolor = false
-            mColorpickerDialog.setLastColor(mObject.strokeColor)
-            mColorpickerDialog.setInitialColor(mObject.strokeColor)
-            mColorpickerDialog.show()
-        }
-        mExtractStrokecolorView.setOnClickListener {
-            if (mObject.strokeColorStyle != null)
-                mObject.strokeColorStyle = null
-            else {
-                val cs = mObject.extractStrokecolorStyle()
-                val se = StyleExtractor<ColorStyle>()
-                se.createStyle(cs, mView.context) {
-                    mBoardObject.styles.addColorStyle(it)
-                    mObject.strokeColorStyle = it
-                }
-            }
-        }
+        
+        mFillcolorView.setOnClickListener(this)
+        mExtractFillcolorView.setOnClickListener(this)
+        mGradienthorizontalView.setOnClickListener(this)
+        mGradientverticalView.setOnClickListener(this)
+        mGradientcircleView.setOnClickListener(this)
+        mGradientstartcolorView.setOnClickListener(this)
+        mExtractGradientstartcolorView.setOnClickListener(this)
+        mGradientendcolorView.setOnClickListener(this)
+        mExtractGradientendcolorView.setOnClickListener(this)
+        mStrokecolorView.setOnClickListener(this)
+        mExtractStrokecolorView.setOnClickListener(this)
 
         mStrokewidthView.setOnEditorActionListener(this)
         mCornerradiusView.setOnEditorActionListener(this)
@@ -101,11 +113,10 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
         mShadowYPosView.setOnEditorActionListener(this)
         mShadowView.setOnCheckedChangeListener { btn, shadow ->
             if (shadow != (mObject.shadow != null)) {
-                if (!shadow) {
+                if (shadow)
+                    mObject.shadow = RectObject.Shadow()
+                else
                     mObject.shadow = null
-                } else {
-                    mObject.shadow = RectObject.ObjectShadow()
-                }
             }
         }
 
@@ -113,6 +124,91 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
             updateUI()
         }
         updateUI()
+    }
+
+
+    override fun onClick(view: View) {
+        when (view) {
+            mFillcolorView -> {
+                currentEditingColor = 0
+                mColorpickerDialog.setLastColor(mObject.fillColor)
+                mColorpickerDialog.setInitialColor(mObject.fillColor)
+                mColorpickerDialog.show()
+            }
+            mExtractFillcolorView -> {
+                if (mObject.fillColorStyle != null)
+                    mObject.fillColorStyle = null
+                else {
+                    val cs = mObject.extractFillcolorStyle()
+                    val se = StyleExtractor<ColorStyle>()
+                    se.createStyle(cs, mView.context) {
+                        mBoardObject.styles.addColorStyle(it)
+                        mObject.fillColorStyle = it
+                    }
+                }
+            }
+            mGradienthorizontalView -> mObject.gradient?.direction = RectObject.Gradient.Direction.HORIZONTAL
+            mGradientverticalView -> mObject.gradient?.direction = RectObject.Gradient.Direction.VERTICAL
+            mGradientcircleView -> mObject.gradient?.direction = RectObject.Gradient.Direction.CIRCLE
+            mGradientstartcolorView -> {
+                if (mObject.gradient != null) {
+                    currentEditingColor = 2
+                    mColorpickerDialog.setLastColor(mObject.gradient!!.startColor)
+                    mColorpickerDialog.setInitialColor(mObject.gradient!!.startColor)
+                    mColorpickerDialog.show()
+                }
+            }
+            mExtractGradientstartcolorView -> {
+                if (mObject.gradient?.startColorStyle != null)
+                    mObject.gradient?.startColorStyle = null
+                else if (mObject.gradient != null) {
+                    val cs = mObject.gradient!!.extractStartcolorStyle()
+                    val se = StyleExtractor<ColorStyle>()
+                    se.createStyle(cs, mView.context) {
+                        mBoardObject.styles.addColorStyle(it)
+                        mObject.gradient?.startColorStyle = it
+                    }
+                }
+            }
+            mGradientendcolorView -> {
+                if (mObject.gradient != null) {
+                    currentEditingColor = 3
+                    mColorpickerDialog.setLastColor(mObject.gradient!!.endColor)
+                    mColorpickerDialog.setInitialColor(mObject.gradient!!.endColor)
+                    mColorpickerDialog.show()
+                }
+            }
+            mExtractGradientendcolorView -> {
+                if (mObject.gradient?.endColorStyle != null)
+                    mObject.gradient?.endColorStyle = null
+                else if (mObject.gradient != null) {
+                    val cs = mObject.gradient!!.extractEndcolorStyle()
+                    val se = StyleExtractor<ColorStyle>()
+                    se.createStyle(cs, mView.context) {
+                        mBoardObject.styles.addColorStyle(it)
+                        mObject.gradient?.endColorStyle = it
+                    }
+                }
+            }
+            mStrokecolorView -> {
+                currentEditingColor = 1
+                mColorpickerDialog.setLastColor(mObject.strokeColor)
+                mColorpickerDialog.setInitialColor(mObject.strokeColor)
+                mColorpickerDialog.show()
+            }
+            mExtractStrokecolorView -> {
+                if (mObject.strokeColorStyle != null)
+                    mObject.strokeColorStyle = null
+                else {
+                    val cs = mObject.extractStrokecolorStyle()
+                    val se = StyleExtractor<ColorStyle>()
+                    se.createStyle(cs, mView.context) {
+                        mBoardObject.styles.addColorStyle(it)
+                        mObject.strokeColorStyle = it
+                    }
+                }
+            }
+        }
     }
 
 
@@ -182,19 +278,50 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
 
 
     private fun updateUI () {
-        mFillcolorView.background = ColorDrawable(mObject.fillColor)
+        mToggleFillView.isChecked = mObject.gradient != null
+        if (mObject.gradient != null) {
+            mFillcolorLayout.visibility = View.GONE
+            mGradientLayout.visibility = View.VISIBLE
+            val gradient = mObject.gradient!!
+            updateGradientDirectionViews(gradient.direction)
+            mGradientstartcolorView.background = ColorDrawable(gradient.startColor)
+            mGradientendcolorView.background = ColorDrawable(gradient.endColor)
+            if (gradient.startColorStyle != null) {
+                var dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+                dr = dr.mutate()
+                dr.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
+                mExtractGradientstartcolorView.setImageDrawable(dr)
+            } else {
+                val dr = ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp)
+                mExtractGradientstartcolorView.setImageDrawable(dr)
+            }
+            if (gradient.endColorStyle != null) {
+                var dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+                dr = dr.mutate()
+                dr.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
+                mExtractGradientendcolorView.setImageDrawable(dr)
+            } else {
+                val dr = ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp)
+                mExtractGradientendcolorView.setImageDrawable(dr)
+            }
+        } else {
+            mFillcolorLayout.visibility = View.VISIBLE
+            mGradientLayout.visibility = View.GONE
+            mFillcolorView.background = ColorDrawable(mObject.fillColor)
+            if (mObject.fillColorStyle != null) {
+                var dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
+                dr = dr.mutate()
+                dr.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
+                mExtractFillcolorView.setImageDrawable(dr)
+            } else {
+                val dr = ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp)
+                mExtractFillcolorView.setImageDrawable(dr)
+            }
+        }
+
         mStrokewidthView.setText(mObject.strokeWidth.toString())
         mStrokecolorView.background = ColorDrawable(mObject.strokeColor)
         mCornerradiusView.setText(mObject.cornerRadius.toString())
-        if (mObject.fillColorStyle != null) {
-            var dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
-            dr = dr.mutate()
-            dr.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
-            mExtractFillcolorView.setImageDrawable(dr)
-        } else {
-            val dr = ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp)
-            mExtractFillcolorView.setImageDrawable(dr)
-        }
         if (mObject.strokeColorStyle != null) {
             var dr = DrawableCompat.wrap(ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp))
             dr = dr.mutate()
@@ -204,6 +331,7 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
             val dr = ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp)
             mExtractStrokecolorView.setImageDrawable(dr)
         }
+        
         if (mObject.shadow != null) {
             mShadowView.isChecked = true
             mShadowXPosView.isEnabled = true
@@ -221,6 +349,36 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
             mShadowYPosView.setText("")
             mShadowBlurView.setText("")
         }
+    }
+
+    private fun updateGradientDirectionViews (dir: RectObject.Gradient.Direction) {
+        when (dir) {
+            RectObject.Gradient.Direction.HORIZONTAL -> {
+                setDirectionImage(mGradienthorizontalView, R.drawable.ic_panorama_horizontal_grey600_24dp, true)
+                setDirectionImage(mGradientverticalView, R.drawable.ic_panorama_vertical_grey600_24dp, false)
+                setDirectionImage(mGradientcircleView, R.drawable.ic_panorama_fisheye_grey600_24dp, false)
+            }
+            RectObject.Gradient.Direction.VERTICAL -> {
+                setDirectionImage(mGradienthorizontalView, R.drawable.ic_panorama_horizontal_grey600_24dp, false)
+                setDirectionImage(mGradientverticalView, R.drawable.ic_panorama_vertical_grey600_24dp, true)
+                setDirectionImage(mGradientcircleView, R.drawable.ic_panorama_fisheye_grey600_24dp, false)
+            }
+            RectObject.Gradient.Direction.CIRCLE -> {
+                setDirectionImage(mGradienthorizontalView, R.drawable.ic_panorama_horizontal_grey600_24dp, false)
+                setDirectionImage(mGradientverticalView, R.drawable.ic_panorama_vertical_grey600_24dp, false)
+                setDirectionImage(mGradientcircleView, R.drawable.ic_panorama_fisheye_grey600_24dp, true)
+            }
+        }
+    }
+
+    private fun setDirectionImage (iv: ImageView, res: Int, checked: Boolean) {
+        val dr = ContextCompat.getDrawable(mView.context, res)
+        if (checked) {
+            val d = DrawableCompat.wrap(dr).mutate()
+            d.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
+            iv.setImageDrawable(d)
+        } else
+            iv.setImageDrawable(dr)
     }
 
 }

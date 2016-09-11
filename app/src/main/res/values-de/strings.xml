@@ -71,4 +71,7 @@
     <string name="export">exportieren</string>
     <string name="choose_font">Schrift wählen</string>
     <string name="delete_unused_files">unbenutzte Dateien löschen</string>
+    <string name="rect_fill_switch">Verlauf nutzen</string>
+    <string name="gradient_start_color">Startfarbe</string>
+    <string name="gradient_end_color">Endfarbe</string>
 </resources>

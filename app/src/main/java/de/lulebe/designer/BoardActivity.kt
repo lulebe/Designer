@@ -250,13 +250,14 @@ class BoardActivity : AppCompatActivity() {
             }
             REQUEST_CODE_IMAGE -> {
                 doAsync {
-                    if (mStorageManager != null) {
+                    if (mBoardObject?.storageManager != null) {
+                        val sm = mBoardObject!!.storageManager!!
                         val input = contentResolver.openInputStream(data.data)
                         val meta = contentResolver.query(data.data, null, null, null, null, null)
                         try {
                             if (meta != null && meta.moveToFirst()) {
                                 val name = meta.getString(meta.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                                val imageUID = mStorageManager!!.addImage(input, name)
+                                val imageUID = sm.addImage(input, name)
                                 uiThread {
                                     if (imageRequestCallback != null)
                                         imageRequestCallback!!(imageUID)
@@ -271,13 +272,14 @@ class BoardActivity : AppCompatActivity() {
             }
             REQUEST_CODE_FONT -> {
                 doAsync {
-                    if (mStorageManager != null) {
+                    if (mBoardObject?.storageManager != null) {
+                        val sm = mBoardObject!!.storageManager!!
                         val input = contentResolver.openInputStream(data.data)
                         val meta = contentResolver.query(data.data, null, null, null, null, null)
                         try {
                             if (meta != null && meta.moveToFirst()) {
                                 val name = meta.getString(meta.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                                val fontUID = mStorageManager!!.addFont(input, name)
+                                val fontUID = sm.addFont(input, name)
                                 uiThread {
                                     if (fontRequestCallback != null)
                                         fontRequestCallback!!(fontUID)

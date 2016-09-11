@@ -21,7 +21,7 @@ class Renderer {
                 else
                     canvas.drawColor(0, PorterDuff.Mode.CLEAR)
                 for (rend in renderables) {
-                        drawRenderable(rend, canvas, translate)
+                    drawRenderable(rend, canvas, translate)
                 }
             }
         }

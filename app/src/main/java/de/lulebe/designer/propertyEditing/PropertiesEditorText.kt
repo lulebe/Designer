@@ -1,5 +1,6 @@
 package de.lulebe.designer.propertyEditing
 
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
@@ -59,7 +60,13 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
 
         mColorpickerDialog.hideOpacityBar()
         mColorpickerDialog.setOnColorPickedListener { colorInt, colorString ->
-            mObject.textColor = colorInt
+            try {
+                Color.alpha(colorInt)
+                Color.red(colorInt)
+                Color.green(colorInt)
+                Color.blue(colorInt)
+                mObject.textColor = colorInt
+            } catch (e: IllegalArgumentException) {}
         }
         mTextcolorView.setOnClickListener {
             mColorpickerDialog.setLastColor(mObject.textColor)

@@ -1,6 +1,7 @@
 package de.lulebe.designer.styleEditing
 
 import android.content.DialogInterface
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
@@ -41,7 +42,13 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
         cpd.setLastColor(cs.color)
         cpd.setInitialColor(cs.color)
         cpd.setOnColorPickedListener { colorInt, colorString ->
-            cs.color = colorInt
+            try {
+                Color.alpha(colorInt)
+                Color.red(colorInt)
+                Color.green(colorInt)
+                Color.blue(colorInt)
+                cs.color = colorInt
+            } catch (e: IllegalArgumentException) {}
         }
         cpd.show()
     }

@@ -143,7 +143,7 @@ class StorageManager {
         val uri = FileProvider.getUriForFile(act, "de.lulebe.designer", File(zipPath))
         return ShareCompat.IntentBuilder.from(act)
                 .setType("application/zip")
-                .setSubject("Designer board file")
+                .setSubject(mBoardObject?.name ?: "Designer board file")
                 .setStream(uri)
                 .createChooserIntent()
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)

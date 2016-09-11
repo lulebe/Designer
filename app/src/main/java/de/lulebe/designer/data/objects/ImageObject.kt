@@ -108,9 +108,6 @@ class ImageObject() : SourceObject() {
     override fun getRenderables(d: Deserializer, forceReload: Boolean): Array<Renderable> {
         if (!forceReload && !hasChanged)
             return renderables.toTypedArray()
-        if (renderables.size > 0) {
-            (renderables[0].shape as Bitmap).recycle()
-        }
         renderables.clear()
         if (alpha == 0 || ctx == null || ctx!!.get() == null || src.equals("")) {
             hasChanged = false
@@ -165,9 +162,11 @@ class ImageObject() : SourceObject() {
                 true)
         rawBmp.recycle()
         thread {
-            val palette = Palette.from(bmp).clearFilters().maximumColorCount(1).generate()
-            if (palette.swatches.size > 0)
-                mainColorCached = palette.swatches[0].rgb
+            try {
+                val palette = Palette.from(bmp).clearFilters().maximumColorCount(1).generate()
+                if (palette.swatches.size > 0)
+                    mainColorCached = palette.swatches[0].rgb
+            } catch (e: Exception) {}
         }
         val paint = Paint()
         paint.alpha = alpha

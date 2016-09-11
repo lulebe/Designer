@@ -192,7 +192,7 @@ class TextObject : SourceObject() {
         val paint = TextPaint(Paint.ANTI_ALIAS_FLAG)
         paint.color = textColor
         paint.textSize = d.dipToPxF(fontSize)
-        paint.alpha = alpha
+        paint.alpha = (alpha * paint.alpha) / 255
         paint.typeface = typeFace
         val layout = StaticLayout(_text, paint, d.dipToPxI(width), alignment, 1F, 0F, false)
         val r = Renderable(Renderable.Type.TEXT, layout, d.dipToPxF(xpos), d.dipToPxF(ypos), paint)
@@ -234,7 +234,8 @@ class TextObject : SourceObject() {
         textStyleChangeListener = {
             _alignment = textStyle!!.alignment
             _fontSize = textStyle!!.fontSize
-            _fontUID = textStyle!!.font
+            fontUID = textStyle!!.font
+            calcSizes()
             change()
         }
         if (board != null) {
