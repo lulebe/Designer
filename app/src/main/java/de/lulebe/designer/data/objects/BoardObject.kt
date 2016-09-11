@@ -3,12 +3,9 @@ package de.lulebe.designer.data.objects
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import de.lulebe.designer.Renderer
-import de.lulebe.designer.data.Deserializer
-import de.lulebe.designer.data.ExportContainer
-import de.lulebe.designer.data.StorageManager
+import de.lulebe.designer.data.*
 import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.Styles
 import java.io.File
@@ -207,6 +204,44 @@ class BoardObject() : SourceObject() {
         return null
     }
 
+    fun removeUnusedFiles () {
+        if (parentBoard != null || storageManager == null) return
+        val sm = storageManager!!
+        for ((key) in images) {
+            var used = false
+            for (obj in objects) {
+                if (obj is ImageObject) {
+                    val io = obj as ImageObject
+                    if (io.imageSource == ImageSource.USER && io.src == key.toString()) {
+                        used = true
+                        break
+                    }
+                }
+            }
+            if (!used) {
+                sm.removeImage(key)
+                images.remove(key)
+            }
+        }
+        for ((key) in fonts) {
+            var used = false
+            for (obj in objects) {
+                if (obj is TextObject) {
+                    val to = obj as TextObject
+                    if (to.fontUID == key) {
+                        used = true
+                        break
+                    }
+                }
+            }
+            if (!used) {
+                sm.removeFont(key)
+                fonts.remove(key)
+                FontCache.fonts.remove(key)
+            }
+        }
+    }
+
     override fun init (ctx: Context, board: BoardObject?) {
         styles.init()
         parentBoard = board
@@ -249,12 +284,6 @@ class BoardObject() : SourceObject() {
         Renderer.drawRenderables(renderables.toTypedArray(), Canvas(renderedBitmap), false)
         renderables.clear()
         val paint = Paint()
-        if (shadow != null)
-            paint.setShadowLayer(
-                    d.dipToPxF(shadow!!.blur),
-                    d.dipToPxF(shadow!!.xpos),
-                    d.dipToPxF(shadow!!.ypos),
-                    Color.parseColor("#99000000"))
         paint.alpha = alpha
         renderables.add(Renderable(Renderable.Type.IMAGE, renderedBitmap!!, d.dipToPxF(xpos), d.dipToPxF(ypos), paint))
         return renderables.toTypedArray()

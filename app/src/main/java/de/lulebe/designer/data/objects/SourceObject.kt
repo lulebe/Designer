@@ -1,7 +1,5 @@
 package de.lulebe.designer.data.objects
 
-import android.content.Context
-
 
 abstract class SourceObject : BaseObject() {
 
@@ -18,90 +16,6 @@ abstract class SourceObject : BaseObject() {
         }
 
 
-    //shadow
-    protected var _shadow: ObjectShadow? = null
-    var shadow: ObjectShadow?
-        get() = _shadow
-        set(value) {
-            _shadow?.removeAllChangeListeners()
-            value?.addChangeListener {
-                change()
-            }
-            _shadow = value
-            change()
-        }
-
-
-
-
-    final class ObjectShadow {
-
-        //listeners
-        @Transient
-        private var listeners: MutableList<() -> Unit> = mutableListOf()
-        fun addChangeListener (l: () -> Unit) {
-            if (listeners == null)
-                listeners = mutableListOf()
-            listeners.add(l)
-        }
-        fun removeChangeListener (l: () -> Unit) {
-            listeners.remove(l)
-        }
-        fun removeAllChangeListeners () {
-            listeners.clear()
-        }
-        fun change () {
-            for (listener in listeners) {
-                listener()
-            }
-        }
-
-        //blurradius
-        private var _blur: Int = 0
-        var blur: Int
-            get() = _blur
-            set(value) {
-                _blur = value
-                change()
-            }
-        //xpos
-        private var _xpos: Int = 0
-        var xpos: Int
-            get() = _xpos
-            set(value) {
-                _xpos = value
-                change()
-            }
-        //ypos
-        private var _ypos: Int = 0
-        var ypos: Int
-            get() = _ypos
-            set(value) {
-                _ypos = value
-                change()
-            }
-
-        constructor(blur: Int = 0, xpos: Int = 0, ypos: Int = 0) {
-            this.blur = blur
-            this.xpos = xpos
-            this.ypos = ypos
-        }
-
-    }
-
-    override fun init (ctx: Context, board: BoardObject?) {
-        super.init(ctx, board)
-        if (shadow != null) {
-            shadow?.addChangeListener {
-                change()
-            }
-        }
-    }
-
-    override fun close() {
-        shadow?.removeAllChangeListeners()
-        super.close()
-    }
 
     fun applyBaseClone (obj: SourceObject, keepName: Boolean = false) {
         if (keepName)
@@ -126,9 +40,6 @@ abstract class SourceObject : BaseObject() {
         obj.width = width
         obj.height = height
         obj.alpha = alpha
-        if (shadow != null) {
-            obj.shadow = ObjectShadow(shadow!!.blur, shadow!!.xpos, shadow!!.ypos)
-        }
     }
 
 }

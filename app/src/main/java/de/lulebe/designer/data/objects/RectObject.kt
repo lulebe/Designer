@@ -71,6 +71,78 @@ class RectObject : SourceObject() {
         }
 
 
+    //shadow
+    protected var _shadow: ObjectShadow? = null
+    var shadow: ObjectShadow?
+        get() = _shadow
+        set(value) {
+            _shadow?.removeAllChangeListeners()
+            value?.addChangeListener {
+                change()
+            }
+            _shadow = value
+            change()
+        }
+
+
+
+
+    final class ObjectShadow {
+
+        //listeners
+        @Transient
+        private var listeners: MutableList<() -> Unit> = mutableListOf()
+        fun addChangeListener (l: () -> Unit) {
+            if (listeners == null)
+                listeners = mutableListOf()
+            listeners.add(l)
+        }
+        fun removeChangeListener (l: () -> Unit) {
+            listeners.remove(l)
+        }
+        fun removeAllChangeListeners () {
+            listeners.clear()
+        }
+        fun change () {
+            for (listener in listeners) {
+                listener()
+            }
+        }
+
+        //blurradius
+        private var _blur: Int = 0
+        var blur: Int
+            get() = _blur
+            set(value) {
+                _blur = value
+                change()
+            }
+        //xpos
+        private var _xpos: Int = 0
+        var xpos: Int
+            get() = _xpos
+            set(value) {
+                _xpos = value
+                change()
+            }
+        //ypos
+        private var _ypos: Int = 0
+        var ypos: Int
+            get() = _ypos
+            set(value) {
+                _ypos = value
+                change()
+            }
+
+        constructor(blur: Int = 0, xpos: Int = 0, ypos: Int = 0) {
+            this.blur = blur
+            this.xpos = xpos
+            this.ypos = ypos
+        }
+
+    }
+
+
 
 
 
@@ -189,6 +261,11 @@ class RectObject : SourceObject() {
     }
 
     override fun init (ctx: Context, board: BoardObject?) {
+        if (shadow != null) {
+            shadow?.addChangeListener {
+                change()
+            }
+        }
         boxStyleChangeListener = {
             if (widthMoving == _width)
                 _widthMoving = boxStyle!!.width
@@ -215,6 +292,11 @@ class RectObject : SourceObject() {
         super.init(ctx, board)
     }
 
+    override fun close() {
+        shadow?.removeAllChangeListeners()
+        super.close()
+    }
+
 
     override fun styleIsUsed(style: BaseStyle): Boolean {
         if (super.styleIsUsed(style) || style == fillColorStyle || style == strokeColorStyle) return true
@@ -224,6 +306,9 @@ class RectObject : SourceObject() {
     override fun clone () : RectObject {
         val obj = RectObject()
         applyBaseClone(obj)
+        if (shadow != null) {
+            obj.shadow = ObjectShadow(shadow!!.blur, shadow!!.xpos, shadow!!.ypos)
+        }
         obj.fillColor = fillColor
         obj.fillAlpha = fillAlpha
         obj.strokeWidth = strokeWidth

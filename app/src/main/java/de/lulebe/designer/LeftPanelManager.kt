@@ -8,6 +8,7 @@ import com.woxthebox.draglistview.DragListView
 import de.lulebe.designer.adapters.BoardObjectsAdapter
 import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.objects.*
+import org.jetbrains.anko.doAsync
 
 
 class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoardObject: BoardObject) : View.OnClickListener {
@@ -20,6 +21,7 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
 
     private val mBtnToggleEditpan: ImageView
     private val mBtnToggleGrid: ImageView
+    private val mBtnRemoveUnusedFiles: View
 
     private val mObjectslistView: DragListView
 
@@ -32,6 +34,7 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
 
         mBtnToggleEditpan = mPanel.findViewById(R.id.btn_toggle_editpan) as ImageView
         mBtnToggleGrid = mPanel.findViewById(R.id.btn_toggle_grid) as ImageView
+        mBtnRemoveUnusedFiles = mPanel.findViewById(R.id.btn_remove_unused)
 
 
         mObjectslistView = mPanel.findViewById(R.id.list_objects) as DragListView
@@ -45,6 +48,7 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
 
         mBtnToggleEditpan.setOnClickListener(this)
         mBtnToggleGrid.setOnClickListener(this)
+        mBtnRemoveUnusedFiles.setOnClickListener(this)
 
 
         initObjectslist()
@@ -87,6 +91,11 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
             }
             mBtnToggleEditpan -> {
                 mBoardState.panningActive = !mBoardState.panningActive
+            }
+            mBtnRemoveUnusedFiles -> {
+                doAsync {
+                    mBoardObject.removeUnusedFiles()
+                }
             }
         }
         mPanel.expand(false)
@@ -137,5 +146,6 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
         CheatSheet.setup(mBtnAddGroup)
         CheatSheet.setup(mBtnToggleEditpan)
         CheatSheet.setup(mBtnToggleGrid)
+        CheatSheet.setup(mBtnRemoveUnusedFiles)
     }
 }

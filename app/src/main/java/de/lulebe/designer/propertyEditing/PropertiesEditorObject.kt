@@ -35,10 +35,6 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
     private val mHeightDisplayView: TextView
     private val mExtractBoxstyleView: ImageView
     private val mAlphaView: EditText
-    private val mShadowView: CheckBox
-    private val mShadowBlurView: EditText
-    private val mShadowXPosView: EditText
-    private val mShadowYPosView: EditText
 
     init {
         mNameView = mView.findViewById(R.id.field_object_name) as EditText
@@ -56,10 +52,6 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         mHeightDisplayView = mView.findViewById(R.id.display_object_height) as TextView
         mExtractBoxstyleView = mView.findViewById(R.id.btn_object_extractboxstyle) as ImageView
         mAlphaView = mView.findViewById(R.id.field_object_alpha) as EditText
-        mShadowView = mView.findViewById(R.id.field_object_shadow) as CheckBox
-        mShadowBlurView = mView.findViewById(R.id.field_object_shadowblur) as EditText
-        mShadowXPosView = mView.findViewById(R.id.field_object_shadowx) as EditText
-        mShadowYPosView = mView.findViewById(R.id.field_object_shadowy) as EditText
 
         initCheatSheets()
 
@@ -69,19 +61,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         mWidthView.setOnEditorActionListener(this)
         mHeightView.setOnEditorActionListener(this)
         mAlphaView.setOnEditorActionListener(this)
-        mShadowBlurView.setOnEditorActionListener(this)
-        mShadowXPosView.setOnEditorActionListener(this)
-        mShadowYPosView.setOnEditorActionListener(this)
 
-        mShadowView.setOnCheckedChangeListener { btn, shadow ->
-            if (shadow != (mObject.shadow != null)) {
-                if (!shadow) {
-                    mObject.shadow = null
-                } else {
-                    mObject.shadow = SourceObject.ObjectShadow()
-                }
-            }
-        }
 
         mDeleteView.setOnClickListener {
             try {
@@ -186,39 +166,6 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
                 mObject.alpha = value
                 return true
             }
-            mShadowBlurView -> {
-                val value: Int
-                try {
-                    value = mShadowBlurView.text.toString().toInt()
-                } catch (e: NumberFormatException) {
-                    return false
-                }
-                if (value < 0) return false
-                mObject.shadow?.blur = value
-                return true
-            }
-            mShadowXPosView -> {
-                val value: Int
-                try {
-                    value = mShadowXPosView.text.toString().toInt()
-                } catch (e: NumberFormatException) {
-                    return false
-                }
-                if (value < 0) return false
-                mObject.shadow?.xpos = value
-                return true
-            }
-            mShadowYPosView -> {
-                val value: Int
-                try {
-                    value = mShadowYPosView.text.toString().toInt()
-                } catch (e: NumberFormatException) {
-                    return false
-                }
-                if (value < 0) return false
-                mObject.shadow?.ypos = value
-                return true
-            }
             else -> return false
         }
     }
@@ -261,23 +208,6 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         } else
             mExtractBoxstyleView.visibility = View.GONE
         mAlphaView.setText(mObject.alpha.toString())
-        if (mObject.shadow != null) {
-            mShadowView.isChecked = true
-            mShadowXPosView.isEnabled = true
-            mShadowYPosView.isEnabled = true
-            mShadowBlurView.isEnabled = true
-            mShadowXPosView.setText(mObject.shadow?.xpos.toString())
-            mShadowYPosView.setText(mObject.shadow?.ypos.toString())
-            mShadowBlurView.setText(mObject.shadow?.blur.toString())
-        } else {
-            mShadowView.isChecked = false
-            mShadowXPosView.isEnabled = false
-            mShadowYPosView.isEnabled = false
-            mShadowBlurView.isEnabled = false
-            mShadowXPosView.setText("")
-            mShadowYPosView.setText("")
-            mShadowBlurView.setText("")
-        }
     }
 
 

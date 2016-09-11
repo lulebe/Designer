@@ -7,6 +7,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -25,6 +26,10 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
     private val mStrokecolorView: View
     private val mExtractStrokecolorView: ImageView
     private val mCornerradiusView: EditText
+    private val mShadowView: CheckBox
+    private val mShadowBlurView: EditText
+    private val mShadowXPosView: EditText
+    private val mShadowYPosView: EditText
 
     private val mColorpickerDialog = ColorPickerDialog.createColorPickerDialog(mView.context)
     private var editingFillcolor = true
@@ -36,6 +41,10 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
         mStrokecolorView = mView.findViewById(R.id.btn_object_strokecolor)
         mExtractStrokecolorView = mView.findViewById(R.id.btn_object_extractstrokecolor) as ImageView
         mCornerradiusView = mView.findViewById(R.id.field_object_cornerradius) as EditText
+        mShadowView = mView.findViewById(R.id.field_object_shadow) as CheckBox
+        mShadowBlurView = mView.findViewById(R.id.field_object_shadowblur) as EditText
+        mShadowXPosView = mView.findViewById(R.id.field_object_shadowx) as EditText
+        mShadowYPosView = mView.findViewById(R.id.field_object_shadowy) as EditText
 
 
         mColorpickerDialog.hideOpacityBar()
@@ -85,6 +94,21 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
         mStrokewidthView.setOnEditorActionListener(this)
         mCornerradiusView.setOnEditorActionListener(this)
 
+
+
+        mShadowBlurView.setOnEditorActionListener(this)
+        mShadowXPosView.setOnEditorActionListener(this)
+        mShadowYPosView.setOnEditorActionListener(this)
+        mShadowView.setOnCheckedChangeListener { btn, shadow ->
+            if (shadow != (mObject.shadow != null)) {
+                if (!shadow) {
+                    mObject.shadow = null
+                } else {
+                    mObject.shadow = RectObject.ObjectShadow()
+                }
+            }
+        }
+
         mObject.addChangeListener {
             updateUI()
         }
@@ -118,6 +142,39 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
                 mObject.cornerRadius = value
                 return true
             }
+            mShadowBlurView -> {
+                val value: Int
+                try {
+                    value = mShadowBlurView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
+                if (value < 0) return false
+                mObject.shadow?.blur = value
+                return true
+            }
+            mShadowXPosView -> {
+                val value: Int
+                try {
+                    value = mShadowXPosView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
+                if (value < 0) return false
+                mObject.shadow?.xpos = value
+                return true
+            }
+            mShadowYPosView -> {
+                val value: Int
+                try {
+                    value = mShadowYPosView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
+                if (value < 0) return false
+                mObject.shadow?.ypos = value
+                return true
+            }
             else -> return false
         }
     }
@@ -146,6 +203,23 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
         } else {
             val dr = ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp)
             mExtractStrokecolorView.setImageDrawable(dr)
+        }
+        if (mObject.shadow != null) {
+            mShadowView.isChecked = true
+            mShadowXPosView.isEnabled = true
+            mShadowYPosView.isEnabled = true
+            mShadowBlurView.isEnabled = true
+            mShadowXPosView.setText(mObject.shadow?.xpos.toString())
+            mShadowYPosView.setText(mObject.shadow?.ypos.toString())
+            mShadowBlurView.setText(mObject.shadow?.blur.toString())
+        } else {
+            mShadowView.isChecked = false
+            mShadowXPosView.isEnabled = false
+            mShadowYPosView.isEnabled = false
+            mShadowBlurView.isEnabled = false
+            mShadowXPosView.setText("")
+            mShadowYPosView.setText("")
+            mShadowBlurView.setText("")
         }
     }
 
