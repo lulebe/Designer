@@ -235,10 +235,8 @@ class TextObject : SourceObject() {
             _alignment = textStyle!!.alignment
             _fontSize = textStyle!!.fontSize
             if (board != null) {
+                _fontUID = textStyle!!.font
                 FontCache.loadFont(textStyle!!.font, board, ctx) {
-                    if (_textStyle != null)
-                        textStyle = null
-                    _fontUID = textStyle!!.font
                     typeFace = it
                 }
             }
