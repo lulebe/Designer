@@ -291,21 +291,23 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
 
 
     private fun snap (raw: Int, snapPoint: Int) : Int {
-        val gridfac = mBoardObject.gridSize * mBoardObject.gridInterval
-        val gridsnapmargin = gridfac / 4
-        val distance = Math.abs(snapPoint % gridfac)
-        val distanceInverted = gridfac - distance
-        if (distance <= gridsnapmargin) { //snap to left/top
-            if (snapPoint > 0)
-                return raw - distance
-            else
-                return raw + distance
-        }
-        if (distanceInverted <= gridsnapmargin) { //snap to right/bottom
-            if (snapPoint > 0)
-                return raw + distanceInverted
-            else
-                return raw - distanceInverted
+        if (mBoardState.showGrid) {
+            val gridfac = mBoardObject.gridSize * mBoardObject.gridInterval
+            val gridsnapmargin = gridfac / 4
+            val distance = Math.abs(snapPoint % gridfac)
+            val distanceInverted = gridfac - distance
+            if (distance <= gridsnapmargin) { //snap to left/top
+                if (snapPoint > 0)
+                    return raw - distance
+                else
+                    return raw + distance
+            }
+            if (distanceInverted <= gridsnapmargin) { //snap to right/bottom
+                if (snapPoint > 0)
+                    return raw + distanceInverted
+                else
+                    return raw - distanceInverted
+            }
         }
         return raw //don't snap
     }
