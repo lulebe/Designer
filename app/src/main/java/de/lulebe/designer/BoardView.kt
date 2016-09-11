@@ -45,9 +45,8 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
             if (mBoardState.selected != null) {
                 val x = eventXOnBoard(event)
                 val y = eventYOnBoard(event)
-                val objAtPos = mBoardObject.getObjectAtPosition(x, y)
                 val handleAtPos = mBoardState.selected!!.getHandleAt(x, y)
-                if (objAtPos == mBoardState.selected || handleAtPos > 0) {
+                if (handleAtPos >= 0) {
                     mObjectdragTouchee = mBoardState.selected!!
                     mObjectdragToucheeHandle = handleAtPos
                     mObjectdragLastX = x

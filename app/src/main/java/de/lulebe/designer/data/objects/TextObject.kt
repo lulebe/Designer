@@ -37,6 +37,8 @@ class TextObject : SourceObject() {
     var alignment: Layout.Alignment
         get() = _alignment
         set(value) {
+            if (_textStyle != null)
+                textStyle = null
             _alignment = value
             calcSizes()
             change()
@@ -47,6 +49,8 @@ class TextObject : SourceObject() {
     var textColor: Int
         get() = _textColor
         set(value) {
+            if (_textColorStyle != null)
+                textColorStyle = null
             _textColor = value
             change()
         }
@@ -69,6 +73,8 @@ class TextObject : SourceObject() {
         set(value) {
             if (ctx != null && board != null) {
                 FontCache.loadFont(value, board!!, ctx!!) {
+                    if (_textStyle != null)
+                        textStyle = null
                     _fontUID = value
                     typeFace = it
                     calcSizes()
@@ -108,6 +114,7 @@ class TextObject : SourceObject() {
                 textStyleChangeListener()
             } else {
                 _textStyleUID = null
+                _textStyle = null
             }
         }
 
@@ -220,12 +227,14 @@ class TextObject : SourceObject() {
         this.ctx = ctx
         this.board = board
         textColorStyleChangeListener = {
-            textColor = textColorStyle!!.color
+            _textColor = textColorStyle!!.color
+            change()
         }
         textStyleChangeListener = {
-            alignment = textStyle!!.alignment
-            fontSize = textStyle!!.fontSize
-            fontUID = textStyle!!.font
+            _alignment = textStyle!!.alignment
+            _fontSize = textStyle!!.fontSize
+            _fontUID = textStyle!!.font
+            change()
         }
         if (board != null) {
             textStyle = board.styles.textStyles[_textStyleUID]

@@ -19,6 +19,8 @@ class RectObject : SourceObject() {
     var fillColor: Int
         get() = _fillColor
         set(value) {
+            if (_fillColorStyle != null)
+                fillColorStyle = null
             _fillColor = value
             change()
         }
@@ -40,6 +42,8 @@ class RectObject : SourceObject() {
     var strokeColor: Int
         get() = _strokeColor
         set(value) {
+            if (_strokeColorStyle != null)
+                strokeColorStyle = null
             _strokeColor = value
             change()
         }
@@ -197,11 +201,11 @@ class RectObject : SourceObject() {
             change()
         }
         fillColorStyleChangeListener = {
-            fillColor = fillColorStyle!!.color
+            _fillColor = fillColorStyle!!.color
             change()
         }
         strokeColorStyleChangeListener = {
-            strokeColor = strokeColorStyle!!.color
+            _strokeColor = strokeColorStyle!!.color
             change()
         }
         if (board != null) {
