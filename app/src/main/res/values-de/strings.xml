@@ -69,4 +69,5 @@
     <string name="show_interface">Oberfläche zeigen</string>
     <string name="share">teilen</string>
     <string name="export">exportieren</string>
+    <string name="choose_font">Schrift wählen</string>
 </resources>
