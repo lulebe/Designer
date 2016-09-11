@@ -234,7 +234,14 @@ class TextObject : SourceObject() {
         textStyleChangeListener = {
             _alignment = textStyle!!.alignment
             _fontSize = textStyle!!.fontSize
-            fontUID = textStyle!!.font
+            if (board != null) {
+                FontCache.loadFont(textStyle!!.font, board, ctx) {
+                    if (_textStyle != null)
+                        textStyle = null
+                    _fontUID = textStyle!!.font
+                    typeFace = it
+                }
+            }
             calcSizes()
             change()
         }
