@@ -16,16 +16,31 @@ import de.lulebe.designer.data.styles.TextStyle
 
 
 class TextStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState) {
+    private val mEmptyview: View
     private val mListview: RecyclerView
 
     init {
+        mEmptyview = mView.findViewById(R.id.tv_no_textstyles)
         mListview = mView.findViewById(R.id.rv_textstyles) as RecyclerView
 
         mListview.layoutManager = LinearLayoutManager(mListview.context)
         mListview.adapter = TextStyleAdapter()
 
+        setVisibilities()
+
         mBoardObject.styles.addChangeListener {
+            setVisibilities()
             mListview.adapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun setVisibilities () {
+        if (mBoardObject.styles.boxStyles.size > 0) {
+            mEmptyview.visibility = View.GONE
+            mListview.visibility = View.VISIBLE
+        } else {
+            mEmptyview.visibility = View.VISIBLE
+            mListview.visibility = View.GONE
         }
     }
 

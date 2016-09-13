@@ -23,16 +23,31 @@ import de.lulebe.designer.data.styles.ColorStyle
 
 class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState) {
 
+    private val mEmptyview: View
     private val mListview: RecyclerView
 
     init {
+        mEmptyview = mView.findViewById(R.id.tv_no_colorstyles)
         mListview = mView.findViewById(R.id.rv_colorstyles) as RecyclerView
 
         mListview.layoutManager = LinearLayoutManager(mListview.context)
         mListview.adapter = ColorStyleAdapter()
 
+        setVisibilities()
+
         mBoardObject.styles.addChangeListener {
+            setVisibilities()
             mListview.adapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun setVisibilities () {
+        if (mBoardObject.styles.boxStyles.size > 0) {
+            mEmptyview.visibility = View.GONE
+            mListview.visibility = View.VISIBLE
+        } else {
+            mEmptyview.visibility = View.VISIBLE
+            mListview.visibility = View.GONE
         }
     }
 

@@ -73,4 +73,7 @@
     <string name="rect_fill_switch">use Gradient fill</string>
     <string name="gradient_start_color">Gradient start color</string>
     <string name="gradient_end_color">Gradient end color</string>
+    <string name="no_colorstyles">No Colors defined</string>
+    <string name="no_boxstyles">No Boxstyles defined</string>
+    <string name="no_textstyles">No Textstyles defined</string>
 </resources>

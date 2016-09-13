@@ -74,4 +74,7 @@
     <string name="rect_fill_switch">Verlauf nutzen</string>
     <string name="gradient_start_color">Startfarbe</string>
     <string name="gradient_end_color">Endfarbe</string>
+    <string name="no_boxstyles">keine Dimensionsstile definiert</string>
+    <string name="no_colorstyles">keine Farben definiert</string>
+    <string name="no_textstyles">keine Textstile definiert</string>
 </resources>
