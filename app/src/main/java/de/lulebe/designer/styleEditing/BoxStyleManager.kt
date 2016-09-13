@@ -22,7 +22,7 @@ class BoxStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val m
     private val mListview: RecyclerView
 
     init {
-        mEmptyview = mView.findViewById(R.id.tv_no_colorstyles)
+        mEmptyview = mView.findViewById(R.id.tv_no_boxstyles)
         mListview = mView.findViewById(R.id.rv_boxstyles) as RecyclerView
 
         mListview.layoutManager = LinearLayoutManager(mListview.context)
