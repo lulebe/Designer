@@ -42,7 +42,7 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
     }
 
     private fun setVisibilities () {
-        if (mBoardObject.styles.textStyles.size > 0) {
+        if (mBoardObject.styles.colorStyles.size > 0) {
             mEmptyview.visibility = View.GONE
             mListview.visibility = View.VISIBLE
         } else {
