@@ -48,6 +48,7 @@ class CopyObject : BaseObject() {
     override fun clone(): CopyObject {
         val c = CopyObject()
         c.sourceId = sourceId
+        c.rotation = rotation
         return c
     }
 
@@ -60,7 +61,7 @@ class CopyObject : BaseObject() {
         renderables.clear()
         val srcRend = src.getRenderables(d, forceReload)
         for (rend in srcRend) {
-            renderables.add(Renderable(rend.type, rend.shape, d.dipToPxF(xpos), d.dipToPxF(ypos), rend.paint))
+            renderables.add(Renderable(rend.type, rend.shape, d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, rend.paint))
         }
         return renderables.toTypedArray()
     }

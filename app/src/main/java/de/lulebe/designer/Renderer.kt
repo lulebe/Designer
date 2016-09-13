@@ -32,6 +32,7 @@ class Renderer {
             canvas.save()
             if (translate)
                 canvas.translate(rend.xPos, rend.yPos)
+            canvas.rotate(rend.rotation)
             when (rend.type) {
                 Renderable.Type.RECT -> {
                     val shape = rend.shape as RectF

@@ -85,7 +85,9 @@ class RectObject : SourceObject() {
             change()
         }
 
-
+    init {
+        _name = "Rectangle"
+    }
     
     
     
@@ -385,14 +387,14 @@ class RectObject : SourceObject() {
         if (shadow != null) {
             paintFill.setShadowLayer(d.dipToPxF(shadow!!.blur), d.dipToPxF(shadow!!.xpos), d.dipToPxF(shadow!!.ypos), Color.parseColor("#99000000"))
         }
-        renderables.add(Renderable(type, shape, calcXpos, calcYpos, paintFill))
+        renderables.add(Renderable(type, shape, calcXpos, calcYpos, rotation, paintFill))
         if (strokeWidth > 0) {
             val paintStroke = Paint(Paint.ANTI_ALIAS_FLAG)
             paintStroke.style = Paint.Style.STROKE
             paintStroke.color = strokeColor
             paintStroke.alpha = (alpha * paintStroke.alpha) / 255
             paintStroke.strokeWidth = d.dipToPxF(strokeWidth)
-            renderables.add(Renderable(type, shape, d.dipToPxF(xpos), d.dipToPxF(ypos), paintStroke))
+            renderables.add(Renderable(type, shape, d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, paintStroke))
         }
         hasChanged = false
         return renderables.toTypedArray()

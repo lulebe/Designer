@@ -99,6 +99,10 @@ class TextObject : SourceObject() {
             change()
         }
 
+    init {
+        _name = "Text"
+    }
+
 
     private var _textStyleUID: Long? = null
     @Transient
@@ -195,7 +199,7 @@ class TextObject : SourceObject() {
         paint.alpha = (alpha * paint.alpha) / 255
         paint.typeface = typeFace
         val layout = StaticLayout(_text, paint, d.dipToPxI(width), alignment, 1F, 0F, false)
-        val r = Renderable(Renderable.Type.TEXT, layout, d.dipToPxF(xpos), d.dipToPxF(ypos), paint)
+        val r = Renderable(Renderable.Type.TEXT, layout, d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, paint)
         renderables.add(r)
         hasChanged = false
         return renderables.toTypedArray()
@@ -246,7 +250,11 @@ class TextObject : SourceObject() {
         if (board != null) {
             textStyle = board.styles.textStyles[_textStyleUID]
             textColorStyle = board.styles.colorStyles[_textColorStyleUID]
-            fontUID = _fontUID
+            FontCache.loadFont(_fontUID, board, ctx) {
+                typeFace = it
+                calcSizes()
+                change()
+            }
         }
     }
 

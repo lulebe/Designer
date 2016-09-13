@@ -17,6 +17,7 @@ abstract class SourceObject : BaseObject() {
 
 
 
+
     fun applyBaseClone (obj: SourceObject, keepName: Boolean = false) {
         if (keepName)
             obj.name = name
@@ -40,6 +41,7 @@ abstract class SourceObject : BaseObject() {
         obj.width = width
         obj.height = height
         obj.alpha = alpha
+        obj.rotation = rotation
     }
 
 }

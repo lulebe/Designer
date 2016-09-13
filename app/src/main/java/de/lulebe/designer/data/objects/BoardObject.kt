@@ -118,6 +118,10 @@ class BoardObject() : SourceObject() {
             gridChange()
         }
 
+    init {
+        _name = "Group"
+    }
+
     private val _styles = Styles()
     val styles: Styles
         get() {
@@ -163,6 +167,7 @@ class BoardObject() : SourceObject() {
         newObj.name = copyObject.name
         newObj.xpos = copyObject.xpos
         newObj.ypos = copyObject.ypos
+        newObj.rotation = copyObject.rotation
         _objects.add(_objects.indexOf(copyObject), newObj)
         _objects.remove(copyObject)
         copyObject.close()
@@ -285,7 +290,7 @@ class BoardObject() : SourceObject() {
         renderables.clear()
         val paint = Paint()
         paint.alpha = alpha
-        renderables.add(Renderable(Renderable.Type.IMAGE, renderedBitmap!!, d.dipToPxF(xpos), d.dipToPxF(ypos), paint))
+        renderables.add(Renderable(Renderable.Type.IMAGE, renderedBitmap!!, d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, paint))
         return renderables.toTypedArray()
     }
 

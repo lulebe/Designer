@@ -69,6 +69,10 @@ class ImageObject() : SourceObject() {
             change()
         }
 
+    init {
+        _name = "Image"
+    }
+
     private var _tintColorStyleUID: Long? = null
     @Transient
     private var _tintColorStyle: ColorStyle? = null
@@ -172,7 +176,7 @@ class ImageObject() : SourceObject() {
         paint.alpha = alpha
         if (tinted)
             paint.colorFilter = PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
-        renderables.add(Renderable(Renderable.Type.IMAGE, bmp, finalXPos, finalYPos, paint))
+        renderables.add(Renderable(Renderable.Type.IMAGE, bmp, finalXPos, finalYPos, rotation, paint))
         hasChanged = false
         return renderables.toTypedArray()
     }

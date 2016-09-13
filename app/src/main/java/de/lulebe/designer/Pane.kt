@@ -28,16 +28,29 @@ class Pane : FrameLayout {
             l(open)
         }
     }
+    val lockListeners = mutableListOf<(open: Boolean) -> Unit>()
+    fun addLockListener (l: (locked: Boolean) -> Unit) {
+        lockListeners.add(l)
+    }
+    private fun notifyLockListeners (locked: Boolean) {
+        for (l in lockListeners) {
+            l(locked)
+        }
+    }
+
+    private var locked = false
+    fun isLocked () = locked
 
     private var expanded = false
     private var expandedTrans = 0F
     private var direction = 0 //0=right, 1=left, 2=up, 3=down
-    private var icons = Array(4, { i ->
+    private var icons = Array(5, { i ->
         when (i) {
             0 -> R.drawable.ic_keyboard_arrow_left_black_24dp
             1 -> R.drawable.ic_keyboard_arrow_up_black_24dp
             2 -> R.drawable.ic_keyboard_arrow_right_black_24dp
-            else -> R.drawable.ic_keyboard_arrow_down_black_24dp
+            3 -> R.drawable.ic_keyboard_arrow_down_black_24dp
+            else -> R.drawable.ic_lock_outline_black_24dp
         }
     })
 
@@ -77,6 +90,7 @@ class Pane : FrameLayout {
                 icons[1] = R.drawable.ic_keyboard_arrow_up_white_24dp
                 icons[2] = R.drawable.ic_keyboard_arrow_right_white_24dp
                 icons[3] = R.drawable.ic_keyboard_arrow_down_white_24dp
+                icons[4] = R.drawable.ic_lock_outline_white_24dp
             }
         }
         calcWidths()
@@ -136,6 +150,8 @@ class Pane : FrameLayout {
         //ToogleButton
         btnToggle.layoutParams = lpBtn
         btnToggle.setPadding(dp12, dp12, dp12, dp12)
+        btnToggle.isClickable = true
+        btnToggle.isLongClickable = true
         val tv = TypedValue()
         context.theme.resolveAttribute(R.attr.selectableItemBackgroundBorderless, tv, true)
         btnToggle.background = ContextCompat.getDrawable(context, tv.resourceId)
@@ -145,7 +161,17 @@ class Pane : FrameLayout {
             2 -> btnToggle.setImageResource(icons[1])
             3 -> btnToggle.setImageResource(icons[3])
         }
-        btnToggle.setOnClickListener { expand(null) }
+        btnToggle.setOnClickListener {
+            if (locked)
+                lock(false)
+            else
+                expand()
+        }
+        btnToggle.setOnLongClickListener {
+            //btnToggle.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            lock()
+            true
+        }
         headerLayout.addView(btnToggle)
         headerLayout.background = background.constantState.newDrawable()
         addView(headerLayout)
@@ -170,7 +196,9 @@ class Pane : FrameLayout {
             expandedTrans = Math.abs(translationY)
     }
 
-    fun expand (expanded: Boolean?, anim: Boolean = true) {
+    fun expand (expanded: Boolean? = null, anim: Boolean = true, overrideLock: Boolean = false) {
+        if (locked && !overrideLock)
+            return
         val dur: Int
         if (anim)
             dur = resources.getInteger(android.R.integer.config_mediumAnimTime)
@@ -225,6 +253,20 @@ class Pane : FrameLayout {
         }
         animator.duration = dur.toLong()
         animator.start()
+    }
+
+    fun lock (locked: Boolean? = null, anim: Boolean = true) {
+        if (locked != null)
+            this.locked = locked
+        else
+            this.locked = !this.locked
+        notifyLockListeners(this.locked)
+        if (!expanded && this.locked)
+            expand(true, anim, true)
+        else if (expanded && !this.locked)
+            expand(false, anim, true)
+        if (this.locked)
+            btnToggle.setImageResource(icons[4])
     }
 
 }

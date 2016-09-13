@@ -98,22 +98,68 @@ class BoardActivity : AppCompatActivity() {
 
 
     private fun initUI () {
+        val dp64 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64F, resources.displayMetrics).toInt()
         setContentView(R.layout.activity_board)
         setSupportActionBar(mToolbar)
         supportActionBar!!.title = "Board"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         mLeftpane.addOpenListener { open ->
             mBoardState?.leftPanelExpanded = open
-            if (open && mRightpane.isExpanded())
+            if (open && !mLeftpane.isLocked() && !mRightpane.isLocked() && mRightpane.isExpanded())
                 mRightpane.expand(false)
+        }
+        mLeftpane.addLockListener { locked ->
+            mBoardState?.leftPanelLocked = locked
+            mLeftpane.post {
+                val lp = mLayout.layoutParams as FrameLayout.LayoutParams
+                if (locked)
+                    lp.setMargins(mLeftpane.width, lp.topMargin, lp.rightMargin, lp.bottomMargin)
+                else
+                    lp.setMargins(dp64, lp.topMargin, lp.rightMargin, lp.bottomMargin)
+                mLayout.layoutParams = lp
+            }
         }
         mRightpane.addOpenListener { open ->
             mBoardState?.rightPanelExpanded = open
-            if (open && mLeftpane.isExpanded())
+            if (open && !mRightpane.isLocked() && !mLeftpane.isLocked() && mLeftpane.isExpanded())
                 mLeftpane.expand(false)
+        }
+        mRightpane.addLockListener { locked ->
+            mBoardState?.rightPanelLocked = locked
+            mRightpane.post {
+                val lp = mLayout.layoutParams as FrameLayout.LayoutParams
+                if (locked)
+                    lp.setMargins(lp.leftMargin, lp.topMargin, mRightpane.width, lp.bottomMargin)
+                else
+                    lp.setMargins(lp.leftMargin, lp.topMargin, dp64, lp.bottomMargin)
+                mLayout.layoutParams = lp
+            }
         }
         mBottompane.addOpenListener { open ->
             mBoardState?.bottomPanelExpanded = open
+        }
+        mBottompane.addLockListener { locked ->
+            mBoardState?.bottomPanelLocked = locked
+            mBottompane.post {
+                val lpL = mLayout.layoutParams as FrameLayout.LayoutParams
+                if (locked)
+                    lpL.setMargins(lpL.leftMargin, lpL.topMargin, lpL.rightMargin, mBottompane.height)
+                else
+                    lpL.setMargins(lpL.leftMargin, lpL.topMargin, lpL.rightMargin, dp64)
+                mLayout.layoutParams = lpL
+                val lpLp = mLeftpane.layoutParams as FrameLayout.LayoutParams
+                if (locked)
+                    lpLp.setMargins(lpLp.leftMargin, lpLp.topMargin, lpLp.rightMargin, mBottompane.height)
+                else
+                    lpLp.setMargins(lpLp.leftMargin, lpLp.topMargin, lpLp.rightMargin, 0)
+                mLeftpane.layoutParams = lpLp
+                val lpRp = mRightpane.layoutParams as FrameLayout.LayoutParams
+                if (locked)
+                    lpRp.setMargins(lpRp.leftMargin, lpRp.topMargin, lpRp.rightMargin, mBottompane.height)
+                else
+                    lpRp.setMargins(lpRp.leftMargin, lpRp.topMargin, lpRp.rightMargin, 0)
+                mRightpane.layoutParams = lpRp
+            }
         }
     }
 
@@ -334,9 +380,18 @@ class BoardActivity : AppCompatActivity() {
             mRightpane.visibility = View.VISIBLE
             mBottompane.visibility = View.VISIBLE
             findViewById(R.id.loading)?.visibility = View.GONE
-            mLeftpane.expand(mBoardState!!.leftPanelExpanded, false)
-            mRightpane.expand(mBoardState!!.rightPanelExpanded, false)
-            mBottompane.expand(mBoardState!!.bottomPanelExpanded, false)
+            if (mBoardState!!.leftPanelLocked)
+                mLeftpane.lock(true, false)
+            else
+                mLeftpane.expand(mBoardState!!.leftPanelExpanded, false)
+            if (mBoardState!!.rightPanelLocked)
+                mRightpane.lock(true, false)
+            else
+                mRightpane.expand(mBoardState!!.rightPanelExpanded, false)
+            if (mBoardState!!.bottomPanelLocked)
+                mBottompane.lock(true, false)
+            else
+                mBottompane.expand(mBoardState!!.bottomPanelExpanded, false)
             mBoardState?.addListener(object: BoardState.BoardStateListener() {
                 override fun onShowUI(shown: Boolean) {
                     if (shown) {

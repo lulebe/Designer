@@ -148,6 +148,15 @@ abstract class BaseObject : IRenderable {
             calculateHandles()
         }
 
+    // rotation
+    private var _rotation: Float = 0F
+    var rotation: Float
+        get() = _rotation
+        set(value) {
+            _rotation = value
+            change()
+        }
+
 
     private var _boxStyleUID: Long? = null
     @Transient
@@ -330,7 +339,7 @@ abstract class BaseObject : IRenderable {
         boxPaint.color = Color.parseColor("#FF8800")
         boxPaint.style = Paint.Style.STROKE
         boxPaint.strokeWidth = deserializer.pixelFac
-        elems.add(Renderable(Renderable.Type.RECT, getBoundRect(deserializer, xOffset, yOffset), 0F, 0F, boxPaint))
+        elems.add(Renderable(Renderable.Type.RECT, getBoundRect(deserializer, xOffset, yOffset), 0F, 0F, 0F, boxPaint))
         if (!showHandles)
             return elems.toTypedArray()
         if (canDirectlyChangeHeight() || canDirectlyChangeWidth()) {
@@ -341,24 +350,24 @@ abstract class BaseObject : IRenderable {
                         deserializer.dipToPxF(handles[0].top) + yOffset,
                         deserializer.dipToPxF(handles[0].right) + xOffset,
                         deserializer.dipToPxF(handles[0].bottom) + yOffset)
-                elems.add(Renderable(Renderable.Type.OVAL, shape, 0F, 0F, handlePaint))
+                elems.add(Renderable(Renderable.Type.OVAL, shape, 0F, 0F, 0F, handlePaint))
                 shape = RectF(deserializer.dipToPxF(handles[2].left) + xOffset,
                         deserializer.dipToPxF(handles[2].top) + yOffset,
                         deserializer.dipToPxF(handles[2].right) + xOffset,
                         deserializer.dipToPxF(handles[2].bottom) + yOffset)
-                elems.add(Renderable(Renderable.Type.OVAL, shape, 0F, 0F, handlePaint))
+                elems.add(Renderable(Renderable.Type.OVAL, shape, 0F, 0F, 0F, handlePaint))
             }
             if (canDirectlyChangeHeight()) {
                 var shape = RectF(deserializer.dipToPxF(handles[1].left) + xOffset,
                         deserializer.dipToPxF(handles[1].top) + yOffset,
                         deserializer.dipToPxF(handles[1].right) + xOffset,
                         deserializer.dipToPxF(handles[1].bottom) + yOffset)
-                elems.add(Renderable(Renderable.Type.OVAL, shape, 0F, 0F, handlePaint))
+                elems.add(Renderable(Renderable.Type.OVAL, shape, 0F, 0F, 0F, handlePaint))
                 shape = RectF(deserializer.dipToPxF(handles[3].left) + xOffset,
                         deserializer.dipToPxF(handles[3].top) + yOffset,
                         deserializer.dipToPxF(handles[3].right) + xOffset,
                         deserializer.dipToPxF(handles[3].bottom) + yOffset)
-                elems.add(Renderable(Renderable.Type.OVAL, shape, 0F, 0F, handlePaint))
+                elems.add(Renderable(Renderable.Type.OVAL, shape, 0F, 0F, 0F, handlePaint))
             }
         }
         return elems.toTypedArray()

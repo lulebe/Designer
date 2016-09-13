@@ -6,7 +6,10 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.*
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import de.lulebe.designer.CheatSheet
 import de.lulebe.designer.R
 import de.lulebe.designer.data.BoardState
@@ -34,6 +37,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
     private val mHeightDisplayLayoutView: View
     private val mHeightDisplayView: TextView
     private val mExtractBoxstyleView: ImageView
+    private val mRotationView: EditText
     private val mAlphaView: EditText
 
     init {
@@ -51,6 +55,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         mHeightDisplayLayoutView = mView.findViewById(R.id.display_object_height_layout)
         mHeightDisplayView = mView.findViewById(R.id.display_object_height) as TextView
         mExtractBoxstyleView = mView.findViewById(R.id.btn_object_extractboxstyle) as ImageView
+        mRotationView = mView.findViewById(R.id.field_object_rotation) as EditText
         mAlphaView = mView.findViewById(R.id.field_object_alpha) as EditText
 
         initCheatSheets()
@@ -60,6 +65,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         mYPosView.setOnEditorActionListener(this)
         mWidthView.setOnEditorActionListener(this)
         mHeightView.setOnEditorActionListener(this)
+        mRotationView.setOnEditorActionListener(this)
         mAlphaView.setOnEditorActionListener(this)
 
 
@@ -77,7 +83,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
             newObj.init(mView.context, mBoardObject)
             newObj.xpos = mObject.xpos + 10
             newObj.ypos = mObject.ypos + 10
-            newObj.name = mView.resources.getString(R.string.copy_of) + mObject.name
+            newObj.name = mView.resources.getString(R.string.copy_of) + " " + mObject.name
             mBoardObject.addObject(newObj)
             mBoardState.selected = newObj
         }
@@ -155,6 +161,17 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
                 mObject.height = value
                 return true
             }
+            mRotationView -> {
+                val value: Float
+                try {
+                    value = mRotationView.text.toString().toFloat()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
+                if (value < 0 || value >= 360) return false
+                mObject.rotation = value
+                return true
+            }
             mAlphaView -> {
                 val value: Int
                 try {
@@ -207,6 +224,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
             }
         } else
             mExtractBoxstyleView.visibility = View.GONE
+        mRotationView.setText(mObject.rotation.toString())
         mAlphaView.setText(mObject.alpha.toString())
     }
 
