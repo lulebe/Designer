@@ -314,18 +314,16 @@ abstract class BaseObject : IRenderable {
 
     fun getHandleAt (x: Int, y: Int) : Int {
         var found = -1
-        if (x >= xpos && x <= xpos+width && y >= ypos && y <= ypos+height)
-            found = 0
-        else {
-            var i = 1
-            for (handle in handles) {
-                if (x >= handle.left && x <= handle.right && y >= handle.top && y <= handle.bottom) {
-                    found = i
-                    break
-                }
-                i++
+        var i = 1
+        for (handle in handles) {
+            if (x >= handle.left && x <= handle.right && y >= handle.top && y <= handle.bottom) {
+                found = i
+                break
             }
+            i++
         }
+        if (found == -1 && x >= xpos && x <= xpos+width && y >= ypos && y <= ypos+height)
+            found = 0
         if (found % 2 == 1 && !canDirectlyChangeWidth())
             found = 0
         if (found % 2 == 0 && !canDirectlyChangeHeight())
@@ -339,7 +337,7 @@ abstract class BaseObject : IRenderable {
         boxPaint.color = Color.parseColor("#FF8800")
         boxPaint.style = Paint.Style.STROKE
         boxPaint.strokeWidth = deserializer.pixelFac
-        elems.add(Renderable(Renderable.Type.RECT, getBoundRect(deserializer, xOffset, yOffset), 0F, 0F, 0F, boxPaint))
+        elems.add(Renderable(Renderable.Type.RECT, getBoundRect(deserializer, xOffset, yOffset), 0F, 0F, rotation, boxPaint))
         if (!showHandles)
             return elems.toTypedArray()
         if (canDirectlyChangeHeight() || canDirectlyChangeWidth()) {
