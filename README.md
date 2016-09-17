@@ -2,4 +2,4 @@
 Android UI Designing App
 
 
-[file format description](../blob/master/format.md)
+[file format description](../master/format.md)
