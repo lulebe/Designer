@@ -199,7 +199,8 @@ class TextObject : SourceObject() {
         paint.alpha = (alpha * paint.alpha) / 255
         paint.typeface = typeFace
         val layout = StaticLayout(_text, paint, d.dipToPxI(width), alignment, 1F, 0F, false)
-        val r = Renderable(Renderable.Type.TEXT, layout, d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, paint)
+        val position = Renderable.Position(d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, d.dipToPxF(layout.width)/2F, d.dipToPxF(layout.height)/2F)
+        val r = Renderable(Renderable.Type.TEXT, layout, position, paint)
         renderables.add(r)
         hasChanged = false
         return renderables.toTypedArray()

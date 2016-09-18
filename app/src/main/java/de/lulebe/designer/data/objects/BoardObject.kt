@@ -290,7 +290,8 @@ class BoardObject() : SourceObject() {
         renderables.clear()
         val paint = Paint()
         paint.alpha = alpha
-        renderables.add(Renderable(Renderable.Type.IMAGE, renderedBitmap!!, d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, paint))
+        val position = Renderable.Position(d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, d.dipToPxF(width)/2F, d.dipToPxF(height)/2F)
+        renderables.add(Renderable(Renderable.Type.IMAGE, renderedBitmap!!, position, paint))
         return renderables.toTypedArray()
     }
 

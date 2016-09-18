@@ -387,14 +387,16 @@ class RectObject : SourceObject() {
         if (shadow != null) {
             paintFill.setShadowLayer(d.dipToPxF(shadow!!.blur), d.dipToPxF(shadow!!.xpos), d.dipToPxF(shadow!!.ypos), Color.parseColor("#99000000"))
         }
-        renderables.add(Renderable(type, shape, calcXpos, calcYpos, rotation, paintFill))
+        val position = Renderable.Position(calcXpos, calcYpos, rotation, d.dipToPxF(width)/2F, d.dipToPxF(height)/2F)
+        renderables.add(Renderable(type, shape, position, paintFill))
         if (strokeWidth > 0) {
             val paintStroke = Paint(Paint.ANTI_ALIAS_FLAG)
             paintStroke.style = Paint.Style.STROKE
             paintStroke.color = strokeColor
             paintStroke.alpha = (alpha * paintStroke.alpha) / 255
             paintStroke.strokeWidth = d.dipToPxF(strokeWidth)
-            renderables.add(Renderable(type, shape, d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, paintStroke))
+            val position = Renderable.Position(d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, d.dipToPxF(width)/2F, d.dipToPxF(height)/2F)
+            renderables.add(Renderable(type, shape, position, paintStroke))
         }
         hasChanged = false
         return renderables.toTypedArray()

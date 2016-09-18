@@ -176,7 +176,8 @@ class ImageObject() : SourceObject() {
         paint.alpha = alpha
         if (tinted)
             paint.colorFilter = PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
-        renderables.add(Renderable(Renderable.Type.IMAGE, bmp, finalXPos, finalYPos, rotation, paint))
+        val position = Renderable.Position(finalXPos, finalYPos, rotation, d.dipToPxF(width)/2F, d.dipToPxF(height)/2F)
+        renderables.add(Renderable(Renderable.Type.IMAGE, bmp, position, paint))
         hasChanged = false
         return renderables.toTypedArray()
     }

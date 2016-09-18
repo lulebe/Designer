@@ -61,7 +61,8 @@ class CopyObject : BaseObject() {
         renderables.clear()
         val srcRend = src.getRenderables(d, forceReload)
         for (rend in srcRend) {
-            renderables.add(Renderable(rend.type, rend.shape, d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, rend.paint))
+            val position = Renderable.Position(d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, d.dipToPxF(width)/2F, d.dipToPxF(height)/2F)
+            renderables.add(Renderable(rend.type, rend.shape, position, rend.paint))
         }
         return renderables.toTypedArray()
     }
