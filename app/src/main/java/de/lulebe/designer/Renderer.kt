@@ -53,6 +53,10 @@ class Renderer {
                     val bitmap = rend.shape as Bitmap
                     canvas.drawBitmap(bitmap, 0F, 0F, rend.paint)
                 }
+                Renderable.Type.PATH -> {
+                    val path = rend.shape as Path
+                    canvas.drawPath(path, rend.paint)
+                }
             }
             canvas.restore()
         }
