@@ -50,8 +50,8 @@ class StorageManager {
         mBoardObject = mGson.fromJson(inr, BoardObject::class.java)
         inr.close()
         ins.close()
-        mBoardObject!!.init(ctx, null)
         mBoardObject!!.storageManager = this
+        mBoardObject!!.init(ctx, null)
         return mBoardObject!!
     }
 
@@ -73,7 +73,9 @@ class StorageManager {
         if (mBoardObject == null) return 0L
         val uid = UIDGenerator.generateUID()
         mBoardObject!!.images.put(uid, filename)
-        FileUtils.copyToFile(inp, File(mDir.path + File.separator + uid + "." + File(filename).extension))
+        val to = File(mDir.path + File.separator + uid + "." + File(filename).extension)
+        if (!to.exists())
+        FileUtils.copyToFile(inp, to)
         return uid;
     }
 
@@ -89,7 +91,9 @@ class StorageManager {
         if (mBoardObject == null) return 0L
         val uid = UIDGenerator.generateUID()
         mBoardObject!!.fonts.put(uid, filename)
-        FileUtils.copyToFile(inp, File(mDir.path + File.separator + uid + "." + File(filename).extension))
+        val to = File(mDir.path + File.separator + uid + "." + File(filename).extension)
+        if (!to.exists())
+            FileUtils.copyToFile(inp, to)
         return uid
     }
 
@@ -99,24 +103,6 @@ class StorageManager {
         val f = File(mDir.path + File.separator + key + "." + File(filename).extension)
         if (f.exists())
             f.delete()
-    }
-
-
-
-    @Throws(FileNotFoundException::class)
-    fun getImageFile (name: String) : File {
-        val f = File(mDir.path + File.separator  + name)
-        if (!f.exists())
-            throw FileNotFoundException()
-        return f
-    }
-
-    @Throws(FileNotFoundException::class)
-    fun getFontFile (name: String) : File {
-        val f = File(mDir.path + File.separator  + name)
-        if (!f.exists())
-            throw FileNotFoundException()
-        return f
     }
 
     fun close () {

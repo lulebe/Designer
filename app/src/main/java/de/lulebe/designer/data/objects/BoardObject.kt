@@ -1,9 +1,7 @@
 package de.lulebe.designer.data.objects
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
+import android.graphics.*
 import de.lulebe.designer.Renderer
 import de.lulebe.designer.data.*
 import de.lulebe.designer.data.styles.BaseStyle
@@ -297,11 +295,19 @@ class BoardObject() : SourceObject() {
 
     fun getObjectAtPosition (x: Int, y: Int) : BaseObject? {
         var i = _objects.size
+        var boundPath: Path
+        var pointPath: Path
+        val matrix = Matrix()
         while (--i >= 0) {
             val o = _objects[i]
-            if (x > o.xpos && x < (o.xpos+o.width) && y > o.ypos && y < (o.ypos+o.height)) {
+            boundPath = Path()
+            pointPath = Path()
+            boundPath.addRect(o.xpos.toFloat(), o.ypos.toFloat(), (o.xpos+o.width).toFloat(), (o.ypos+o.height).toFloat(), Path.Direction.CW)
+            matrix.setRotate(o.rotation, (o.xpos+(o.width/2F)).toFloat(), (o.ypos+(o.height/2F)).toFloat())
+            boundPath.transform(matrix)
+            pointPath.addRect(x.toFloat(), y.toFloat(), x.toFloat()+0.1F, y.toFloat()+0.1F, Path.Direction.CW)
+            if (boundPath.op(pointPath, Path.Op.INTERSECT) && !boundPath.isEmpty)
                 return o
-            }
         }
         return null
     }

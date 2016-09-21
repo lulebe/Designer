@@ -38,6 +38,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
     private val mHeightDisplayView: TextView
     private val mExtractBoxstyleView: ImageView
     private val mRotationView: EditText
+    private val mRotationhandleinfoView: View
     private val mAlphaView: EditText
 
     init {
@@ -56,6 +57,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         mHeightDisplayView = mView.findViewById(R.id.display_object_height) as TextView
         mExtractBoxstyleView = mView.findViewById(R.id.btn_object_extractboxstyle) as ImageView
         mRotationView = mView.findViewById(R.id.field_object_rotation) as EditText
+        mRotationhandleinfoView = mView.findViewById(R.id.info_object_rotation_handles)
         mAlphaView = mView.findViewById(R.id.field_object_alpha) as EditText
 
         initCheatSheets()
@@ -225,6 +227,10 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         } else
             mExtractBoxstyleView.visibility = View.GONE
         mRotationView.setText(mObject.rotation.toString())
+        if (mObject.rotation == 0F)
+            mRotationhandleinfoView.visibility = View.GONE
+        else
+            mRotationhandleinfoView.visibility = View.VISIBLE
         mAlphaView.setText(mObject.alpha.toString())
     }
 

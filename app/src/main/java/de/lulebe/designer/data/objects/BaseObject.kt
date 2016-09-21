@@ -1,10 +1,7 @@
 package de.lulebe.designer.data.objects
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.RectF
+import android.graphics.*
 import de.lulebe.designer.data.Deserializer
 import de.lulebe.designer.data.ExportContainer
 import de.lulebe.designer.data.UIDGenerator
@@ -41,6 +38,7 @@ abstract class BaseObject : IRenderable {
 
     @Transient
     protected var _hasChanged = true
+    @Transient
     var hasChanged = _hasChanged
         get() = _hasChanged
 
@@ -148,12 +146,15 @@ abstract class BaseObject : IRenderable {
             calculateHandles()
         }
 
+    @Transient
+    private val rotationMatrix = Matrix()
     // rotation
     private var _rotation: Float = 0F
     var rotation: Float
         get() = _rotation
         set(value) {
             _rotation = value
+            calculateHandles()
             change()
         }
 
@@ -234,30 +235,32 @@ abstract class BaseObject : IRenderable {
         calculateHandles()
     }
     fun setHandlePosition (handle: Int, x: Int, y: Int) {
+        val centerXold = xposMoving + widthMoving/2
+        val centerYold = yposMoving + heightMoving/2
         when (handle) {
             1 -> {
                 if (x >= xposMoving + widthMoving)
                     return
-                widthMoving += -(x - xposMoving)
-                xposMoving = x
+                _widthMoving += -(x - xposMoving)
+                _xposMoving = x
             }
             2 -> {
                 if (y >= yposMoving + heightMoving)
                     return
-                heightMoving += -(y - yposMoving)
-                yposMoving = y
+                _heightMoving += -(y - yposMoving)
+                _yposMoving = y
             }
             3 -> {
                 val add = x - (xposMoving + widthMoving)
                 if (-add >= widthMoving)
                     return
-                widthMoving += add
+                _widthMoving += add
             }
             4 -> {
                 val add = y - (yposMoving + heightMoving)
                 if (-add >= heightMoving)
                     return
-                heightMoving += add
+                _heightMoving += add
             }
         }
         calculateHandles()
@@ -299,10 +302,21 @@ abstract class BaseObject : IRenderable {
 
 
     protected fun calculateHandles () {
-        calculateHandle(handles[0], xposMoving, yposMoving + (heightMoving / 2))
-        calculateHandle(handles[1], xposMoving + (widthMoving / 2), yposMoving)
-        calculateHandle(handles[2], xposMoving + widthMoving, yposMoving + (heightMoving / 2))
-        calculateHandle(handles[3], xposMoving + (widthMoving / 2), yposMoving + heightMoving)
+        var rotRad = Math.toRadians(rotation.toDouble())
+        val rad90deg = Math.toRadians(90.0)
+        val centerX = xposMoving + widthMoving/2
+        val centerY = yposMoving + heightMoving/2
+        calculateHandle(handles[0], centerX - (Math.cos(rotRad)*widthMoving/2).toInt(),
+                centerY - (Math.sin(rotRad)*widthMoving/2).toInt())
+        rotRad += rad90deg
+        calculateHandle(handles[1], centerX - (Math.cos(rotRad)*heightMoving/2).toInt(),
+                centerY - (Math.sin(rotRad)*heightMoving/2).toInt())
+        rotRad += rad90deg
+        calculateHandle(handles[2], centerX - (Math.cos(rotRad)*widthMoving/2).toInt(),
+                centerY - (Math.sin(rotRad)*widthMoving/2).toInt())
+        rotRad += rad90deg
+        calculateHandle(handles[3], centerX - (Math.cos(rotRad)*heightMoving/2).toInt(),
+                centerY - (Math.sin(rotRad)*heightMoving/2).toInt())
     }
 
     private fun calculateHandle (handle: Rect, cx: Int, cy: Int) {
@@ -315,33 +329,41 @@ abstract class BaseObject : IRenderable {
     fun getHandleAt (x: Int, y: Int) : Int {
         var found = -1
         var i = 1
-        for (handle in handles) {
-            if (x >= handle.left && x <= handle.right && y >= handle.top && y <= handle.bottom) {
-                found = i
-                break
+        val boundPath = Path()
+        boundPath.addRect(xpos.toFloat(), ypos.toFloat(), (xpos+width).toFloat(), (ypos+height).toFloat(), Path.Direction.CW)
+        val matrix = Matrix()
+        matrix.setRotate(rotation, (xpos+(width/2F)).toFloat(), (ypos+(height/2F)).toFloat())
+        boundPath.transform(matrix)
+        val pointPath = Path()
+        pointPath.addRect(x.toFloat(), y.toFloat(), x.toFloat()+0.1F, y.toFloat()+0.1F, Path.Direction.CW)
+        if (boundPath.op(pointPath, Path.Op.INTERSECT) && !boundPath.isEmpty)
+            found = 0
+        if (rotation == 0F)
+            for (handle in handles) {
+                if ((i % 2 == 1 && !canDirectlyChangeWidth()) || (i % 2 == 0 && !canDirectlyChangeHeight()))
+                    continue
+                if (x >= handle.left && x <= handle.right && y >= handle.top && y <= handle.bottom) {
+                    found = i
+                    break
+                }
+                i++
             }
-            i++
-        }
-        if (found == -1 && x >= xpos && x <= xpos+width && y >= ypos && y <= ypos+height)
-            found = 0
-        if (found % 2 == 1 && !canDirectlyChangeWidth())
-            found = 0
-        if (found % 2 == 0 && !canDirectlyChangeHeight())
-            found = 0
         return found
     }
 
     override fun getHandleRenderables(d: Deserializer, xOffset: Float, yOffset: Float, showHandles: Boolean): Array<Renderable> {
         val elems = mutableListOf<Renderable>()
-        val boxPaint = Paint()
+        val boxPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         boxPaint.color = Color.parseColor("#FF8800")
         boxPaint.style = Paint.Style.STROKE
         boxPaint.strokeWidth = d.pixelFac
-        val position = Renderable.Position(0F, 0F, rotation, d.dipToPxF(xpos+width/2), d.dipToPxF(ypos+height/2))
+        val position = Renderable.Position(0F, 0F, rotation,
+                d.dipToPxF(xposMoving+(widthMoving/2))+xOffset,
+                d.dipToPxF(yposMoving+(heightMoving/2))+yOffset)
         elems.add(Renderable(Renderable.Type.RECT, getBoundRect(d, xOffset, yOffset), position, boxPaint))
         if (!showHandles)
             return elems.toTypedArray()
-        if (canDirectlyChangeHeight() || canDirectlyChangeWidth()) {
+        if (rotation == 0F && (canDirectlyChangeHeight() || canDirectlyChangeWidth())) {
             val handlePaint = Paint(Paint.ANTI_ALIAS_FLAG)
             handlePaint.color = Color.parseColor("#FF8800")
             if (canDirectlyChangeWidth()) {
@@ -374,7 +396,7 @@ abstract class BaseObject : IRenderable {
 
 
     open fun getMainColor () : Int {
-        return Color.parseColor("#000000")
+        return Color.BLACK
     }
 
     open fun export (ec: ExportContainer) {

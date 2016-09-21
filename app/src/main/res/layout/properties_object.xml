@@ -196,6 +196,16 @@
             android:text="0"/>
     </android.support.design.widget.TextInputLayout>
 
+    <TextView
+        android:id="@+id/info_object_rotation_handles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="56dp"
+        android:layout_marginRight="16dp"
+        android:visibility="gone"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:text="@string/info_rotation_no_handles"/>
+
 
     <FrameLayout
         android:layout_width="match_parent"

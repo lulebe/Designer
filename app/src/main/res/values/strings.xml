@@ -76,4 +76,5 @@
     <string name="no_colorstyles">No Colors defined</string>
     <string name="no_boxstyles">No Boxstyles defined</string>
     <string name="no_textstyles">No Textstyles defined</string>
+    <string name="info_rotation_no_handles">rotated objects show no resizing handles</string>
 </resources>
