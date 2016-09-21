@@ -7,7 +7,6 @@ import android.graphics.Typeface
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
-import android.util.Log
 import de.lulebe.designer.data.Deserializer
 import de.lulebe.designer.data.ExportContainer
 import de.lulebe.designer.data.FontCache
@@ -250,11 +249,9 @@ class TextObject : SourceObject() {
             }
         }
         if (board != null) {
-            Log.d("FONTLOADING", "1")
             textStyle = board.styles.textStyles[_textStyleUID]
             textColorStyle = board.styles.colorStyles[_textColorStyleUID]
             FontCache.loadFont(_fontUID, board, ctx) {
-                Log.d("FONTLOADING", "2")
                 typeFace = it
                 calcSizes()
                 change()
