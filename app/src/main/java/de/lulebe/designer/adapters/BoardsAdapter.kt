@@ -17,7 +17,6 @@ class BoardsAdapter(val listener: (BoardMeta, longClick: Boolean) -> Unit) : Rec
     fun setItems (items: MutableList<BoardMeta>) {
         mItems = items
         notifyDataSetChanged()
-        Log.d("ITEMS", mItems.size.toString())
     }
 
 

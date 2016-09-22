@@ -60,9 +60,7 @@ class FontChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val la
             }
             TYPE_FONT_USER -> {
                 val key = mBoardObject.fonts.keys.toList().get(position - 2)
-                Log.d("KEY", key.toString())
                 holder.txtView.text = mBoardObject.fonts[key]
-                Log.d("VALUE", mBoardObject.fonts[key])
                 holder.click = {
                     clickListener(key)
                 }
