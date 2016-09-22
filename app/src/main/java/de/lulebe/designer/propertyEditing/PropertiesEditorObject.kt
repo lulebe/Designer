@@ -73,11 +73,11 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
 
         mDeleteView.setOnClickListener {
             try {
-                mBoardObject.removeObject(mBoardState.selected!!)
+                mBoardObject.removeObject(mObject)
             } catch (e: BoardObject.CannotDeleteCopiedObjectException) {
                 Toast.makeText(mView.context, R.string.cant_delete_copied_object, Toast.LENGTH_SHORT).show()
             }
-            mBoardState.selected = null
+            mBoardState.selectedClear()
         }
         mDuplicateView.setOnClickListener {
             val newObj = CopyObject()
@@ -87,7 +87,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
             newObj.ypos = mObject.ypos + 10
             newObj.name = mView.resources.getString(R.string.copy_of) + " " + mObject.name
             mBoardObject.addObject(newObj)
-            mBoardState.selected = newObj
+            mBoardState.selectedSet(newObj)
         }
 
         mExtractBoxstyleView.setOnClickListener {

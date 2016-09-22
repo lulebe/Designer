@@ -1,6 +1,5 @@
 package de.lulebe.designer
 
-import android.content.Context
 import android.graphics.*
 import android.os.Build
 import android.support.v4.view.GestureDetectorCompat
@@ -12,42 +11,38 @@ import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.Deserializer
 import de.lulebe.designer.data.objects.BaseObject
 import de.lulebe.designer.data.objects.BoardObject
-import de.lulebe.designer.data.objects.Renderable
 
 
-class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject: BoardObject) : View(context) {
+open class BoardView(val mActivity: BoardActivity, val mBoardState: BoardState, val mBoardObject: BoardObject) : View(mActivity) {
 
 
-    private var mBufferBitmap: Bitmap? = null
-    private var mDipRatio = 1F
-    private val mDeserializer: Deserializer
+    protected var mBufferBitmap: Bitmap? = null
+    protected var mDipRatio = 1F
+    protected val mDeserializer: Deserializer
+
+    protected val mRulerPaint = Paint()
+    protected val mGridPaint = Paint()
+
+    protected val mHorizRulerPic = Picture()
+    protected val mVertRulerPic = Picture()
+
+    protected var mObjectdragTouchee: BaseObject? = null
+    protected var mObjectdragToucheeHandle = 0
+    protected var mObjectdragLastX: Int = 0
+    protected var mObjectdragLastY: Int = 0
 
 
-    private val mRulerPaint = Paint()
-    private val mGridPaint = Paint()
-
-    private val mHorizRulerPic = Picture()
-    private val mVertRulerPic = Picture()
-
-    private var mSelectedHandles: Array<Renderable>? = null
-
-    private var mObjectdragTouchee: BaseObject? = null
-    private var mObjectdragToucheeHandle = 0
-    private var mObjectdragLastX: Int = 0
-    private var mObjectdragLastY: Int = 0
-
-
-    private val mGestureListener = object: GestureDetector.SimpleOnGestureListener() {
+    protected val mGestureListener = object: GestureDetector.SimpleOnGestureListener() {
 
         override fun onDown(event: MotionEvent?): Boolean {
             if (event == null)
                 return false
-            if (mBoardState.selected != null) {
+            if (mBoardState.selected.size > 0) {
                 val x = eventXOnBoard(event)
                 val y = eventYOnBoard(event)
-                val handleAtPos = mBoardState.selected!!.getHandleAt(x, y)
+                val handleAtPos = mBoardState.selected[0].getHandleAt(x, y)
                 if (handleAtPos >= 0) {
-                    mObjectdragTouchee = mBoardState.selected!!
+                    mObjectdragTouchee = mBoardState.selected[0]
                     mObjectdragToucheeHandle = handleAtPos
                     mObjectdragLastX = x
                     mObjectdragLastY = y
@@ -56,10 +51,25 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
             return true
         }
 
-        override fun onSingleTapUp(event: MotionEvent?): Boolean {
-            if (event == null) return false
-            mBoardState.selected = mBoardObject.getObjectAtPosition(eventXOnBoard(event), eventYOnBoard(event))
+        override fun onSingleTapUp(event: MotionEvent): Boolean {
+            mBoardState.selectedSet(mBoardObject.getObjectAtPosition(eventXOnBoard(event), eventYOnBoard(event)))
             return true
+        }
+
+        override fun onDoubleTap(event: MotionEvent): Boolean {
+            val tapped = mBoardObject.getObjectAtPosition(eventXOnBoard(event), eventYOnBoard(event))
+            mBoardState.selectedSet(tapped)
+            if (tapped is BoardObject)
+                mActivity.openGroup(tapped)
+            else {
+                mBoardState.rightPanelExpanded = true
+            }
+            return true
+        }
+
+        override fun onLongPress(event: MotionEvent) {
+            val pressed = mBoardObject.getObjectAtPosition(eventXOnBoard(event), eventYOnBoard(event))
+            mBoardState.selectedAdd(pressed)
         }
 
         override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
@@ -69,7 +79,7 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
             return true
         }
     }//mGestureListener
-    private val mGestureDetector = GestureDetectorCompat(context, mGestureListener)
+    protected val mGestureDetector = GestureDetectorCompat(mActivity, mGestureListener)
 
 
 
@@ -105,7 +115,7 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
             override fun onBoardScrollY(scrollY: Float) {
                 invalidate()
             }
-            override fun onSelectObject(obj: BaseObject?) {
+            override fun onSelectChange(objs: List<BaseObject>) {
                 invalidate()
             }
             override fun onPanningActive(active: Boolean) {
@@ -114,6 +124,12 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
             }
         })
 
+        drawRulerPictures()
+
+        initRendering()
+    }//init
+
+    open protected fun initRendering() {
         mBoardObject.addSizeChangeListener {
             mBoardState.boardScrollX = 0F
             mBoardState.boardScrollY = 0F
@@ -131,9 +147,8 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
         }
         mBufferBitmap?.recycle()
         mBufferBitmap = Bitmap.createBitmap((mBoardObject.width * mDipRatio).toInt(), (mBoardObject.height * mDipRatio).toInt(), Bitmap.Config.ARGB_8888)
-        drawRulerPictures()
         Renderer.drawRenderables(mBoardObject.getRenderables(mDeserializer), Canvas(mBufferBitmap), true, false)
-    }//init
+    }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
@@ -166,15 +181,15 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
     }
 
 
-    private fun eventXOnBoard (event: MotionEvent) : Int {
+    protected fun eventXOnBoard (event: MotionEvent) : Int {
         return ((event.x + mBoardState.boardScrollX) / mDipRatio).toInt()
     }
-    private fun eventYOnBoard (event: MotionEvent) : Int {
+    protected fun eventYOnBoard (event: MotionEvent) : Int {
         return ((event.y + mBoardState.boardScrollY) / mDipRatio).toInt()
     }
 
 
-    private fun drawRulers (canvas: Canvas) {
+    protected fun drawRulers (canvas: Canvas) {
         val interval = mDipRatio * mBoardObject.gridSize * mBoardObject.gridInterval
         canvas.save()
         canvas.translate(- (mBoardState.boardScrollX % interval), 0F)
@@ -187,16 +202,18 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
     }
 
 
-    private fun drawSelection(canvas: Canvas) {
-        if (mBoardState.selected == null) return
-        val renderables = mBoardState.selected!!.getHandleRenderables(mDeserializer, -mBoardState.boardScrollX, -mBoardState.boardScrollY, !mBoardState.panningActive)
-        for (renderable in renderables)
-            Renderer.drawRenderable(renderable, canvas, true)
+    protected fun drawSelection(canvas: Canvas) {
+        mBoardState.selected.forEachIndexed { index, sel ->
+            sel.getHandleRenderables(mDeserializer, -mBoardState.boardScrollX, -mBoardState.boardScrollY, !mBoardState.panningActive && index == 0)
+                    .forEach { rend ->
+                        Renderer.drawRenderable(rend, canvas, true)
+                    }
+        }
     }
 
 
 
-    private fun drawRulerPictures () {
+    protected fun drawRulerPictures () {
         val size = mBoardObject.gridSize
         val interval = mBoardObject.gridInterval
         val dipSize = mDipRatio * size
@@ -241,7 +258,7 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
 
 
 
-    private fun pan (event: MotionEvent) : Boolean {
+    protected fun pan (event: MotionEvent) : Boolean {
         if (mObjectdragTouchee != null && event.action == MotionEvent.ACTION_MOVE) {
             val target = mObjectdragTouchee!!
             val rawX = eventXOnBoard(event)
@@ -290,7 +307,7 @@ class BoardView(context: Context, val mBoardState: BoardState, val mBoardObject:
     }
 
 
-    private fun snap (raw: Int, snapPoint: Int) : Int {
+    protected fun snap (raw: Int, snapPoint: Int) : Int {
         if (mBoardState.showGrid) {
             val gridfac = mBoardObject.gridSize * mBoardObject.gridInterval
             val gridsnapmargin = gridfac / 4

@@ -3,7 +3,6 @@ package de.lulebe.designer.adapters
 import android.content.Context
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,7 +44,7 @@ class FontChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val la
         when (getItemViewType(position)) {
             TYPE_ADD_BTN -> {
                 holder.txtView.text = "add Font"
-                holder.fontView.text = "add"
+                holder.fontView.text = "+"
                 holder.click = addUserFontListener
             }
             TYPE_FONT_DEFAULT -> {

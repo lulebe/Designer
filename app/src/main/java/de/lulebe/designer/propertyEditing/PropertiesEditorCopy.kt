@@ -39,11 +39,11 @@ class PropertiesEditorCopy (val mObject: CopyObject, val mView: ViewGroup, val m
                 mObject.source!!.copies--
             mObject.removeAllChangeListeners()
             mBoardObject.removeObject(mObject)
-            mBoardState.selected = null
+            mBoardState.selectedClear()
         }
 
         mUnlockView.setOnClickListener {
-            mBoardState.selected = mBoardObject.unlockCopy(mObject)
+            mBoardState.selectedSet(mBoardObject.unlockCopy(mObject))
         }
 
 

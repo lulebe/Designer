@@ -104,7 +104,7 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
     private fun createObj(obj: BaseObject) {
         obj.init(mPanel.context, mBoardObject)
         mBoardObject.addObject(obj)
-        mBoardState.selected = obj
+        mBoardState.selectedSet(obj)
     }
 
 

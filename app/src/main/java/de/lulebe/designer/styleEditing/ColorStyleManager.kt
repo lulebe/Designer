@@ -1,6 +1,5 @@
 package de.lulebe.designer.styleEditing
 
-import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.app.AlertDialog
@@ -101,12 +100,14 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
 
 
     private fun applyColorStyle (cs: ColorStyle) {
-        when (mBoardState.selected) {
+        if (mBoardState.selected.size != 1) return
+        val selected = mBoardState.selected[0]
+        when (selected) {
             is TextObject -> {
-                (mBoardState.selected!! as TextObject).textColorStyle = cs
+                (selected).textColorStyle = cs
             }
             is ImageObject -> {
-                val obj = (mBoardState.selected!! as ImageObject)
+                val obj = (selected)
                 obj.tintColorStyle = cs
                 obj.tinted = true
             }
@@ -114,16 +115,16 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
                 AlertDialog.Builder(mView.context)
                         .setTitle(R.string.set_color_style)
                         .setMessage(R.string.apply_color_style_to)
-                        .setNeutralButton(android.R.string.cancel, DialogInterface.OnClickListener { dialogInterface, i ->
+                        .setNeutralButton(android.R.string.cancel, { dialogInterface, i ->
                             dialogInterface.cancel()
                         })
-                        .setNegativeButton(R.string.stroke, DialogInterface.OnClickListener { dialogInterface, i ->
+                        .setNegativeButton(R.string.stroke, { dialogInterface, i ->
                             dialogInterface.dismiss()
-                            (mBoardState.selected as RectObject?)?.strokeColorStyle = cs
+                            selected.strokeColorStyle = cs
                         })
-                        .setPositiveButton(R.string.fill, DialogInterface.OnClickListener { dialogInterface, i ->
+                        .setPositiveButton(R.string.fill, { dialogInterface, i ->
                             dialogInterface.dismiss()
-                            (mBoardState.selected as RectObject?)?.fillColorStyle = cs
+                            selected.fillColorStyle = cs
                         })
                         .show()
             }

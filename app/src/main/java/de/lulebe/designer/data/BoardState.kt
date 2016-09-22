@@ -8,7 +8,7 @@ import de.lulebe.designer.data.objects.BoardObject
 class BoardState {
 
     open class BoardStateListener () {
-        open fun onSelectObject (obj: BaseObject?) {}
+        open fun onSelectChange (objs: List<BaseObject>) {}
         open fun onPanningActive (active: Boolean) {}
         open fun onShowGrid (shown: Boolean) {}
         open fun onShowUI (shown: Boolean) {}
@@ -37,14 +37,33 @@ class BoardState {
     
 
 
-    private var _selected: BaseObject? = null
-    var selected: BaseObject?
+    private val _selected: MutableList<BaseObject> = mutableListOf()
+    val selected: List<BaseObject>
         get() = _selected
-        set(value) {
-            _selected = value
-            for (l in mListeners)
-                l.onSelectObject(value)
-        }
+    fun selectedClear () {
+        _selected.clear()
+        for (l in mListeners)
+            l.onSelectChange(selected)
+    }
+    fun selectedSet (obj: BaseObject?) {
+        _selected.clear()
+        if (obj != null)
+            _selected.add(obj)
+        for (l in mListeners)
+            l.onSelectChange(selected)
+    }
+    fun selectedAdd (obj: BaseObject?) {
+        if (obj == null)
+            return
+        _selected.add(obj)
+        for (l in mListeners)
+            l.onSelectChange(selected)
+    }
+    fun selectedRemove (obj: BaseObject) {
+        _selected.remove(obj)
+        for (l in mListeners)
+            l.onSelectChange(selected)
+    }
 
 
     private var _panningActive: Boolean = true
@@ -162,10 +181,7 @@ class BoardState {
         b.putBoolean("rightPanelLocked", rightPanelLocked)
         b.putBoolean("bottomPanelExpanded", bottomPanelExpanded)
         b.putBoolean("bottomPanelLocked", bottomPanelLocked)
-        if (selected != null)
-            b.putLong("selectedUID", selected?.uid!!)
-        else
-            b.putLong("selectedUID", 0L)
+        b.putLongArray("selectedUIDs", selected.map { it.uid }.toLongArray())
         instanceState.putBundle("BoardState", b)
     }
 
@@ -187,9 +203,11 @@ class BoardState {
             bs.rightPanelLocked = b.getBoolean("rightPanelLocked")
             bs.bottomPanelExpanded = b.getBoolean("bottomPanelExpanded")
             bs.bottomPanelLocked = b.getBoolean("bottomPanelLocked")
-            val s = b.getLong("selectedUID")
-            if (s != 0L)
-                bs.selected = boardObject.getObjectWithUID(s)
+            val s = b.getLongArray("selectedUIDs")
+            s.map { boardObject.getObjectWithUID(it) }.forEach {
+                if (it != null)
+                    bs.selectedAdd(it)
+            }
             return bs
         }
     }

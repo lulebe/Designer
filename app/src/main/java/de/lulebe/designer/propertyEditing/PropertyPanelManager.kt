@@ -12,7 +12,7 @@ class PropertyPanelManager(val mActivity: BoardActivity, val mLayout: ViewGroup,
 
     init {
         mBoardState.addListener(object : BoardState.BoardStateListener() {
-            override fun onSelectObject(obj: BaseObject?) {
+            override fun onSelectChange(objs: List<BaseObject>) {
                 updateUI()
             }
         })
@@ -23,35 +23,37 @@ class PropertyPanelManager(val mActivity: BoardActivity, val mLayout: ViewGroup,
     private fun updateUI () {
         mLayout.removeAllViews()
         val layoutInflater = LayoutInflater.from(mLayout.context)
-        when (mBoardState.selected) {
-            is CopyObject -> {
-                layoutInflater.inflate(R.layout.properties_copy, mLayout)
-                PropertiesEditorCopy(mBoardState.selected!! as CopyObject, mLayout, mBoardObject, mBoardState)
-            }
-            is SourceObject -> {
-                layoutInflater.inflate(R.layout.properties_object, mLayout)
-                PropertiesEditorObject(mBoardState.selected!! as SourceObject, mLayout, mBoardObject, mBoardState)
-                when (mBoardState.selected) {
-                    is RectObject -> {
-                        layoutInflater.inflate(R.layout.properties_object_rect, mLayout)
-                        PropertiesEditorRect(mBoardState.selected!! as RectObject, mLayout, mBoardObject)
-                    }
-                    is TextObject -> {
-                        layoutInflater.inflate(R.layout.properties_object_text, mLayout)
-                        PropertiesEditorText(mBoardState.selected!! as TextObject, mLayout, mBoardObject, mActivity)
-                    }
-                    is ImageObject -> {
-                        layoutInflater.inflate(R.layout.properties_object_image, mLayout)
-                        PropertiesEditorImage(mBoardState.selected!! as ImageObject, mLayout, mBoardObject, mActivity)
-                    }
-                    is BoardObject -> {
-                        layoutInflater.inflate(R.layout.properties_object_board, mLayout)
-                        PropertiesEditorBoard(mBoardState.selected!! as BoardObject, mLayout, mActivity)
+        if (mBoardState.selected.size == 0)
+            layoutInflater.inflate(R.layout.properties_null, mLayout)
+        else {
+            val selected = mBoardState.selected[0]
+            when (selected) {
+                is CopyObject -> {
+                    layoutInflater.inflate(R.layout.properties_copy, mLayout)
+                    PropertiesEditorCopy(selected, mLayout, mBoardObject, mBoardState)
+                }
+                is SourceObject -> {
+                    layoutInflater.inflate(R.layout.properties_object, mLayout)
+                    PropertiesEditorObject(selected, mLayout, mBoardObject, mBoardState)
+                    when (selected) {
+                        is RectObject -> {
+                            layoutInflater.inflate(R.layout.properties_object_rect, mLayout)
+                            PropertiesEditorRect(selected, mLayout, mBoardObject)
+                        }
+                        is TextObject -> {
+                            layoutInflater.inflate(R.layout.properties_object_text, mLayout)
+                            PropertiesEditorText(selected, mLayout, mBoardObject, mActivity)
+                        }
+                        is ImageObject -> {
+                            layoutInflater.inflate(R.layout.properties_object_image, mLayout)
+                            PropertiesEditorImage(selected, mLayout, mBoardObject, mActivity)
+                        }
+                        is BoardObject -> {
+                            layoutInflater.inflate(R.layout.properties_object_board, mLayout)
+                            PropertiesEditorBoard(selected, mLayout, mActivity)
+                        }
                     }
                 }
-            }
-            else -> {
-                layoutInflater.inflate(R.layout.properties_null, mLayout)
             }
         }
     }

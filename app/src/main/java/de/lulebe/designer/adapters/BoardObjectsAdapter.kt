@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.woxthebox.draglistview.DragItemAdapter
 import de.lulebe.designer.R
-import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.objects.BaseObject
+import de.lulebe.designer.data.objects.BoardObject
 
 
 class BoardObjectsAdapter(val mBoardObject: BoardObject, val mBoardState: BoardState) : DragItemAdapter<BaseObject, BoardObjectsAdapter.ObjectViewHolder>(false) {
@@ -40,7 +40,7 @@ class BoardObjectsAdapter(val mBoardObject: BoardObject, val mBoardState: BoardS
         var obj: BaseObject? = null
 
         override fun onItemClicked(view: View?) {
-            mBoardState.selected = obj
+            mBoardState.selectedSet(obj)
         }
     }
 }

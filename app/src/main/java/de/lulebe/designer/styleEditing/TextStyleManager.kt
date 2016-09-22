@@ -157,8 +157,8 @@ class TextStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val 
     }
 
     private fun applyTextStyle (ts: TextStyle) {
-        if (mBoardState.selected != null && mBoardState.selected!! is TextObject) {
-            (mBoardState.selected!! as TextObject).textStyle = ts
+        if (mBoardState.selected.size == 1 && mBoardState.selected[0] is TextObject) {
+            (mBoardState.selected[0] as TextObject).textStyle = ts
         }
     }
 

@@ -77,8 +77,8 @@ class BoxStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val m
             holder.dimensions.text = bs.width.toString() + " * " + bs.height.toString() +
                     ", " + mView.resources.getString(R.string.corner_radius) + ": " + bs.cornerRadius.toString()
             holder.view.setOnClickListener {
-                if (mBoardState.selected != null)
-                    mBoardState.selected!!.boxStyle = bs
+                if (mBoardState.selected.size == 1)
+                    mBoardState.selected[0].boxStyle = bs
             }
             holder.view.setOnLongClickListener {
                 openEditDialog(bs)
