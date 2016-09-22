@@ -29,6 +29,7 @@ import org.jetbrains.anko.uiThread
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
+import java.util.concurrent.Future
 
 class BoardActivity : AppCompatActivity() {
 
@@ -36,11 +37,14 @@ class BoardActivity : AppCompatActivity() {
     val REQUEST_CODE_GROUP = 2
     val REQUEST_CODE_FONT = 3
 
+    private val mMainView: View by bindView(R.id.main)
     private val mToolbar: Toolbar by bindView(R.id.toolbar)
     private val mLeftpane: Pane by bindView(R.id.leftpane)
     private val mRightpane: Pane by bindView(R.id.rightpane)
     private val mBottompane: Pane by bindView(R.id.bottompane)
     private val mLayout: FrameLayout by bindView(R.id.layout)
+
+    private var asyncABHider: Future<Unit>? = null
 
     private var mStorageManager: StorageManager? = null
 
@@ -151,18 +155,17 @@ class BoardActivity : AppCompatActivity() {
                 if (locked)
                     lpLp.setMargins(lpLp.leftMargin, lpLp.topMargin, lpLp.rightMargin, mBottompane.height)
                 else
-                    lpLp.setMargins(lpLp.leftMargin, lpLp.topMargin, lpLp.rightMargin, 0)
+                    lpLp.setMargins(lpLp.leftMargin, lpLp.topMargin, lpLp.rightMargin, dp64)
                 mLeftpane.layoutParams = lpLp
                 val lpRp = mRightpane.layoutParams as FrameLayout.LayoutParams
                 if (locked)
                     lpRp.setMargins(lpRp.leftMargin, lpRp.topMargin, lpRp.rightMargin, mBottompane.height)
                 else
-                    lpRp.setMargins(lpRp.leftMargin, lpRp.topMargin, lpRp.rightMargin, 0)
+                    lpRp.setMargins(lpRp.leftMargin, lpRp.topMargin, lpRp.rightMargin, dp64)
                 mRightpane.layoutParams = lpRp
             }
         }
     }
-
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
