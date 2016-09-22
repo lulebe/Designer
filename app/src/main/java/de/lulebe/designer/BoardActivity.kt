@@ -378,7 +378,7 @@ class BoardActivity : AppCompatActivity() {
             val rightpane = mRightpane.findViewById(R.id.layout_properties) as ViewGroup
             mPropertyPanelManager = PropertyPanelManager(this, rightpane, mBoardObject!!, mBoardState!!)
             mLeftPanelManager = LeftPanelManager(mLeftpane, mBoardState!!, mBoardObject!!)
-            mStylePanelManager = StylePanelManager(mBottompane, mBoardObject!!, mBoardState!!)
+            mStylePanelManager = StylePanelManager(mBottompane, mBoardObject!!, mBoardState!!, this)
             mLeftpane.visibility = View.VISIBLE
             mRightpane.visibility = View.VISIBLE
             mBottompane.visibility = View.VISIBLE

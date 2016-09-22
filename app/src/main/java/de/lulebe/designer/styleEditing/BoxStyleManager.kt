@@ -49,6 +49,7 @@ class BoxStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val m
 
     private fun openEditDialog (bs: BoxStyle) {
         val view = LayoutInflater.from(mView.context).inflate(R.layout.dialog_edit_boxstyle, null)
+        (view.findViewById(R.id.field_name) as EditText).setText(bs.name)
         (view.findViewById(R.id.field_width) as EditText).setText(bs.width.toString())
         (view.findViewById(R.id.field_height) as EditText).setText(bs.height.toString())
         (view.findViewById(R.id.field_cornerradius) as EditText).setText(bs.cornerRadius.toString())
@@ -60,6 +61,7 @@ class BoxStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val m
                 })
                 .setPositiveButton(R.string.save, DialogInterface.OnClickListener { dialogInterface, i ->
                     dialogInterface.dismiss()
+                    bs.name = (view.findViewById(R.id.field_name) as EditText).text.toString()
                     bs.width = (view.findViewById(R.id.field_width) as EditText).text.toString().toInt()
                     bs.height = (view.findViewById(R.id.field_height) as EditText).text.toString().toInt()
                     bs.cornerRadius = (view.findViewById(R.id.field_cornerradius) as EditText).text.toString().toInt()

@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.azeesoft.lib.colorpicker.ColorPickerDialog
@@ -51,8 +52,38 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
         }
     }
 
-
     private fun openEditDialog (cs: ColorStyle) {
+        AlertDialog.Builder(mView.context)
+                .setTitle(R.string.edit_color_style)
+                .setNegativeButton(android.R.string.cancel, { dialogInterface, i ->
+                    dialogInterface.cancel()
+                })
+                .setNeutralButton(R.string.edit_name, { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    openNameEditDialog(cs)
+                })
+                .setPositiveButton(R.string.edit_color, { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    openColorEditDialog(cs)
+                })
+                .show()
+    }
+
+
+    private fun openNameEditDialog (cs: ColorStyle) {
+        val v = LayoutInflater.from(mView.context).inflate(R.layout.dialog_namechooser, null)
+        (v.findViewById(R.id.field_name) as EditText).setText(cs.name)
+        AlertDialog.Builder(mView.context)
+                .setView(v)
+                .setTitle(R.string.name)
+                .setPositiveButton(android.R.string.ok, { dialogInterface, i ->
+                    cs.name = (v.findViewById(R.id.field_name) as EditText).text.toString()
+                })
+                .show()
+    }
+
+
+    private fun openColorEditDialog (cs: ColorStyle) {
         val cpd = ColorPickerDialog.createColorPickerDialog(mView.context)
         cpd.setLastColor(cs.color)
         cpd.setInitialColor(cs.color)

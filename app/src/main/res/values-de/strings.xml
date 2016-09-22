@@ -77,4 +77,8 @@
     <string name="no_boxstyles">keine Dimensionsstile definiert</string>
     <string name="no_colorstyles">keine Farben definiert</string>
     <string name="no_textstyles">keine Textstile definiert</string>
+    <string name="edit_color">Farbe bearbeiten</string>
+    <string name="edit_color_style">Farbstil bearbeiten</string>
+    <string name="edit_name">Name ändern</string>
+    <string name="info_rotation_no_handles">rotierte Objekte haben keine Verschiebe/Größenänderungsgriffe</string>
 </resources>

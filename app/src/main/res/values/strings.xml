@@ -77,4 +77,9 @@
     <string name="no_boxstyles">No Boxstyles defined</string>
     <string name="no_textstyles">No Textstyles defined</string>
     <string name="info_rotation_no_handles">rotated objects show no resizing handles</string>
+    <string name="edit_name">Edit Name</string>
+    <string name="edit_color">Edit Color</string>
+    <string name="edit_color_style">Edit Color Style</string>
+    <string name="edit_text_style">Edit Text Style</string>
+    <string name="edit_font">Edit font</string>
 </resources>

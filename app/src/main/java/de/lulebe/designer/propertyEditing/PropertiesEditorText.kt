@@ -138,7 +138,12 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
         if (v == null || actionId != EditorInfo.IME_ACTION_DONE) return false
         when (v) {
             mFontsizeView -> {
-                val value = Integer.valueOf(mFontsizeView.text.toString())
+                val value: Int
+                try {
+                    value = mFontsizeView.text.toString().toInt()
+                } catch (e: NumberFormatException) {
+                    return false
+                }
                 if (value < 1 || value > 200) return false
                 mObject.fontSize = value
                 return true
