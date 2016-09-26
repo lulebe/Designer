@@ -3,6 +3,7 @@ package de.lulebe.designer.propertyEditing
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import de.lulebe.designer.CheatSheet
@@ -12,7 +13,7 @@ import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.objects.CopyObject
 
 
-class PropertiesEditorCopy (val mObject: CopyObject, val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState) : TextView.OnEditorActionListener {
+class PropertiesEditorCopy (val mObject: CopyObject, val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState) : TextView.OnEditorActionListener, View.OnKeyListener {
 
 
     private val mNameView: EditText
@@ -48,8 +49,11 @@ class PropertiesEditorCopy (val mObject: CopyObject, val mView: ViewGroup, val m
 
 
         mNameView.setOnEditorActionListener(this)
+        mNameView.setOnKeyListener(this)
         mXPosView.setOnEditorActionListener(this)
+        mXPosView.setOnKeyListener(this)
         mYPosView.setOnEditorActionListener(this)
+        mYPosView.setOnKeyListener(this)
 
         mObject.addChangeListener {
             updateUI()
@@ -59,7 +63,19 @@ class PropertiesEditorCopy (val mObject: CopyObject, val mView: ViewGroup, val m
     }
 
 
-    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+    override fun onKey(view: View?, keyCode: Int, keyEvent: KeyEvent): Boolean {
+        if (keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER)
+            return processEditText(view as EditText)
+        return false
+    }
+
+
+    override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent?): Boolean {
+        if (actionId != EditorInfo.IME_ACTION_DONE) return false
+        return processEditText(v as EditText)
+    }
+
+    private fun processEditText (v: EditText) : Boolean {
         when (v) {
             mNameView -> {
                 mObject.name = mNameView.text.toString()

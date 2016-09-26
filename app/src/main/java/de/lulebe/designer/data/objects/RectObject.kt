@@ -355,8 +355,8 @@ class RectObject : SourceObject() {
             hasChanged = false
             return emptyArray()
         }
-        val calcXpos = d.dipToPxF(xpos)
-        val calcYpos = d.dipToPxF(ypos)
+        val calcXpos = d.dipToPxF(actualXpos)
+        val calcYpos = d.dipToPxF(actualYpos)
         val calcWidth = d.dipToPxF(width)
         val calcHeight = d.dipToPxF(height)
         var type = Renderable.Type.RECT
@@ -395,7 +395,7 @@ class RectObject : SourceObject() {
             paintStroke.color = strokeColor
             paintStroke.alpha = (alpha * paintStroke.alpha) / 255
             paintStroke.strokeWidth = d.dipToPxF(strokeWidth)
-            val position = Renderable.Position(d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, d.dipToPxF(width)/2F, d.dipToPxF(height)/2F)
+            val position = Renderable.Position(calcXpos, calcYpos, rotation, d.dipToPxF(width)/2F, d.dipToPxF(height)/2F)
             renderables.add(Renderable(type, shape, position, paintStroke))
         }
         hasChanged = false

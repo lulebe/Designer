@@ -53,7 +53,7 @@ class BoardState {
             l.onSelectChange(selected)
     }
     fun selectedAdd (obj: BaseObject?) {
-        if (obj == null)
+        if (obj == null || _selected.contains(obj))
             return
         _selected.add(obj)
         for (l in mListeners)

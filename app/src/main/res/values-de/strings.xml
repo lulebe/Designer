@@ -81,4 +81,7 @@
     <string name="edit_color_style">Farbstil bearbeiten</string>
     <string name="edit_name">Name ändern</string>
     <string name="info_rotation_no_handles">rotierte Objekte haben keine Verschiebe/Größenänderungsgriffe</string>
+    <string name="edit_font">Schriftart bearbeiten</string>
+    <string name="edit_text_style">Textstil bearbeiten</string>
+    <string name="group_selected_objects">ausgewählte Objekte gruppieren</string>
 </resources>

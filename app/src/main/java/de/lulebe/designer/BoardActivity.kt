@@ -201,7 +201,7 @@ class BoardActivity : AppCompatActivity() {
                 doAsync {
                     val tmpFile = File.createTempFile("designer_img", ".png", cacheDir)
                     val os = FileOutputStream(tmpFile)
-                    Renderer.renderJPEG(mBoardObject!!, 2, os)
+                    Renderer.renderPNG(mBoardObject!!, 2F, os)
                     os.close()
                     val intent = ShareCompat.IntentBuilder.from(this@BoardActivity)
                             .setType("image/png")

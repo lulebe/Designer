@@ -20,7 +20,7 @@ import de.lulebe.designer.data.styles.BoxStyle
 
 
 
-class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState) : TextView.OnEditorActionListener {
+class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState) : TextView.OnEditorActionListener, View.OnKeyListener {
 
 
     private val mNameView: EditText
@@ -63,12 +63,19 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         initCheatSheets()
 
         mNameView.setOnEditorActionListener(this)
+        mNameView.setOnKeyListener(this)
         mXPosView.setOnEditorActionListener(this)
+        mXPosView.setOnKeyListener(this)
         mYPosView.setOnEditorActionListener(this)
+        mYPosView.setOnKeyListener(this)
         mWidthView.setOnEditorActionListener(this)
+        mWidthView.setOnKeyListener(this)
         mHeightView.setOnEditorActionListener(this)
+        mHeightView.setOnKeyListener(this)
         mRotationView.setOnEditorActionListener(this)
+        mRotationView.setOnKeyListener(this)
         mAlphaView.setOnEditorActionListener(this)
+        mAlphaView.setOnKeyListener(this)
 
 
         mDeleteView.setOnClickListener {
@@ -108,10 +115,20 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         updateUI()
     }
 
+    override fun onKey(view: View, keyCode: Int, keyEvent: KeyEvent): Boolean {
+        if (keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER)
+            return processEditText(view as EditText)
+        return false
+    }
 
 
-    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-        if (v == null || actionId != EditorInfo.IME_ACTION_DONE) return false
+
+    override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent?): Boolean {
+        if (actionId != EditorInfo.IME_ACTION_DONE) return false
+        return processEditText(v as EditText)
+    }
+
+    private fun processEditText (v: EditText) : Boolean {
         when (v) {
             mNameView -> {
                 mObject.name = mNameView.text.toString()

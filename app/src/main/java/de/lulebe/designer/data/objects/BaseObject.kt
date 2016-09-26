@@ -11,6 +11,15 @@ import de.lulebe.designer.data.styles.BoxStyle
 
 abstract class BaseObject : IRenderable {
 
+
+    enum class HorizontalOrigin {
+        LEFT, RIGHT, CENTER
+    }
+    enum class VerticalOrigin {
+        TOP, BOTTOM, CENTER
+    }
+
+
     //listeners
     @Transient
     protected var listeners = mutableListOf<() -> Unit>()
@@ -29,6 +38,14 @@ abstract class BaseObject : IRenderable {
             listener()
         }
     }
+
+    @Transient
+    protected var _parentBoard: BoardObject? = null
+    var parentBoard: BoardObject?
+        get() = _parentBoard
+        set(value) {
+            _parentBoard = value
+        }
 
     @Transient
     private val handles = Array<Rect>(4, { Rect() })
@@ -70,6 +87,7 @@ abstract class BaseObject : IRenderable {
             change()
         }
 
+
     @Transient
     protected var _xposMoving: Int = _xpos
     var xposMoving: Int
@@ -77,6 +95,26 @@ abstract class BaseObject : IRenderable {
         set(value) {
             _xposMoving = value
             calculateHandles()
+        }
+
+    //xpos origin
+    protected var _xposOrigin = HorizontalOrigin.LEFT
+    var xposOrigin: HorizontalOrigin
+        get() = _xposOrigin
+        set(value) {
+            _xposOrigin = value
+            calculateHandles()
+            change()
+        }
+
+    //actual xpos
+    val actualXpos: Int
+        get() {
+            if (_parentBoard == null || _xposOrigin == HorizontalOrigin.LEFT) return _xpos
+            when (_xposOrigin) {
+                HorizontalOrigin.RIGHT -> { return _parentBoard!!.width - _xpos - _width }
+                else -> { return _parentBoard!!.width/2 - _width/2 + _xpos }
+            }
         }
 
 
@@ -98,6 +136,26 @@ abstract class BaseObject : IRenderable {
         set(value) {
             _yposMoving = value
             calculateHandles()
+        }
+
+    //ypos origin
+    protected var _yposOrigin = VerticalOrigin.TOP
+    var yposOrigin: VerticalOrigin
+        get() = _yposOrigin
+        set(value) {
+            _yposOrigin = value
+            calculateHandles()
+            change()
+        }
+
+    //actual ypos
+    val actualYpos: Int
+        get() {
+            if (_parentBoard == null || _yposOrigin == VerticalOrigin.TOP) return _ypos
+            when (_yposOrigin) {
+                VerticalOrigin.BOTTOM -> { return _parentBoard!!.height - _ypos - _height }
+                else -> { return _parentBoard!!.height/2 - _height/2 + _ypos }
+            }
         }
 
 
@@ -123,6 +181,19 @@ abstract class BaseObject : IRenderable {
             calculateHandles()
         }
 
+    //locked width
+    protected var _lockToParentWidth = false
+    var lockToParentWidth: Boolean
+        get() = _lockToParentWidth
+        set(value) {
+            if (_parentBoard == null || !canDirectlyChangeWidth()) return
+            if (_boxStyle != null)
+                boxStyle = null
+            _lockToParentWidth = value
+            width = _parentBoard!!.width
+            change()
+        }
+
 
     //height
     protected var _height: Int = 50
@@ -144,6 +215,18 @@ abstract class BaseObject : IRenderable {
         set(value) {
             _heightMoving = value
             calculateHandles()
+        }
+
+    protected var _lockToParentHeight = false
+    //locked height
+    var lockToParentHeight: Boolean
+        get() = _lockToParentHeight
+        set(value) {
+            if (_parentBoard == null || !canDirectlyChangeHeight()) return
+            if (_boxStyle != null)
+                boxStyle = null
+            _lockToParentHeight = value
+            height = _parentBoard!!.height
         }
 
     @Transient
@@ -220,23 +303,31 @@ abstract class BaseObject : IRenderable {
         calculateHandles()
     }
     open fun applyMovement() {
-        _xpos = xposMoving
-        _ypos = yposMoving
+        if (_xposOrigin == HorizontalOrigin.LEFT || _parentBoard == null)
+            _xpos = xposMoving
+        else if (_xposOrigin == HorizontalOrigin.RIGHT)
+            _xpos = _parentBoard!!.width - xposMoving - widthMoving
+        else if (_xposOrigin == HorizontalOrigin.CENTER)
+            _xpos = xposMoving - _parentBoard!!.width/2 - widthMoving/2
+        if (_yposOrigin == VerticalOrigin.TOP || _parentBoard == null)
+            _ypos = yposMoving
+        else if (_yposOrigin == VerticalOrigin.BOTTOM)
+            _ypos = _parentBoard!!.height - yposMoving - heightMoving
+        else if (_yposOrigin == VerticalOrigin.CENTER)
+            _ypos = yposMoving - _parentBoard!!.height/2 - heightMoving/2
         _width = widthMoving
         _height = heightMoving
         calculateHandles()
         change()
     }
     fun resetHandles() {
-        xposMoving = xpos
-        yposMoving = ypos
+        xposMoving = actualXpos
+        yposMoving = actualYpos
         widthMoving = width
         heightMoving = height
         calculateHandles()
     }
     fun setHandlePosition (handle: Int, x: Int, y: Int) {
-        val centerXold = xposMoving + widthMoving/2
-        val centerYold = yposMoving + heightMoving/2
         when (handle) {
             1 -> {
                 if (x >= xposMoving + widthMoving)
@@ -268,6 +359,7 @@ abstract class BaseObject : IRenderable {
 
 
     open fun init (ctx: Context, board: BoardObject?) {
+        parentBoard = board
         if (boxStyleChangeListener == null)
             boxStyleChangeListener = {
                 if (canDirectlyChangeWidth()) {
@@ -285,8 +377,8 @@ abstract class BaseObject : IRenderable {
             }
         if (board != null)
             boxStyle = board.styles.boxStyles[_boxStyleUID]
-        _xposMoving = xpos
-        _yposMoving = ypos
+        _xposMoving = actualXpos
+        _yposMoving = actualYpos
         _widthMoving = width
         _heightMoving = height
         calculateHandles()
@@ -330,9 +422,9 @@ abstract class BaseObject : IRenderable {
         var found = -1
         var i = 1
         val boundPath = Path()
-        boundPath.addRect(xpos.toFloat(), ypos.toFloat(), (xpos+width).toFloat(), (ypos+height).toFloat(), Path.Direction.CW)
+        boundPath.addRect(actualXpos.toFloat(), actualYpos.toFloat(), (actualXpos+width).toFloat(), (actualYpos+height).toFloat(), Path.Direction.CW)
         val matrix = Matrix()
-        matrix.setRotate(rotation, (xpos+(width/2F)).toFloat(), (ypos+(height/2F)).toFloat())
+        matrix.setRotate(rotation, (actualXpos+(width/2F)).toFloat(), (actualXpos+(height/2F)).toFloat())
         boundPath.transform(matrix)
         val pointPath = Path()
         pointPath.addRect(x.toFloat(), y.toFloat(), x.toFloat()+0.1F, y.toFloat()+0.1F, Path.Direction.CW)

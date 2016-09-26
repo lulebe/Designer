@@ -27,7 +27,7 @@ import de.lulebe.designer.data.styles.ColorStyle
 import de.lulebe.designer.data.styles.TextStyle
 
 
-class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mBoardObject: BoardObject, val mActivity: BoardActivity) : TextView.OnEditorActionListener {
+class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mBoardObject: BoardObject, val mActivity: BoardActivity) : TextView.OnEditorActionListener, View.OnKeyListener {
 
     private val mTextcolorView: View
     private val mExtractTextcolorView: ImageView
@@ -102,6 +102,7 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
 
 
         mFontsizeView.setOnEditorActionListener(this)
+        mFontsizeView.setOnKeyListener(this)
 
         mAlignleftView.setOnClickListener {
             mObject.alignment = Layout.Alignment.ALIGN_NORMAL
@@ -133,9 +134,20 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
     }
 
 
+    override fun onKey(view: View, keyCode: Int, keyEvent: KeyEvent): Boolean {
+        if (keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER)
+            return processEditText(view as EditText)
+        return false
+    }
 
-    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-        if (v == null || actionId != EditorInfo.IME_ACTION_DONE) return false
+
+    override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent?): Boolean {
+        if (actionId != EditorInfo.IME_ACTION_DONE) return false
+        return processEditText(v as EditText)
+    }
+
+
+    private fun processEditText(v: EditText): Boolean {
         when (v) {
             mFontsizeView -> {
                 val value: Int

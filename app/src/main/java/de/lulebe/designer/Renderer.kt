@@ -63,11 +63,11 @@ class Renderer {
 
 
 
-        fun renderJPEG (board: BoardObject, resolutionMultiplier: Int, outputStream: OutputStream) {
-            val deserializer = Deserializer(resolutionMultiplier.toFloat())
+        fun renderPNG(board: BoardObject, resolutionMultiplier: Float, outputStream: OutputStream) {
+            val deserializer = Deserializer(resolutionMultiplier)
             val bitmap = Bitmap.createBitmap(
-                    board.width * resolutionMultiplier,
-                    board.height * resolutionMultiplier,
+                    (board.width * resolutionMultiplier).toInt(),
+                    (board.height * resolutionMultiplier).toInt(),
                     Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             drawRenderables(board.getRenderables(deserializer, true), canvas)

@@ -16,7 +16,7 @@ import de.lulebe.designer.data.objects.RectObject
 import de.lulebe.designer.data.styles.ColorStyle
 
 
-class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mBoardObject: BoardObject) : View.OnClickListener, TextView.OnEditorActionListener {
+class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mBoardObject: BoardObject) : View.OnClickListener, TextView.OnEditorActionListener, View.OnKeyListener {
 
     private val mFilliconView: ImageView
     private val mToggleFillView: Switch
@@ -104,13 +104,18 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
         mExtractStrokecolorView.setOnClickListener(this)
 
         mStrokewidthView.setOnEditorActionListener(this)
+        mStrokewidthView.setOnKeyListener(this)
         mCornerradiusView.setOnEditorActionListener(this)
+        mCornerradiusView.setOnKeyListener(this)
 
 
 
         mShadowBlurView.setOnEditorActionListener(this)
+        mShadowBlurView.setOnKeyListener(this)
         mShadowXPosView.setOnEditorActionListener(this)
+        mShadowXPosView.setOnKeyListener(this)
         mShadowYPosView.setOnEditorActionListener(this)
+        mShadowYPosView.setOnKeyListener(this)
         mShadowView.setOnCheckedChangeListener { btn, shadow ->
             if (shadow != (mObject.shadow != null)) {
                 if (shadow)
@@ -212,9 +217,20 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
     }
 
 
+    override fun onKey(view: View, keyCode: Int, keyEvent: KeyEvent): Boolean {
+        if (keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER)
+            return processEditText(view as EditText)
+        return false
+    }
 
-    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-        if (v == null || actionId != EditorInfo.IME_ACTION_DONE) return false
+
+    override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent?): Boolean {
+        if (actionId != EditorInfo.IME_ACTION_DONE) return false
+        return processEditText(v as EditText)
+    }
+
+
+    private fun processEditText(v: EditText): Boolean {
         when (v) {
             mStrokewidthView -> {
                 val value: Int
@@ -274,7 +290,6 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
             else -> return false
         }
     }
-
 
 
     private fun updateUI () {

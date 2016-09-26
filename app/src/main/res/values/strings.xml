@@ -82,4 +82,5 @@
     <string name="edit_color_style">Edit Color Style</string>
     <string name="edit_text_style">Edit Text Style</string>
     <string name="edit_font">Edit font</string>
+    <string name="group_selected_objects">group selected Objects</string>
 </resources>

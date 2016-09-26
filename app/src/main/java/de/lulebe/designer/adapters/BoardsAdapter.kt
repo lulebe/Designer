@@ -1,13 +1,15 @@
 package de.lulebe.designer.adapters
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import com.squareup.picasso.Picasso
 import de.lulebe.designer.R
 import de.lulebe.designer.data.BoardMeta
+import java.io.File
 
 
 class BoardsAdapter(val listener: (BoardMeta, longClick: Boolean) -> Unit) : RecyclerView.Adapter<BoardsAdapter.BoardViewHolder>() {
@@ -29,22 +31,28 @@ class BoardsAdapter(val listener: (BoardMeta, longClick: Boolean) -> Unit) : Rec
     }
 
     override fun onBindViewHolder(holder: BoardViewHolder, position: Int) {
-        holder.tvName.text = mItems[position].name
+        val item = mItems[position]
+        holder.tvName.text = item.name
+        val ctx = holder.ivPreview.context
+        Picasso.with(ctx).load(File(ctx.filesDir.path + File.separator + item._id.toString() + File.separator + "preview.png"))
+                .into(holder.ivPreview)
         holder.view.setOnClickListener {
-            listener(mItems[position], false)
+            listener(item, false)
         }
         holder.view.setOnLongClickListener {
-            listener(mItems[position], true)
+            listener(item, true)
             true
         }
     }
 
     class BoardViewHolder : RecyclerView.ViewHolder {
         val tvName: TextView
+        val ivPreview: ImageView
         val view: View
         constructor(itemView: ViewGroup) : super(itemView) {
             view = itemView
             tvName = itemView.findViewById(R.id.tv_name) as TextView
+            ivPreview = itemView.findViewById(R.id.iv_preview) as ImageView
         }
     }
 }

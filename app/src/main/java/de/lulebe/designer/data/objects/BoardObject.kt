@@ -59,14 +59,6 @@ class BoardObject() : SourceObject() {
     private var renderedBitmap: Bitmap? = null
 
     @Transient
-    private var _parentBoard: BoardObject? = null
-    var parentBoard: BoardObject?
-        get() = _parentBoard
-        set(value) {
-            _parentBoard = value
-        }
-
-    @Transient
     private var _storageManager: StorageManager? = null
     var storageManager: StorageManager?
         get() {
@@ -211,33 +203,13 @@ class BoardObject() : SourceObject() {
         if (parentBoard != null || storageManager == null) return
         val sm = storageManager!!
         for ((key) in images) {
-            var used = false
-            for (obj in objects) {
-                if (obj is ImageObject) {
-                    val io = obj as ImageObject
-                    if (io.imageSource == ImageSource.USER && io.src == key.toString()) {
-                        used = true
-                        break
-                    }
-                }
-            }
-            if (!used) {
+            if (!isImageUsed(objects, key.toString())) {
                 sm.removeImage(key)
                 images.remove(key)
             }
         }
         for ((key) in fonts) {
-            var used = false
-            for (obj in objects) {
-                if (obj is TextObject) {
-                    val to = obj as TextObject
-                    if (to.fontUID == key) {
-                        used = true
-                        break
-                    }
-                }
-            }
-            if (!used) {
+            if (!isFontUsed(objects, key)) {
                 sm.removeFont(key)
                 fonts.remove(key)
                 FontCache.fonts.remove(key)
@@ -245,9 +217,28 @@ class BoardObject() : SourceObject() {
         }
     }
 
+    private fun isImageUsed (objs: List<BaseObject>, ImageUID: String) : Boolean {
+        objs.forEach {
+            if (it is ImageObject && it.imageSource == ImageSource.USER && it.src == ImageUID)
+                return true
+            if (it is BoardObject && isImageUsed(it.objects, ImageUID))
+                return true
+        }
+        return false
+    }
+
+    private fun isFontUsed (objs: List<BaseObject>, FontUID: Long) : Boolean {
+        objs.forEach {
+            if (it is TextObject && it.fontUID == FontUID)
+                return true
+            if (it is BoardObject && isFontUsed(it.objects, FontUID))
+                return true
+        }
+        return false
+    }
+
     override fun init (ctx: Context, board: BoardObject?) {
         styles.init()
-        parentBoard = board
         super.init(ctx, board)
         for (obj in _objects) {
             obj.init(ctx, this)
@@ -317,7 +308,7 @@ class BoardObject() : SourceObject() {
             if (obj.uid == uid)
                 return obj
         }
-        return null
+        return parentBoard?.getObjectWithUID(uid)
     }
 
 

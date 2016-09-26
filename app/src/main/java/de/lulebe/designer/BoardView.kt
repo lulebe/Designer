@@ -206,6 +206,8 @@ open class BoardView(val mActivity: BoardActivity, val mBoardState: BoardState, 
         mBoardState.selected.forEachIndexed { index, sel ->
             sel.getHandleRenderables(mDeserializer, -mBoardState.boardScrollX, -mBoardState.boardScrollY, !mBoardState.panningActive && index == 0)
                     .forEach { rend ->
+                        if (index != 0)
+                            rend.paint.color = Color.DKGRAY
                         Renderer.drawRenderable(rend, canvas, true)
                     }
         }
@@ -269,7 +271,9 @@ open class BoardView(val mActivity: BoardActivity, val mBoardState: BoardState, 
                 0 -> {
                     snappedX = snap(rawX, target.xposMoving + (rawX - mObjectdragLastX))
                     snappedY = snap(rawY, target.yposMoving + (rawY - mObjectdragLastY))
-                    target.movingTo(target.xposMoving + (snappedX - mObjectdragLastX), target.yposMoving + (snappedY - mObjectdragLastY))
+                    mBoardState.selected.forEach {
+                        it.movingTo(it.xposMoving + (snappedX - mObjectdragLastX), it.yposMoving + (snappedY - mObjectdragLastY))
+                    }
                 }
                 1 -> {
                     snappedX = snap(rawX, target.xposMoving + (rawX - mObjectdragLastX))
@@ -299,7 +303,7 @@ open class BoardView(val mActivity: BoardActivity, val mBoardState: BoardState, 
             return true
         }
         if (mObjectdragTouchee != null && event.action == MotionEvent.ACTION_UP) {
-            mObjectdragTouchee!!.applyMovement()
+            mBoardState.selected.forEach { it.applyMovement() }
             mObjectdragTouchee = null
             return true
         }

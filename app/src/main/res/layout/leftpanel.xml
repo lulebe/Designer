@@ -105,6 +105,19 @@
             android:contentDescription="@string/delete_unused_files"
             android:clickable="true"/>
 
+        <ImageView
+            android:id="@+id/btn_join"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginRight="168dp"
+            android:layout_gravity="right"
+            android:padding="12dp"
+            android:src="@drawable/ic_group_white_24dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/group_selected_objects"
+            android:clickable="true"/>
+
     </FrameLayout>
 
 

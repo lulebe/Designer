@@ -7,6 +7,7 @@ import android.support.v4.app.ShareCompat
 import android.support.v4.content.FileProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import de.lulebe.designer.Renderer
 import de.lulebe.designer.data.objects.*
 import de.lulebe.designer.external.RuntimeTypeAdapterFactory
 import net.lingala.zip4j.core.ZipFile
@@ -15,6 +16,7 @@ import net.lingala.zip4j.util.Zip4jConstants
 import org.apache.commons.io.FileUtils
 import java.io.*
 import java.util.*
+import kotlin.concurrent.thread
 
 
 class StorageManager {
@@ -62,11 +64,22 @@ class StorageManager {
                 mDir.mkdirs()
             mFile.createNewFile()
         }
+        thread { savePreview() }
         val outs = FileOutputStream(mFile)
         val outw = OutputStreamWriter(outs)
         mGson.toJson(boardObject, BoardObject::class.java, outw)
         outw.close()
         outs.close()
+    }
+
+    fun savePreview () {
+        val board = mBoardObject ?: return
+        if (!mDir.exists()) return
+        val f = File(mDir, "preview.png")
+        val os = FileOutputStream(f)
+        val ratio = 250F / board.width.toFloat()
+        Renderer.renderPNG(board, ratio, os)
+        os.close()
     }
 
     fun addImage (inp: InputStream, filename: String) : Long {
