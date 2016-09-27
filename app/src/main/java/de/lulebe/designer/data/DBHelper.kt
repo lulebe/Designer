@@ -51,6 +51,12 @@ class DBHelper(val context: Context) : SQLiteOpenHelper(context, DBHelper.DB_NAM
         }
     }
 
+    fun updateLastEditedTime (id: Long) {
+        val db = writableDatabase
+        db.execSQL("UPDATE boards SET lastOpened=" + Date().time.toString() + " WHERE _id=" + id.toString())
+        db.close()
+    }
+
     companion object {
         private val DB_NAME = "Designer.db"
         private val DB_VERSION = 3

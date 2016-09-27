@@ -1,5 +1,6 @@
 package de.lulebe.designer.adapters
 
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +33,10 @@ class BoardObjectsAdapter(val mBoardObject: BoardObject, val mBoardState: BoardS
     override fun onBindViewHolder(holder: ObjectViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         val item = itemList[position]
-        holder.view.isSelected == mBoardState.selected.contains(item)
+        if (mBoardState.selected.contains(item))
+            holder.textView.setTextColor(holder.textView.context.getColor(R.color.colorAccent))
+        else
+            holder.textView.setTextColor(Color.WHITE)
         holder.textView.text = itemList[position].name
         holder.colorView.background = ColorDrawable(itemList[position].getMainColor())
         holder.obj = item

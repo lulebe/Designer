@@ -77,7 +77,7 @@ class StorageManager {
         if (!mDir.exists()) return
         val f = File(mDir, "preview.png")
         val os = FileOutputStream(f)
-        val ratio = 250F / board.width.toFloat()
+        val ratio = 2F
         Renderer.renderPNG(board, ratio, os)
         os.close()
     }

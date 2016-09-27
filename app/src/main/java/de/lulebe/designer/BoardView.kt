@@ -5,6 +5,7 @@ import android.os.Build
 import android.support.v4.view.GestureDetectorCompat
 import android.util.TypedValue
 import android.view.GestureDetector
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
 import de.lulebe.designer.data.BoardState
@@ -68,8 +69,12 @@ open class BoardView(val mActivity: BoardActivity, val mBoardState: BoardState, 
         }
 
         override fun onLongPress(event: MotionEvent) {
-            val pressed = mBoardObject.getObjectAtPosition(eventXOnBoard(event), eventYOnBoard(event))
-            mBoardState.selectedAdd(pressed)
+            val pressed = mBoardObject.getObjectAtPosition(eventXOnBoard(event), eventYOnBoard(event)) ?: return
+            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+            if (!mBoardState.selected.contains(pressed))
+                    mBoardState.selectedAdd(pressed)
+            else
+                mBoardState.selectedRemove(pressed)
         }
 
         override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {

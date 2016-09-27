@@ -10,7 +10,7 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
@@ -22,6 +22,7 @@ import de.lulebe.designer.data.BoardMeta
 import de.lulebe.designer.data.DBHelper
 import de.lulebe.designer.data.StorageManager
 import java.io.File
+import java.util.*
 
 class SelectBoardActivity : AppCompatActivity() {
 
@@ -32,6 +33,7 @@ class SelectBoardActivity : AppCompatActivity() {
             openActionsDialog(board)
         } else {
             val intent = Intent(this, BoardActivity::class.java)
+            intent.putExtra("dbId", board._id)
             intent.putExtra("path", filesDir.path + File.separator + board._id.toString())
             startActivity(intent)
         }
@@ -97,7 +99,7 @@ class SelectBoardActivity : AppCompatActivity() {
             startActivityForResult(intent, REQUEST_CODE_IMPORT)
         }
         val boardsList = findViewById(R.id.boardslist) as RecyclerView
-        boardsList.layoutManager = LinearLayoutManager(this)
+        boardsList.layoutManager = GridLayoutManager(this, resources.getInteger(R.integer.mainpage_grid_rows))
         boardsList.adapter = mAdapter
     }
 
@@ -142,7 +144,7 @@ class SelectBoardActivity : AppCompatActivity() {
                 val db = dbh.writableDatabase
                 val cv = ContentValues()
                 cv.put("name", name)
-                cv.put("lastOpened", System.currentTimeMillis()/1000L)
+                cv.put("lastOpened", Date().time)
                 val _id = db.insert("boards", null, cv)
                 val sm = StorageManager.createWithNameInternal(name, filesDir.path + File.separator + _id.toString())
                 db.close()
@@ -170,7 +172,7 @@ class SelectBoardActivity : AppCompatActivity() {
             val db = dbh.writableDatabase
             val cv = ContentValues()
             cv.put("name", newName)
-            cv.put("lastOpened", System.currentTimeMillis()/1000L)
+            cv.put("lastOpened", Date().time)
             val newId = db.insert("boards", null, cv)
             val origSM = StorageManager(filesDir.path + File.separator + boardMeta._id.toString())
             origSM.duplicate(filesDir.path + File.separator + newId.toString())
@@ -204,7 +206,7 @@ class SelectBoardActivity : AppCompatActivity() {
             val cv = ContentValues()
             cv.put("_id", _id)
             cv.put("name", sm.get(this@SelectBoardActivity).name)
-            cv.put("lastOpened", System.currentTimeMillis()/1000L)
+            cv.put("lastOpened", Date().time)
             db.insert("boards", null, cv)
             db.close()
             dbh.close()
@@ -246,7 +248,7 @@ class SelectBoardActivity : AppCompatActivity() {
                 val item = BoardMeta()
                 item._id = c.getLong(c.getColumnIndex("_id"))
                 item.name = c.getString(c.getColumnIndex("name"))
-                item.lastOpened = c.getString(c.getColumnIndex("lastOpened"))
+                item.lastOpened = c.getLong(c.getColumnIndex("lastOpened"))
                 items.add(item)
             }
             c.close()

@@ -20,6 +20,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import butterknife.bindView
 import de.lulebe.designer.data.BoardState
+import de.lulebe.designer.data.DBHelper
 import de.lulebe.designer.data.StorageManager
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.propertyEditing.PropertyPanelManager
@@ -344,11 +345,21 @@ class BoardActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateLastEditedTime () {
+        if (intent.getBooleanExtra("isRoot", true)) {
+            val dbh = DBHelper(this@BoardActivity)
+            val id = intent.getLongExtra("dbId", 0)
+            dbh.updateLastEditedTime(id)
+            dbh.close()
+        }
+    }
+
     private inner class LoadBoard(val savedInstanceState: Bundle?) : AsyncTask<Void, Void, Boolean>() {
         override fun doInBackground(vararg params: Void?): Boolean {
             if (mStorageManager == null || !mStorageManager!!.exists()) return false
             mBoardObject = mStorageManager?.get(this@BoardActivity)
             mBoardKey = Random().nextInt()
+            updateLastEditedTime()
             (application as Designer).boards.put(mBoardKey, mBoardObject!!)
             return true
         }
@@ -420,6 +431,7 @@ class BoardActivity : AppCompatActivity() {
         override fun doInBackground(vararg params: Void?): Void? {
             if (mStorageManager == null || mBoardObject == null) return null
             mStorageManager?.save(mBoardObject!!)
+            updateLastEditedTime()
             return null
         }
     }
