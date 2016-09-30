@@ -424,10 +424,14 @@ class BoardActivity : AppCompatActivity() {
             mPropertyPanelManager = PropertyPanelManager(this, rightpane, mBoardObject!!, mBoardState!!)
             mLeftPanelManager = LeftPanelManager(mLeftpane, mBoardState!!, mBoardObject!!, this)
             mStylePanelManager = StylePanelManager(mBottompane, mBoardObject!!, mBoardState!!, this)
-            mLeftpane.visibility = View.VISIBLE
             if (!mBoardState!!.importing) {
+                mLeftpane.visibility = View.VISIBLE
                 mRightpane.visibility = View.VISIBLE
                 mBottompane.visibility = View.VISIBLE
+            } else {
+                val lp = mLayout.layoutParams as FrameLayout.LayoutParams
+                lp.setMargins(0, lp.topMargin, 0, 0)
+                mLayout.layoutParams = lp
             }
             findViewById(R.id.loading)?.visibility = View.GONE
             if (mBoardState!!.leftPanelLocked)

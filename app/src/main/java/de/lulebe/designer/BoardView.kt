@@ -36,7 +36,7 @@ open class BoardView(val mActivity: BoardActivity, val mBoardState: BoardState, 
     protected val mGestureListener = object: GestureDetector.SimpleOnGestureListener() {
 
         override fun onDown(event: MotionEvent?): Boolean {
-            if (event == null || mBoardState.importing)
+            if (event == null)
                 return false
             if (mBoardState.selected.size > 0) {
                 val x = eventXOnBoard(event)

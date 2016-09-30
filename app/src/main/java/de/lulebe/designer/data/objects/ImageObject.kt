@@ -205,6 +205,8 @@ class ImageObject() : SourceObject() {
 
 
     override fun getMainColor(): Int {
+        if (tinted)
+            return _tintColor
         return mainColorCached
     }
 

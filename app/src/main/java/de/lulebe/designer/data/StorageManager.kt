@@ -84,9 +84,8 @@ class StorageManager {
         os.close()
     }
 
-    fun addImage (inp: InputStream, filename: String) : Long {
+    fun addImage (inp: InputStream, filename: String, uid: Long = UIDGenerator.generateUID()) : Long {
         if (mBoardObject == null) return 0L
-        val uid = UIDGenerator.generateUID()
         mBoardObject!!.images.put(uid, filename)
         val to = File(mDir.path + File.separator + uid + "." + File(filename).extension)
         if (!to.exists())
@@ -102,9 +101,8 @@ class StorageManager {
             f.delete()
     }
 
-    fun addFont (inp: InputStream, filename: String) : Long {
+    fun addFont (inp: InputStream, filename: String, uid: Long = UIDGenerator.generateUID()) : Long {
         if (mBoardObject == null) return 0L
-        val uid = UIDGenerator.generateUID()
         mBoardObject!!.fonts.put(uid, filename)
         val to = File(mDir.path + File.separator + uid + "." + File(filename).extension)
         if (!to.exists())

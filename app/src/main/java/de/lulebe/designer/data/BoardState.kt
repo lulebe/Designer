@@ -81,6 +81,7 @@ class BoardState {
     var panningActive: Boolean
         get() = _panningActive
         set(value) {
+            if (!value && _importing) return
             _panningActive = value
             for (l in mListeners)
                 l.onPanningActive(value)

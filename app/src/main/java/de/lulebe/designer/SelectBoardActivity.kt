@@ -44,8 +44,8 @@ class SelectBoardActivity : AppCompatActivity() {
         initUI()
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         BoardsLoader().execute()
     }
 
@@ -137,8 +137,8 @@ class SelectBoardActivity : AppCompatActivity() {
             .show()
     }
 
-    private inner class BoardCreator(val name: String) : AsyncTask<Void, Void, String>() {
-        override fun doInBackground(vararg params: Void?): String? {
+    private inner class BoardCreator(val name: String) : AsyncTask<Void, Void, Long>() {
+        override fun doInBackground(vararg params: Void?): Long? {
             try {
                 val dbh = DBHelper(this@SelectBoardActivity)
                 val db = dbh.writableDatabase
@@ -149,14 +149,15 @@ class SelectBoardActivity : AppCompatActivity() {
                 val sm = StorageManager.createWithNameInternal(name, filesDir.path + File.separator + _id.toString())
                 db.close()
                 dbh.close()
-                return sm.getPath()
+                return _id
             } catch (e: IllegalArgumentException) {
                 return null
             }
         }
-        override fun onPostExecute (path: String?) {
+        override fun onPostExecute (id: Long?) {
             val intent = Intent(this@SelectBoardActivity, BoardActivity::class.java)
-            intent.putExtra("path", path)
+            intent.putExtra("dbId", id)
+            intent.putExtra("path", filesDir.path + File.separator + id.toString())
             startActivity(intent)
         }
     }
@@ -189,8 +190,8 @@ class SelectBoardActivity : AppCompatActivity() {
         }
     }
 
-    private inner class BoardImporter (val uri: Uri) : AsyncTask<Void, Void, String>() {
-        override fun doInBackground(vararg p0: Void?): String? {
+    private inner class BoardImporter (val uri: Uri) : AsyncTask<Void, Void, Long>() {
+        override fun doInBackground(vararg p0: Void?): Long? {
             val dbh = DBHelper(this@SelectBoardActivity)
             val db = dbh.writableDatabase
             val c = db.rawQuery("SELECT _id FROM boards ORDER BY _id DESC LIMIT 1", null)
@@ -210,12 +211,13 @@ class SelectBoardActivity : AppCompatActivity() {
             db.insert("boards", null, cv)
             db.close()
             dbh.close()
-            return sm.getPath()
+            return _id
         }
 
-        override fun onPostExecute(path: String?) {
+        override fun onPostExecute(id: Long?) {
             val intent = Intent(this@SelectBoardActivity, BoardActivity::class.java)
-            intent.putExtra("path", path)
+            intent.putExtra("dbId", id)
+            intent.putExtra("path", filesDir.path + File.separator + id.toString())
             startActivity(intent)
         }
     }

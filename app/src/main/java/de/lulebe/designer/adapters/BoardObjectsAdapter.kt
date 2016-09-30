@@ -2,6 +2,7 @@ package de.lulebe.designer.adapters
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,12 +35,17 @@ class BoardObjectsAdapter(val mBoardObject: BoardObject, val mBoardState: BoardS
         super.onBindViewHolder(holder, position)
         val item = itemList[position]
         if (mBoardState.selected.contains(item))
-            holder.textView.setTextColor(holder.textView.context.getColor(R.color.colorAccent))
+            holder.textView.setTextColor(ContextCompat.getColor(holder.textView.context, R.color.colorAccent))
         else
             holder.textView.setTextColor(Color.WHITE)
         holder.textView.text = itemList[position].name
         holder.colorView.background = ColorDrawable(itemList[position].getMainColor())
         holder.obj = item
+    }
+
+    override fun swapItems(pos1: Int, pos2: Int) {
+        if (!mBoardState.importing)
+            super.swapItems(pos1, pos2)
     }
 
     override fun getItemId(position: Int) = itemList[position].uid

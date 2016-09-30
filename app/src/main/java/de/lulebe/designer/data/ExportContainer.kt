@@ -27,7 +27,7 @@ class ExportContainer {
             if (imgPath != null) {
                 val imgFile = File(imgPath)
                 if (imgFile.exists() && imgFile.canRead()) {
-                    storage.addImage(FileInputStream(imgFile), fromBoard.images[it]!!)
+                    storage.addImage(FileInputStream(imgFile), fromBoard.images[it]!!, it)
                 }
             }
         }
@@ -36,7 +36,7 @@ class ExportContainer {
             if (fontPath != null) {
                 val fontFile = File(fontPath)
                 if (fontFile.exists() && fontFile.canRead()) {
-                    storage.addFont(FileInputStream(fontFile), fromBoard.fonts[it]!!)
+                    storage.addFont(FileInputStream(fontFile), fromBoard.fonts[it]!!, it)
                 }
             }
         }

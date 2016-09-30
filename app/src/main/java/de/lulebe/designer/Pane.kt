@@ -179,6 +179,7 @@ class Pane : FrameLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
         val dp2 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2F, resources.displayMetrics).toInt()
         val scv = findViewById(R.id.vert_scrollview) as ScrollView?
         scv?.setOnScrollChangeListener { view, scrollX, scrollY, oldScrollX, oldScrollY ->
