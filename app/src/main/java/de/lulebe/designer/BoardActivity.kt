@@ -448,6 +448,7 @@ class BoardActivity : AppCompatActivity() {
                 mBottompane.expand(mBoardState!!.bottomPanelExpanded, false)
             mBoardState?.addListener(object: BoardState.BoardStateListener() {
                 override fun onShowUI(shown: Boolean) {
+                    if (mBoardState!!.importing) return
                     if (shown) {
                         mLeftpane.visibility = View.VISIBLE
                         mRightpane.visibility = View.VISIBLE
