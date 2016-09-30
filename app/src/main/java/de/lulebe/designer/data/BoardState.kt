@@ -9,6 +9,7 @@ class BoardState {
 
     open class BoardStateListener () {
         open fun onSelectChange (objs: List<BaseObject>) {}
+        open fun onImporting (importing: Boolean) {}
         open fun onPanningActive (active: Boolean) {}
         open fun onShowGrid (shown: Boolean) {}
         open fun onShowUI (shown: Boolean) {}
@@ -64,6 +65,16 @@ class BoardState {
         for (l in mListeners)
             l.onSelectChange(selected)
     }
+
+
+    private var _importing: Boolean = false
+    var importing: Boolean
+        get() = _importing
+        set(value) {
+            _importing = value
+            for (l in mListeners)
+                l.onImporting(value)
+        }
 
 
     private var _panningActive: Boolean = true
@@ -170,6 +181,7 @@ class BoardState {
 
     fun saveInstanceState (instanceState: Bundle) {
         val b = Bundle()
+        b.putBoolean("importing", importing)
         b.putBoolean("panningActive", panningActive)
         b.putBoolean("showGrid", showGrid)
         b.putBoolean("showUI", showUI)
@@ -192,6 +204,7 @@ class BoardState {
                 return BoardState()
             val bs = BoardState()
             val b = sis.getBundle("BoardState")
+            bs.importing = b.getBoolean("importing")
             bs.panningActive = b.getBoolean("panningActive")
             bs.showGrid = b.getBoolean("showGrid")
             bs.showUI = b.getBoolean("showUI")

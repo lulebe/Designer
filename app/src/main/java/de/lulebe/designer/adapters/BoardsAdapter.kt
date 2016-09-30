@@ -1,7 +1,6 @@
 package de.lulebe.designer.adapters
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +37,6 @@ class BoardsAdapter(val listener: (BoardMeta, longClick: Boolean) -> Unit) : Rec
         holder.tvName.text = item.name
         val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault())
         sdf.timeZone = Calendar.getInstance().timeZone
-        Log.d("TIMEZONE", sdf.timeZone.displayName)
         holder.tvLastedited.text = sdf.format(Date(item.lastOpened))
         val ctx = holder.ivPreview.context
         Picasso.with(ctx).load(File(ctx.filesDir.path + File.separator + item._id.toString() + File.separator + "preview.png"))

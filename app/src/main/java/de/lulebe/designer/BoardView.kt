@@ -36,7 +36,7 @@ open class BoardView(val mActivity: BoardActivity, val mBoardState: BoardState, 
     protected val mGestureListener = object: GestureDetector.SimpleOnGestureListener() {
 
         override fun onDown(event: MotionEvent?): Boolean {
-            if (event == null)
+            if (event == null || mBoardState.importing)
                 return false
             if (mBoardState.selected.size > 0) {
                 val x = eventXOnBoard(event)
@@ -58,6 +58,7 @@ open class BoardView(val mActivity: BoardActivity, val mBoardState: BoardState, 
         }
 
         override fun onDoubleTap(event: MotionEvent): Boolean {
+            if (mBoardState.importing) return false
             val tapped = mBoardObject.getObjectAtPosition(eventXOnBoard(event), eventYOnBoard(event))
             mBoardState.selectedSet(tapped)
             if (tapped is BoardObject)

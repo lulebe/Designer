@@ -20,6 +20,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import butterknife.bindView
 import de.lulebe.designer.data.*
+import de.lulebe.designer.data.objects.BaseObject
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.propertyEditing.PropertyPanelManager
 import de.lulebe.designer.styleEditing.StylePanelManager
@@ -36,8 +37,6 @@ class BoardActivity : AppCompatActivity() {
     val REQUEST_CODE_GROUP = 2
     val REQUEST_CODE_FONT = 3
     val REQUEST_CODE_IMPORT = 4
-
-    private var mRequestedBoard: BoardMeta? = null
 
     private val mMainView: View by bindView(R.id.main)
     private val mToolbar: Toolbar by bindView(R.id.toolbar)
@@ -178,16 +177,23 @@ class BoardActivity : AppCompatActivity() {
         }
         return true
     }
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> {
+                if (mBoardState != null && mBoardState!!.importing) {
+                    val data = Intent()
+                    val objs = mBoardState!!.selected.map(BaseObject::uid).toLongArray()
+                    data.putExtra("selectedObjects", objs)
+                    data.putExtra("boardDbId", intent.getLongExtra("dbId", 0))
+                    setResult(Activity.RESULT_OK, data)
+                }
                 finish()
                 return true
             }
             R.id.menu_showui -> {
                 if (mBoardState == null) return false
-                item!!.isChecked = !item!!.isChecked
-                mBoardState?.showUI = item!!.isChecked
+                item.isChecked = !item.isChecked
+                mBoardState?.showUI = item.isChecked
                 if (mBoardState!!.showUI)
                     mBoardState!!.boardScrollX += TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64F, resources.displayMetrics)
                 else
@@ -290,9 +296,9 @@ class BoardActivity : AppCompatActivity() {
     }
 
     fun importFromBoard (bm: BoardMeta) {
-        mRequestedBoard = bm
         val intent = Intent(this, BoardActivity::class.java)
         intent.putExtra("dbId", bm._id)
+        intent.putExtra("import", true)
         startActivityForResult(intent, REQUEST_CODE_IMPORT)
     }
 
@@ -353,12 +359,11 @@ class BoardActivity : AppCompatActivity() {
                 }
             }
             REQUEST_CODE_IMPORT -> {
-                if (data != null && resultCode != Activity.RESULT_OK) {
+                if (data != null && resultCode == Activity.RESULT_OK) {
                     doAsync {
                         val toBoard = mBoardObject
-                        val bm = mRequestedBoard
-                        if (bm != null && toBoard != null) {
-                            val sm = StorageManager(this@BoardActivity, bm._id)
+                        if (toBoard != null) {
+                            val sm = StorageManager(this@BoardActivity, data.getLongExtra("boardDbId", 0))
                             val fromBoard = sm.get(this@BoardActivity)
                             val ec = ExportContainer()
                             data.getLongArrayExtra("selectedObjects").forEach {
@@ -369,7 +374,6 @@ class BoardActivity : AppCompatActivity() {
                         }
                     }
                 }
-                mRequestedBoard = null
             }
         }
     }
@@ -405,6 +409,7 @@ class BoardActivity : AppCompatActivity() {
         if (mBoardObject != null) {
             supportActionBar?.title = mBoardObject!!.name
             mBoardState = BoardState.fromInstanceState(savedInstanceState, mBoardObject!!)
+            mBoardState!!.importing = intent.getBooleanExtra("import", false)
             val sp = PreferenceManager.getDefaultSharedPreferences(this)
             val boardView: View
             if (sp.getBoolean("surfaceview", true))
@@ -420,8 +425,10 @@ class BoardActivity : AppCompatActivity() {
             mLeftPanelManager = LeftPanelManager(mLeftpane, mBoardState!!, mBoardObject!!, this)
             mStylePanelManager = StylePanelManager(mBottompane, mBoardObject!!, mBoardState!!, this)
             mLeftpane.visibility = View.VISIBLE
-            mRightpane.visibility = View.VISIBLE
-            mBottompane.visibility = View.VISIBLE
+            if (!mBoardState!!.importing) {
+                mRightpane.visibility = View.VISIBLE
+                mBottompane.visibility = View.VISIBLE
+            }
             findViewById(R.id.loading)?.visibility = View.GONE
             if (mBoardState!!.leftPanelLocked)
                 mLeftpane.lock(true, false)
