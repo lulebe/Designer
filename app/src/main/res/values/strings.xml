@@ -83,4 +83,5 @@
     <string name="edit_text_style">Edit Text Style</string>
     <string name="edit_font">Edit font</string>
     <string name="group_selected_objects">group selected Objects</string>
+    <string name="import_objects">import objects</string>
 </resources>

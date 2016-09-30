@@ -84,4 +84,5 @@
     <string name="edit_font">Schriftart bearbeiten</string>
     <string name="edit_text_style">Textstil bearbeiten</string>
     <string name="group_selected_objects">ausgewählte Objekte gruppieren</string>
+    <string name="import_objects">Objekte importieren</string>
 </resources>

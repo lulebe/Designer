@@ -1,10 +1,14 @@
 package de.lulebe.designer
 
 import android.support.v4.content.res.ResourcesCompat
+import android.support.v7.app.AlertDialog
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
 import com.woxthebox.draglistview.DragListView
+import de.lulebe.designer.adapters.BoardImportAdapter
 import de.lulebe.designer.adapters.BoardObjectsAdapter
 import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.Grouper
@@ -20,10 +24,12 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
     private val mBtnAddImage: View
     private val mBtnAddGroup: View
 
+    private val mBtnImport: View
+    private val mBtnJoin: View
+
     private val mBtnToggleEditpan: ImageView
     private val mBtnToggleGrid: ImageView
     private val mBtnRemoveUnusedFiles: View
-    private val mBtnJoin: View
 
     private val mObjectslistView: DragListView
 
@@ -34,10 +40,12 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
         mBtnAddImage = mPanel.findViewById(R.id.btn_add_image)
         mBtnAddGroup = mPanel.findViewById(R.id.btn_add_group)
 
+        mBtnImport = mPanel.findViewById(R.id.btn_import)
+        mBtnJoin = mPanel.findViewById(R.id.btn_join)
+
         mBtnToggleEditpan = mPanel.findViewById(R.id.btn_toggle_editpan) as ImageView
         mBtnToggleGrid = mPanel.findViewById(R.id.btn_toggle_grid) as ImageView
         mBtnRemoveUnusedFiles = mPanel.findViewById(R.id.btn_remove_unused)
-        mBtnJoin = mPanel.findViewById(R.id.btn_join)
 
 
         mObjectslistView = mPanel.findViewById(R.id.list_objects) as DragListView
@@ -49,10 +57,12 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
         mBtnAddImage.setOnClickListener(this)
         mBtnAddGroup.setOnClickListener(this)
 
+        mBtnImport.setOnClickListener(this)
+        mBtnJoin.setOnClickListener(this)
+
         mBtnToggleEditpan.setOnClickListener(this)
         mBtnToggleGrid.setOnClickListener(this)
         mBtnRemoveUnusedFiles.setOnClickListener(this)
-        mBtnJoin.setOnClickListener(this)
 
 
         initObjectslist()
@@ -90,6 +100,12 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
                 val obj = BoardObject()
                 createObj(obj)
             }
+            mBtnImport -> {
+                importObjs()
+            }
+            mBtnJoin -> {
+                mBoardState.selectedSet(Grouper.group(mPanel.context, mBoardObject, mBoardState.selected))
+            }
             mBtnToggleGrid -> {
                 mBoardState.showGrid = !mBoardState.showGrid
             }
@@ -101,9 +117,6 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
                     mBoardObject.removeUnusedFiles()
                 }
             }
-            mBtnJoin -> {
-                mBoardState.selectedSet(Grouper.group(mPanel.context, mBoardObject, mBoardState.selected))
-            }
         }
         mPanel.expand(false)
     }
@@ -112,6 +125,23 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
         obj.init(mPanel.context, mBoardObject)
         mBoardObject.addObject(obj)
         mBoardState.selectedSet(obj)
+    }
+
+
+    private fun importObjs () {
+        val rv = RecyclerView(mPanel.context)
+        rv.layoutManager = GridLayoutManager(mPanel.context, 2)
+        val dialog = AlertDialog.Builder(mPanel.context)
+                .setTitle("Import Objects")
+                .setView(rv)
+                .setNegativeButton(android.R.string.cancel) { dialogInterface, i ->
+                    dialogInterface.cancel()
+                }
+                .show()
+        val adapter = BoardImportAdapter(mPanel.context) {
+            dialog.dismiss()
+        }
+        rv.adapter = adapter
     }
 
 
@@ -152,9 +182,10 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
         CheatSheet.setup(mBtnAddText)
         CheatSheet.setup(mBtnAddImage)
         CheatSheet.setup(mBtnAddGroup)
+        CheatSheet.setup(mBtnImport)
+        CheatSheet.setup(mBtnJoin)
         CheatSheet.setup(mBtnToggleEditpan)
         CheatSheet.setup(mBtnToggleGrid)
         CheatSheet.setup(mBtnRemoveUnusedFiles)
-        CheatSheet.setup(mBtnJoin)
     }
 }

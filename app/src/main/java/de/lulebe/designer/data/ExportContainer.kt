@@ -26,16 +26,18 @@ class ExportContainer {
             val imgPath = fromBoard.getImagePath(it)
             if (imgPath != null) {
                 val imgFile = File(imgPath)
-                if (imgFile.exists() && imgFile.canRead())
+                if (imgFile.exists() && imgFile.canRead()) {
                     storage.addImage(FileInputStream(imgFile), fromBoard.images[it]!!)
+                }
             }
         }
         fonts.forEach {
             val fontPath = fromBoard.getFontPath(it)
             if (fontPath != null) {
                 val fontFile = File(fontPath)
-                if (fontFile.exists() && fontFile.canRead())
+                if (fontFile.exists() && fontFile.canRead()) {
                     storage.addFont(FileInputStream(fontFile), fromBoard.fonts[it]!!)
+                }
             }
         }
         //add all styles
