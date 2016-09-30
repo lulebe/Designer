@@ -3,6 +3,7 @@ package de.lulebe.designer.data.objects
 import android.content.Context
 import android.graphics.*
 import de.lulebe.designer.data.Deserializer
+import de.lulebe.designer.data.ExportContainer
 import de.lulebe.designer.data.styles.ColorStyle
 
 
@@ -196,6 +197,19 @@ class PathObject : SourceObject() {
     override fun clone(): PathObject {
         val po = PathObject()
         applyBaseClone(po)
+        points.forEach { po.points.add(Pair(Point(it.first.x, it.first.y), it.second)) }
+        po.fillColor = _fillColor
+        po.strokeColor = _strokeColor
+        po.strokeWidth = _strokeWidth
+        po.fillColorStyle = fillColorStyle
+        po.strokeColorStyle = strokeColorStyle
         return po
+    }
+
+    override fun export(ec: ExportContainer): PathObject {
+        val newObj = super.export(ec) as PathObject
+        newObj.strokeColorStyle = strokeColorStyle?.export(ec)
+        newObj.fillColorStyle = fillColorStyle?.export(ec)
+        return newObj
     }
 }

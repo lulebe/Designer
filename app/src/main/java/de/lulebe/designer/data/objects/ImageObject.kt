@@ -212,17 +212,23 @@ class ImageObject() : SourceObject() {
     override fun clone(): ImageObject {
         val obj = ImageObject()
         applyBaseClone(obj)
-        obj.imageSource = imageSource
-        obj.src = src
+        obj.imageSource = _imageSource
+        obj.src = _src
+        obj.tintColor = _tintColor
+        obj.tinted = _tinted
+        obj.tintColorStyle = tintColorStyle
+        obj.keepRatio = _keepRatio
         return obj
     }
 
-    override fun export(ec: ExportContainer) {
-        super.export(ec)
+    override fun export(ec: ExportContainer) : ImageObject {
+        val newObj = super.export(ec) as ImageObject
         if (imageSource == ImageSource.USER && src != "")
             try {
                 ec.images.add(src.toLong())
             } catch (e: NumberFormatException) {}
+        newObj.tintColorStyle = tintColorStyle?.export(ec)
+        return newObj
     }
 
 }

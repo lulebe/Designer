@@ -262,17 +262,22 @@ class TextObject : SourceObject() {
     override fun clone(): TextObject {
         val obj = TextObject()
         applyBaseClone(obj)
-        obj.text = text
-        obj.alignment = alignment
-        obj.textColor = textColor
-        obj.fontSize = fontSize
+        obj.text = _text
+        obj.alignment = _alignment
+        obj.textColor = _textColor
+        obj.fontSize = _fontSize
+        obj.textStyle = textStyle
+        obj.textColorStyle = textColorStyle
         return obj
     }
 
-    override fun export(ec: ExportContainer) {
-        super.export(ec)
+    override fun export(ec: ExportContainer) : TextObject {
+        val newObj = super.export(ec) as TextObject
         if (fontUID != 0L)
             ec.fonts.add(fontUID)
+        newObj.textStyle = textStyle?.export(ec)
+        newObj.textColorStyle = textColorStyle?.export(ec)
+        return newObj
     }
 
 }

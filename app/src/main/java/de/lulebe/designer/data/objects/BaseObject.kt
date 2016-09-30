@@ -9,7 +9,7 @@ import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.BoxStyle
 
 
-abstract class BaseObject : IRenderable {
+abstract class BaseObject : IRenderable, Cloneable {
 
 
     enum class HorizontalOrigin {
@@ -491,13 +491,16 @@ abstract class BaseObject : IRenderable {
         return Color.BLACK
     }
 
-    open fun export (ec: ExportContainer) {
+    open fun export (ec: ExportContainer) : BaseObject {
+        if (ec.newUIDs.containsKey(uid))
+            return ec.objects[ec.newUIDs[uid]]!!
         val newObj = this.clone()
         ec.objects.put(newObj.uid, newObj)
-        if (boxStyle != null)
-            ec.boxStyles.put(boxStyle!!.uid, boxStyle!!)
+        ec.newUIDs.put(uid, newObj.uid)
+        newObj.boxStyle = boxStyle?.export(ec)
+        return newObj
     }
 
-    abstract fun clone () : BaseObject
+    override public abstract fun clone () : BaseObject
 
 }

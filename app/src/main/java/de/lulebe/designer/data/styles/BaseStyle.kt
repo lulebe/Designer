@@ -1,9 +1,10 @@
 package de.lulebe.designer.data.styles
 
+import de.lulebe.designer.data.ExportContainer
 import de.lulebe.designer.data.UIDGenerator
 
 
-open class BaseStyle {
+abstract class BaseStyle : Cloneable {
 
     //listeners
     @Transient
@@ -34,4 +35,9 @@ open class BaseStyle {
             _name = value
             change()
         }
+
+    override public abstract fun clone () : BaseStyle
+
+    abstract fun export (ec: ExportContainer) : BaseStyle
+
 }

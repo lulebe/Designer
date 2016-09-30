@@ -1,6 +1,7 @@
 package de.lulebe.designer.data.styles
 
 import android.text.Layout
+import de.lulebe.designer.data.ExportContainer
 
 
 class TextStyle : BaseStyle() {
@@ -30,5 +31,23 @@ class TextStyle : BaseStyle() {
             _alignment = value
             change()
         }
+
+    override fun clone(): TextStyle {
+        val ts = TextStyle()
+        ts.name = _name
+        ts.fontSize = _fontSize
+        ts.font = _font
+        ts.alignment = _alignment
+        return ts
+    }
+
+    override fun export(ec: ExportContainer): TextStyle {
+        if (ec.newUIDs.containsKey(uid))
+            return ec.textStyles[ec.newUIDs[uid]]!!
+        val newStyle = clone()
+        ec.newUIDs.put(uid, newStyle.uid)
+        ec.textStyles.put(newStyle.uid, newStyle)
+        return newStyle
+    }
 
 }

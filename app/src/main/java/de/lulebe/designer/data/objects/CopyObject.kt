@@ -72,9 +72,12 @@ class CopyObject : BaseObject() {
         return source!!.getMainColor()
     }
 
-    override fun export(ec: ExportContainer) {
-        super.export(ec)
-        if (source != null)
-            ec.objects.put(source!!.uid, source!!)
+    override fun export(ec: ExportContainer) : CopyObject {
+        val newObj = super.export(ec) as CopyObject
+        if (source != null) {
+            val newSrc = source!!.export(ec)
+            newObj.sourceId = newSrc.uid
+        }
+        return newObj
     }
 }

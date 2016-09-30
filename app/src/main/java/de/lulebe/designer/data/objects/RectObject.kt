@@ -92,7 +92,7 @@ class RectObject : SourceObject() {
     
     
     
-    class Gradient {
+    class Gradient : Cloneable {
         //listeners
         @Transient
         private var listeners: MutableList<() -> Unit> = mutableListOf()
@@ -201,7 +201,11 @@ class RectObject : SourceObject() {
             return cs
         }
 
-        fun init () {
+        fun init (board: BoardObject) {
+            if (_startColorStyleUID != null)
+                startColorStyle = board.styles.colorStyles[_startColorStyleUID!!]
+            if (_endColorStyleUID != null)
+                endColorStyle = board.styles.colorStyles[_endColorStyleUID!!]
             startColorStyleChangeListener = {
                 _startColor = startColorStyle!!.color
                 change()
@@ -211,13 +215,31 @@ class RectObject : SourceObject() {
                 change()
             }
         }
+
+        override public fun clone () : Gradient {
+            val newG = Gradient()
+            newG.direction = direction
+            newG.startColor = startColor
+            newG.endColor = endColor
+            newG.startColorStyle = startColorStyle
+            newG.endColorStyle = endColorStyle
+            return newG
+        }
+
+        fun export (ec: ExportContainer) : Gradient {
+            val newG = clone()
+            newG.startColorStyle = startColorStyle?.export(ec)
+            newG.endColorStyle = endColorStyle?.export(ec)
+            return newG
+        }
+
     }
 
 
     
     
     
-    class Shadow {
+    class Shadow : Cloneable{
 
         //listeners
         @Transient
@@ -268,6 +290,10 @@ class RectObject : SourceObject() {
             this.blur = blur
             this.xpos = xpos
             this.ypos = ypos
+        }
+
+        override public fun clone () : Shadow {
+            return Shadow(blur, xpos, ypos)
         }
 
     }
@@ -435,6 +461,7 @@ class RectObject : SourceObject() {
             change()
         }
         if (board != null) {
+            gradient?.init(board)
             fillColorStyle = board.styles.colorStyles[_fillColorStyleUID]
             strokeColorStyle = board.styles.colorStyles[_strokeColorStyleUID]
             gradient?.startColorStyle = board.styles.colorStyles[gradient?._startColorStyleUID]
@@ -456,23 +483,25 @@ class RectObject : SourceObject() {
 
     override fun clone () : RectObject {
         val obj = RectObject()
-        applyBaseClone(obj)
-        if (shadow != null) {
-            obj.shadow = Shadow(shadow!!.blur, shadow!!.xpos, shadow!!.ypos)
-        }
+        obj.shadow = shadow?.clone()
+        obj.gradient = gradient?.clone()
         obj.fillColor = fillColor
         obj.strokeWidth = strokeWidth
         obj.strokeColor = strokeColor
         obj.cornerRadius = cornerRadius
+        applyBaseClone(obj)
+        obj.fillColorStyle = fillColorStyle
+        obj.strokeColorStyle = strokeColorStyle
         return obj
     }
 
-    override fun export(ec: ExportContainer) {
-        super.export(ec)
-        if (fillColorStyle != null)
-            ec.colorStyles.put(fillColorStyle!!.uid, fillColorStyle!!)
-        if (strokeColorStyle != null)
-            ec.colorStyles.put(strokeColorStyle!!.uid, strokeColorStyle!!)
+    override fun export(ec: ExportContainer) : RectObject {
+        val newObj = super.export(ec) as RectObject
+        newObj.fillColorStyle = fillColorStyle?.export(ec)
+        newObj.strokeColorStyle = strokeColorStyle?.export(ec)
+        newObj.shadow = shadow?.clone()
+        newObj.gradient = gradient?.export(ec)
+        return newObj
     }
 
 }
