@@ -271,13 +271,14 @@ class TextObject : SourceObject() {
         return obj
     }
 
-    override fun export(ec: ExportContainer) : TextObject {
-        val newObj = super.export(ec) as TextObject
+    override fun export(ec: ExportContainer, saveToContainer: Boolean) : List<BaseObject> {
+        val list = super.export(ec, saveToContainer)
+        val newObj = list[0] as TextObject
         if (fontUID != 0L)
             ec.fonts.add(fontUID)
         newObj.textStyle = textStyle?.export(ec)
         newObj.textColorStyle = textColorStyle?.export(ec)
-        return newObj
+        return list
     }
 
 }

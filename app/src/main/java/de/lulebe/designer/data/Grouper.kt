@@ -3,10 +3,14 @@ package de.lulebe.designer.data
 import android.content.Context
 import de.lulebe.designer.data.objects.BaseObject
 import de.lulebe.designer.data.objects.BoardObject
+import de.lulebe.designer.data.objects.CopyObject
 
 
 object Grouper {
     fun group (ctx: Context, oldBoard: BoardObject, objects: List<BaseObject>) : BoardObject {
+        objects.filter {
+            it !is CopyObject
+        }
         val newBoard = BoardObject()
         val sizes = calculateSizes(objects)
         newBoard.xpos = sizes[0]

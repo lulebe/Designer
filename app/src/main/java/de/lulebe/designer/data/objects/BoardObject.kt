@@ -308,7 +308,7 @@ class BoardObject() : SourceObject() {
             if (obj.uid == uid)
                 return obj
         }
-        return parentBoard?.getObjectWithUID(uid)
+        return null
     }
 
 
@@ -333,11 +333,17 @@ class BoardObject() : SourceObject() {
         return obj
     }
 
-    override fun export(ec: ExportContainer) {
-        super.export(ec)
-        for (obj in objects) {
-            obj.export(ec)
+    override fun export(ec: ExportContainer, saveToContainer: Boolean) : List<BaseObject> {
+        val list = super.export(ec, saveToContainer)
+        val newObj = list[0] as BoardObject
+        newObj.objects.flatMap {
+            val objs = it.export(ec, false)
+            newObj.removeObject(it)
+            objs
+        }.forEach {
+            newObj.addObject(it)
         }
+        return list
     }
 
 

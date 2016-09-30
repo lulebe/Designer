@@ -495,13 +495,14 @@ class RectObject : SourceObject() {
         return obj
     }
 
-    override fun export(ec: ExportContainer) : RectObject {
-        val newObj = super.export(ec) as RectObject
+    override fun export(ec: ExportContainer, saveToContainer: Boolean) : List<BaseObject> {
+        val list = super.export(ec, saveToContainer)
+        val newObj = list[0] as RectObject
         newObj.fillColorStyle = fillColorStyle?.export(ec)
         newObj.strokeColorStyle = strokeColorStyle?.export(ec)
         newObj.shadow = shadow?.clone()
         newObj.gradient = gradient?.export(ec)
-        return newObj
+        return list
     }
 
 }

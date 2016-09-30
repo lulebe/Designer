@@ -72,12 +72,15 @@ class CopyObject : BaseObject() {
         return source!!.getMainColor()
     }
 
-    override fun export(ec: ExportContainer) : CopyObject {
-        val newObj = super.export(ec) as CopyObject
+    override fun export(ec: ExportContainer, saveToContainer: Boolean) : List<BaseObject> {
+        val originalList = super.export(ec, saveToContainer)
+        val mutList = originalList.toMutableList()
+        val newObj = originalList[0] as CopyObject
         if (source != null) {
-            val newSrc = source!!.export(ec)
+            val newSrc = source!!.export(ec, saveToContainer)[0]
             newObj.sourceId = newSrc.uid
+            mutList.add(newSrc)
         }
-        return newObj
+        return mutList.toList()
     }
 }

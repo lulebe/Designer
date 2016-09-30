@@ -221,14 +221,15 @@ class ImageObject() : SourceObject() {
         return obj
     }
 
-    override fun export(ec: ExportContainer) : ImageObject {
-        val newObj = super.export(ec) as ImageObject
+    override fun export(ec: ExportContainer, saveToContainer: Boolean) : List<BaseObject> {
+        val list = super.export(ec, saveToContainer)
+        val newObj = list[0] as ImageObject
         if (imageSource == ImageSource.USER && src != "")
             try {
                 ec.images.add(src.toLong())
             } catch (e: NumberFormatException) {}
         newObj.tintColorStyle = tintColorStyle?.export(ec)
-        return newObj
+        return list
     }
 
 }

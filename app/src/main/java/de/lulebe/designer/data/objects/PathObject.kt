@@ -206,10 +206,11 @@ class PathObject : SourceObject() {
         return po
     }
 
-    override fun export(ec: ExportContainer): PathObject {
-        val newObj = super.export(ec) as PathObject
+    override fun export(ec: ExportContainer, saveToContainer: Boolean): List<BaseObject> {
+        val list = super.export(ec, saveToContainer)
+        val newObj = list[0] as PathObject
         newObj.strokeColorStyle = strokeColorStyle?.export(ec)
         newObj.fillColorStyle = fillColorStyle?.export(ec)
-        return newObj
+        return list
     }
 }

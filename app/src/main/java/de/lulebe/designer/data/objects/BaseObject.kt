@@ -491,14 +491,15 @@ abstract class BaseObject : IRenderable, Cloneable {
         return Color.BLACK
     }
 
-    open fun export (ec: ExportContainer) : BaseObject {
+    open fun export (ec: ExportContainer, saveToContainer: Boolean) : List<BaseObject> {
         if (ec.newUIDs.containsKey(uid))
-            return ec.objects[ec.newUIDs[uid]]!!
+            return listOf(ec.objects[ec.newUIDs[uid]]!!)
         val newObj = this.clone()
-        ec.objects.put(newObj.uid, newObj)
+        if (saveToContainer)
+            ec.objects.put(newObj.uid, newObj)
         ec.newUIDs.put(uid, newObj.uid)
         newObj.boxStyle = boxStyle?.export(ec)
-        return newObj
+        return listOf(newObj)
     }
 
     override public abstract fun clone () : BaseObject
