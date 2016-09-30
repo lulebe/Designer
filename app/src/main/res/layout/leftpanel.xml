@@ -75,7 +75,7 @@
             android:layout_marginRight="168dp"
             android:layout_gravity="right"
             android:padding="12dp"
-            android:src="@drawable/ic_file_import_white_24dp"
+            android:src="@drawable/ic_import_white_24dp"
             android:background="?selectableItemBackgroundBorderless"
             android:contentDescription="@string/import_objects"
             android:clickable="true"/>
