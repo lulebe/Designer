@@ -52,8 +52,8 @@ class ExportContainer {
         }
         //add all objects
         objects.forEach {
-            board.addObject(it.value)
             it.value.init(ctx, board)
+            board.addObject(it.value)
         }
         return true
     }

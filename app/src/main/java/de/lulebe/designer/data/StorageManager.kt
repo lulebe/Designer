@@ -43,6 +43,8 @@ class StorageManager {
         mGson = GsonBuilder().registerTypeAdapterFactory(boFactory).create()
     }
 
+    constructor(ctx: Context, id: Long) : this(ctx.filesDir.path + File.separator + id.toString())
+
     fun exists () = mFile.exists()
 
     fun get (ctx: Context) : BoardObject {

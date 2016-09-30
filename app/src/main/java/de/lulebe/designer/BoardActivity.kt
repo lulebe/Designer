@@ -19,9 +19,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
 import butterknife.bindView
-import de.lulebe.designer.data.BoardState
-import de.lulebe.designer.data.DBHelper
-import de.lulebe.designer.data.StorageManager
+import de.lulebe.designer.data.*
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.propertyEditing.PropertyPanelManager
 import de.lulebe.designer.styleEditing.StylePanelManager
@@ -37,6 +35,9 @@ class BoardActivity : AppCompatActivity() {
     val REQUEST_CODE_IMAGE = 1
     val REQUEST_CODE_GROUP = 2
     val REQUEST_CODE_FONT = 3
+    val REQUEST_CODE_IMPORT = 4
+
+    private var mRequestedBoard: BoardMeta? = null
 
     private val mMainView: View by bindView(R.id.main)
     private val mToolbar: Toolbar by bindView(R.id.toolbar)
@@ -63,7 +64,7 @@ class BoardActivity : AppCompatActivity() {
         initUI()
 
         if (intent.getBooleanExtra("isRoot", true)) {
-            mStorageManager = StorageManager(intent.getStringExtra("path"))
+            mStorageManager = StorageManager(this, intent.getLongExtra("dbId", 0))
             LoadBoard(savedInstanceState).execute()
         } else {
             val key = intent.getIntExtra("boardKey", 0)
@@ -288,17 +289,25 @@ class BoardActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_GROUP)
     }
 
+    fun importFromBoard (bm: BoardMeta) {
+        mRequestedBoard = bm
+        val intent = Intent(this, BoardActivity::class.java)
+        intent.putExtra("dbId", bm._id)
+        startActivityForResult(intent, REQUEST_CODE_IMPORT)
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (data == null || resultCode != Activity.RESULT_OK) return
         when (requestCode) {
             REQUEST_CODE_GROUP -> {
+                if (data == null || resultCode != Activity.RESULT_OK) return
                 val key = data.getIntExtra("boardKey", 0)
                 if (key != 0)
                     (application as Designer).boards.remove(key)
             }
             REQUEST_CODE_IMAGE -> {
+                if (data == null || resultCode != Activity.RESULT_OK) return
                 doAsync {
                     if (mBoardObject?.storageManager != null) {
                         val sm = mBoardObject!!.storageManager!!
@@ -321,6 +330,7 @@ class BoardActivity : AppCompatActivity() {
                 }
             }
             REQUEST_CODE_FONT -> {
+                if (data == null || resultCode != Activity.RESULT_OK) return
                 doAsync {
                     if (mBoardObject?.storageManager != null) {
                         val sm = mBoardObject!!.storageManager!!
@@ -341,6 +351,25 @@ class BoardActivity : AppCompatActivity() {
                         }
                     }
                 }
+            }
+            REQUEST_CODE_IMPORT -> {
+                if (data != null && resultCode != Activity.RESULT_OK) {
+                    doAsync {
+                        val toBoard = mBoardObject
+                        val bm = mRequestedBoard
+                        if (bm != null && toBoard != null) {
+                            val sm = StorageManager(this@BoardActivity, bm._id)
+                            val fromBoard = sm.get(this@BoardActivity)
+                            val ec = ExportContainer()
+                            data.getLongArrayExtra("selectedObjects").forEach {
+                                fromBoard.getObjectWithUID(it)?.export(ec, true)
+                            }
+                            ec.exportTo(this@BoardActivity, toBoard, fromBoard)
+                            sm.close()
+                        }
+                    }
+                }
+                mRequestedBoard = null
             }
         }
     }
@@ -388,7 +417,7 @@ class BoardActivity : AppCompatActivity() {
             val origLP = mLayout.layoutParams as FrameLayout.LayoutParams
             val rightpane = mRightpane.findViewById(R.id.layout_properties) as ViewGroup
             mPropertyPanelManager = PropertyPanelManager(this, rightpane, mBoardObject!!, mBoardState!!)
-            mLeftPanelManager = LeftPanelManager(mLeftpane, mBoardState!!, mBoardObject!!)
+            mLeftPanelManager = LeftPanelManager(mLeftpane, mBoardState!!, mBoardObject!!, this)
             mStylePanelManager = StylePanelManager(mBottompane, mBoardObject!!, mBoardState!!, this)
             mLeftpane.visibility = View.VISIBLE
             mRightpane.visibility = View.VISIBLE

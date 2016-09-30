@@ -16,7 +16,7 @@ import org.jetbrains.anko.uiThread
 import java.io.File
 
 
-class BoardImportAdapter(val mContext: Context, val mClickListener: (bm: BoardMeta) -> Unit)
+class BoardImportAdapter(val mContext: Context, val mBoardId: Long, val mClickListener: (bm: BoardMeta) -> Unit)
         : RecyclerView.Adapter<BoardImportAdapter.BoardViewHolder>() {
 
     val mBoards = mutableListOf<BoardMeta>()
@@ -35,7 +35,8 @@ class BoardImportAdapter(val mContext: Context, val mClickListener: (bm: BoardMe
                 item._id = c.getLong(c.getColumnIndex("_id"))
                 item.name = c.getString(c.getColumnIndex("name"))
                 item.lastOpened = c.getLong(c.getColumnIndex("lastOpened"))
-                mBoards.add(item)
+                if (item._id != mBoardId)
+                    mBoards.add(item)
             }
             c.close()
             db.close()

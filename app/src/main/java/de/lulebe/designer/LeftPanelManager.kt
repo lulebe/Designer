@@ -16,7 +16,7 @@ import de.lulebe.designer.data.objects.*
 import org.jetbrains.anko.doAsync
 
 
-class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoardObject: BoardObject) : View.OnClickListener {
+class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoardObject: BoardObject, val mActivity: BoardActivity) : View.OnClickListener {
 
 
     private val mBtnAddRect: View
@@ -138,8 +138,9 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
                     dialogInterface.cancel()
                 }
                 .show()
-        val adapter = BoardImportAdapter(mPanel.context) {
+        val adapter = BoardImportAdapter(mPanel.context, mActivity.intent.getLongExtra("dbId", 0)) {
             dialog.dismiss()
+            mActivity.importFromBoard(it)
         }
         rv.adapter = adapter
     }
