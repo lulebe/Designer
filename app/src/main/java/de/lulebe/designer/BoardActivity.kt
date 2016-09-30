@@ -6,6 +6,8 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.provider.OpenableColumns
+import android.support.design.widget.CoordinatorLayout
+import android.support.design.widget.Snackbar
 import android.support.v4.app.ShareCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
@@ -116,7 +118,7 @@ class BoardActivity : AppCompatActivity() {
         mLeftpane.addLockListener { locked ->
             mBoardState?.leftPanelLocked = locked
             mLeftpane.post {
-                val lp = mLayout.layoutParams as FrameLayout.LayoutParams
+                val lp = mLayout.layoutParams as CoordinatorLayout.LayoutParams
                 if (locked)
                     lp.setMargins(mLeftpane.width, lp.topMargin, lp.rightMargin, lp.bottomMargin)
                 else
@@ -132,7 +134,7 @@ class BoardActivity : AppCompatActivity() {
         mRightpane.addLockListener { locked ->
             mBoardState?.rightPanelLocked = locked
             mRightpane.post {
-                val lp = mLayout.layoutParams as FrameLayout.LayoutParams
+                val lp = mLayout.layoutParams as CoordinatorLayout.LayoutParams
                 if (locked)
                     lp.setMargins(lp.leftMargin, lp.topMargin, mRightpane.width, lp.bottomMargin)
                 else
@@ -146,19 +148,19 @@ class BoardActivity : AppCompatActivity() {
         mBottompane.addLockListener { locked ->
             mBoardState?.bottomPanelLocked = locked
             mBottompane.post {
-                val lpL = mLayout.layoutParams as FrameLayout.LayoutParams
+                val lpL = mLayout.layoutParams as CoordinatorLayout.LayoutParams
                 if (locked)
                     lpL.setMargins(lpL.leftMargin, lpL.topMargin, lpL.rightMargin, mBottompane.height)
                 else
                     lpL.setMargins(lpL.leftMargin, lpL.topMargin, lpL.rightMargin, dp64)
                 mLayout.layoutParams = lpL
-                val lpLp = mLeftpane.layoutParams as FrameLayout.LayoutParams
+                val lpLp = mLeftpane.layoutParams as CoordinatorLayout.LayoutParams
                 if (locked)
                     lpLp.setMargins(lpLp.leftMargin, lpLp.topMargin, lpLp.rightMargin, mBottompane.height)
                 else
                     lpLp.setMargins(lpLp.leftMargin, lpLp.topMargin, lpLp.rightMargin, dp64)
                 mLeftpane.layoutParams = lpLp
-                val lpRp = mRightpane.layoutParams as FrameLayout.LayoutParams
+                val lpRp = mRightpane.layoutParams as CoordinatorLayout.LayoutParams
                 if (locked)
                     lpRp.setMargins(lpRp.leftMargin, lpRp.topMargin, lpRp.rightMargin, mBottompane.height)
                 else
@@ -416,10 +418,10 @@ class BoardActivity : AppCompatActivity() {
                 boardView = BoardViewAsync(this, mBoardState!!, mBoardObject!!)
             else
                 boardView = BoardView(this, mBoardState!!, mBoardObject!!)
-            val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+            val lp = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)
             boardView.layoutParams = lp
             mLayout.addView(boardView)
-            val origLP = mLayout.layoutParams as FrameLayout.LayoutParams
+            val origLP = mLayout.layoutParams as CoordinatorLayout.LayoutParams
             val rightpane = mRightpane.findViewById(R.id.layout_properties) as ViewGroup
             mPropertyPanelManager = PropertyPanelManager(this, rightpane, mBoardObject!!, mBoardState!!)
             mLeftPanelManager = LeftPanelManager(mLeftpane, mBoardState!!, mBoardObject!!, this)
@@ -429,9 +431,10 @@ class BoardActivity : AppCompatActivity() {
                 mRightpane.visibility = View.VISIBLE
                 mBottompane.visibility = View.VISIBLE
             } else {
-                val lp = mLayout.layoutParams as FrameLayout.LayoutParams
+                val lp = mLayout.layoutParams as CoordinatorLayout.LayoutParams
                 lp.setMargins(0, lp.topMargin, 0, 0)
                 mLayout.layoutParams = lp
+                Snackbar.make(mMainView, "Select one object (or multiple by long-clicking) and go back to the previous board to import them", Snackbar.LENGTH_LONG).show()
             }
             findViewById(R.id.loading)?.visibility = View.GONE
             if (mBoardState!!.leftPanelLocked)
@@ -458,7 +461,7 @@ class BoardActivity : AppCompatActivity() {
                         mLeftpane.visibility = View.GONE
                         mRightpane.visibility = View.GONE
                         mBottompane.visibility = View.GONE
-                        val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+                        val lp = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)
                         lp.topMargin = origLP.topMargin
                         mLayout.layoutParams = lp
                     }

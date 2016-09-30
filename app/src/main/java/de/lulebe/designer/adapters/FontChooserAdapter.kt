@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import de.lulebe.designer.R
 import de.lulebe.designer.data.FontCache
+import de.lulebe.designer.data.IncludedFiles
 import de.lulebe.designer.data.objects.BoardObject
 
 
@@ -48,11 +49,12 @@ class FontChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val la
                 holder.click = addUserFontListener
             }
             TYPE_FONT_DEFAULT -> {
-                holder.txtView.text = "default"
+                holder.includedView.visibility = View.VISIBLE
+                holder.txtView.text = IncludedFiles.fonts[position-1L]
                 holder.click = {
-                    clickListener(0L)
+                    clickListener(position-1L)
                 }
-                FontCache.loadFont(0L, mBoardObject, ctx) {
+                FontCache.loadFont(position-1L, mBoardObject, ctx) {
                     if (position == holder.adapterPosition)
                         holder.fontView.typeface = it
                 }
@@ -72,13 +74,13 @@ class FontChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val la
     }
 
     override fun getItemCount(): Int {
-        return mBoardObject.fonts.size + 2
+        return mBoardObject.fonts.size + 1 + IncludedFiles.fonts.size
     }
 
     override fun getItemViewType(position: Int): Int {
         if (position == 0)
             return TYPE_ADD_BTN
-        if (position == 1)
+        if (position > 0 && position <= IncludedFiles.fonts.size)
             return TYPE_FONT_DEFAULT
         return TYPE_FONT_USER
     }
@@ -91,6 +93,7 @@ class FontChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val la
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var click = {}
+        val includedView = itemView.findViewById(R.id.included)
         val fontView = itemView.findViewById(R.id.fv) as TextView
         val txtView = itemView.findViewById(R.id.tv) as TextView
         init {

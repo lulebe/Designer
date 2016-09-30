@@ -139,9 +139,12 @@ class BoardObject() : SourceObject() {
                 return _parentBoard!!.fonts
         }
 
-    private val _objects: MutableList<BaseObject> = mutableListOf()
-    val objects: MutableList<BaseObject>
+    private var _objects: MutableList<BaseObject> = mutableListOf()
+    var objects: MutableList<BaseObject>
         get() = _objects
+        set(value) {
+            _objects = value
+        }
 
     fun addObject (baseObject: BaseObject) {
         _objects.add(baseObject)
@@ -336,13 +339,21 @@ class BoardObject() : SourceObject() {
     override fun export(ec: ExportContainer, saveToContainer: Boolean) : List<BaseObject> {
         val list = super.export(ec, saveToContainer)
         val newObj = list[0] as BoardObject
-        newObj.objects.flatMap {
-            val objs = it.export(ec, false)
-            newObj.removeObject(it)
-            objs
-        }.forEach {
-            newObj.addObject(it)
+        val newList = mutableListOf<BaseObject>()
+        newObj.objects.forEach {
+            var copyOnlyFirst = true
+            if (it is CopyObject && it.source != null && !newList.contains(it.source!!))
+                copyOnlyFirst = false
+            it.export(ec, false).forEachIndexed { index, exp ->
+                if (!copyOnlyFirst || index == 0)
+                    newList.add(exp)
+            }
+            it.close()
+            if (it is CopyObject) {
+                it.source?.copies?.minus(1)
+            }
         }
+        newObj.objects = newList
         return list
     }
 

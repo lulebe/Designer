@@ -18,7 +18,7 @@ object FontCache {
         } else {
             doAsync {
                 val typeFace: Typeface
-                if (uid != 0L) {
+                if (uid >= 200L) {
                     val path = File(board.getFontPath(uid))
                     if (path.exists() && path.canRead()) {
                         typeFace = Typeface.createFromFile(path)
@@ -27,8 +27,8 @@ object FontCache {
                         typeFace = Typeface.createFromAsset(ctx.assets, "fonts/roboto.ttf")
                     }
                 } else {
-                    typeFace = Typeface.createFromAsset(ctx.assets, "fonts/roboto.ttf")
-                    fonts.put(0L, WeakReference(typeFace))
+                    typeFace = Typeface.createFromAsset(ctx.assets, "fonts/"+IncludedFiles.fonts[uid])
+                    fonts.put(uid, WeakReference(typeFace))
                 }
                 uiThread {
                     cb(typeFace)

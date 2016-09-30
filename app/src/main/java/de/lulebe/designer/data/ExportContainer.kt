@@ -6,6 +6,8 @@ import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.styles.BoxStyle
 import de.lulebe.designer.data.styles.ColorStyle
 import de.lulebe.designer.data.styles.TextStyle
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.io.File
 import java.io.FileInputStream
 
@@ -51,9 +53,18 @@ class ExportContainer {
             board.styles.addTextStyle(it.value)
         }
         //add all objects
-        objects.forEach {
-            it.value.init(ctx, board)
-            board.addObject(it.value)
+        objects.keys.forEachIndexed { index, id ->
+            if (index != objects.size - 1) {
+                objects[id]!!.init(ctx, board)
+                board.addObject(objects[id]!!)
+            } else {
+                doAsync {
+                    uiThread {
+                        objects[id]!!.init(ctx, board)
+                        board.addObject(objects[id]!!)
+                    }
+                }
+            }
         }
         return true
     }
