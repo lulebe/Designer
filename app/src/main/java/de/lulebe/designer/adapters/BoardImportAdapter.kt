@@ -11,6 +11,7 @@ import com.squareup.picasso.Picasso
 import de.lulebe.designer.R
 import de.lulebe.designer.data.BoardMeta
 import de.lulebe.designer.data.DBHelper
+import de.lulebe.designer.data.IncludedFiles
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.File
@@ -27,6 +28,13 @@ class BoardImportAdapter(val mContext: Context, val mBoardId: Long, val mClickLi
 
     private fun loadBoards () {
         doAsync {
+            IncludedFiles.boards.forEach {
+                val item = BoardMeta()
+                item._id = it.key
+                item.lastOpened = 0
+                item.name = it.value
+                mBoards.add(item)
+            }
             val dbh = DBHelper(mContext)
             val db = dbh.readableDatabase
             val c = db.rawQuery("SELECT * FROM boards ORDER BY lastOpened DESC", null)
@@ -54,6 +62,8 @@ class BoardImportAdapter(val mContext: Context, val mBoardId: Long, val mClickLi
     override fun onBindViewHolder(holder: BoardViewHolder, position: Int) {
         val item = mBoards[position]
         holder.txtView.text = item.name
+        if (item._id < 0L)
+            holder.included.visibility = View.VISIBLE
         val ctx = holder.imgView.context
         Picasso.with(ctx).load(File(ctx.filesDir.path + File.separator + item._id.toString() + File.separator + "preview.png"))
                 .into(holder.imgView)
@@ -65,6 +75,7 @@ class BoardImportAdapter(val mContext: Context, val mBoardId: Long, val mClickLi
 
 
     inner class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val included = itemView.findViewById(R.id.included)
         val imgView = itemView.findViewById(R.id.iv) as ImageView
         val txtView = itemView.findViewById(R.id.tv) as TextView
         init {

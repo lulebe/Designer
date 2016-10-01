@@ -1,5 +1,9 @@
 package de.lulebe.designer.data
 
+import android.content.Context
+import java.io.File
+import java.io.FilenameFilter
+
 
 object IncludedFiles {
     val fonts = mapOf<Long, String>(
@@ -25,6 +29,25 @@ object IncludedFiles {
             Pair(19L, "HelveticaNeue-BlackCond.ttf")
     )
     val boards = mapOf<Long, String>(
-            Pair(50L, "Material Design")
+            Pair(-1L, "Material Design")
     )
+    val includedBoardsVersion = 1
+
+    fun setupBoards(ctx: Context) {
+        ctx.filesDir.list(FilenameFilter { dir, fileName ->
+            try {
+                val id = fileName.toLong()
+                if (id < 0)
+                    return@FilenameFilter true
+            } catch (e: Exception) {
+                return@FilenameFilter false
+            }
+            false
+        }).forEach {
+            File(ctx.filesDir.path + File.separator + it).deleteRecursively()
+        }
+        boards.keys.forEach { key ->
+            StorageManager.createFromZipInput(ctx, ctx.assets.open("boards/" + key.toString() + ".zip"), key.toString()).close()
+        }
+    }
 }

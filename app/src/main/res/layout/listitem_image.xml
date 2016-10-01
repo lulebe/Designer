@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?attr/selectableItemBackground"
-    android:orientation="vertical">
+    android:foreground="?attr/selectableItemBackground">
+    <ImageView
+        android:id="@+id/included"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_gravity="top|right"
+        android:layout_margin="8dp"
+        android:src="@drawable/ic_check_circle_grey600_18dp"
+        android:visibility="gone"/>
     <ImageView
         android:id="@+id/iv"
         android:layout_width="match_parent"
@@ -15,6 +22,7 @@
         android:id="@+id/tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
         android:padding="4dp"
         android:gravity="center"
         android:background="#dddddd"
@@ -23,4 +31,4 @@
         android:minLines="2"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:elevation="4dp"/>
-</LinearLayout>
+</FrameLayout>

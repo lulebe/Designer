@@ -16,7 +16,6 @@ import net.lingala.zip4j.util.Zip4jConstants
 import org.apache.commons.io.FileUtils
 import java.io.*
 import java.util.*
-import kotlin.concurrent.thread
 
 
 class StorageManager {
@@ -66,12 +65,12 @@ class StorageManager {
                 mDir.mkdirs()
             mFile.createNewFile()
         }
-        thread { savePreview() }
         val outs = FileOutputStream(mFile)
         val outw = OutputStreamWriter(outs)
         mGson.toJson(boardObject, BoardObject::class.java, outw)
         outw.close()
         outs.close()
+        savePreview()
     }
 
     fun savePreview () {

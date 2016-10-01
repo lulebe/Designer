@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -20,6 +21,7 @@ import android.widget.EditText
 import de.lulebe.designer.adapters.BoardsAdapter
 import de.lulebe.designer.data.BoardMeta
 import de.lulebe.designer.data.DBHelper
+import de.lulebe.designer.data.IncludedFiles
 import de.lulebe.designer.data.StorageManager
 import java.io.File
 import java.util.*
@@ -42,6 +44,7 @@ class SelectBoardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initUI()
+        IncludedBoardsLoader().execute()
     }
 
     override fun onResume() {
@@ -126,15 +129,44 @@ class SelectBoardActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle(R.string.duplicate_board)
             .setView(v)
-            .setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener { dialogInterface, i ->
+            .setNegativeButton(android.R.string.cancel) { dialogInterface, i ->
                 dialogInterface.cancel()
-            })
-            .setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener { dialogInterface, i ->
+            }
+            .setPositiveButton(android.R.string.ok) { dialogInterface, i ->
                 val name = (v.findViewById(R.id.field_name) as EditText).text.toString()
                 dialogInterface.dismiss()
                 BoardDuplicator(boardMeta, name).execute()
-            })
+            }
             .show()
+    }
+
+    private inner class IncludedBoardsLoader() : AsyncTask<Void, Void, Void>() {
+        private var dialog: AlertDialog? = null
+        private val sp = PreferenceManager.getDefaultSharedPreferences(this@SelectBoardActivity)
+        private var cancelled = false
+        override fun onPreExecute() {
+            if (sp.getInt("included-boards-version", 0) >= IncludedFiles.includedBoardsVersion)
+                cancelled = true
+            else {
+                dialog = AlertDialog.Builder(this@SelectBoardActivity)
+                        .setTitle("Setting up Boards...")
+                        .setMessage("please wait...")
+                        .show()
+            }
+        }
+        override fun doInBackground(vararg p0: Void?): Void? {
+            if (cancelled) return null
+            IncludedFiles.setupBoards(this@SelectBoardActivity)
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            if (cancelled) return
+            val editor = sp.edit()
+            editor.putInt("included-boards-version", IncludedFiles.includedBoardsVersion)
+            editor.commit()
+            dialog?.dismiss()
+        }
     }
 
     private inner class BoardCreator(val name: String) : AsyncTask<Void, Void, Long>() {
