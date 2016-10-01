@@ -164,7 +164,7 @@ class SelectBoardActivity : AppCompatActivity() {
             if (cancelled) return
             val editor = sp.edit()
             editor.putInt("included-boards-version", IncludedFiles.includedBoardsVersion)
-            editor.commit()
+            editor.apply()
             dialog?.dismiss()
         }
     }
