@@ -141,8 +141,8 @@ class ImageObject() : SourceObject() {
         val maxHeight = d.dipToPxI(height)
         val finalWidth: Int
         val finalHeight: Int
-        var finalXPos = d.dipToPxF(xpos)
-        var finalYPos = d.dipToPxF(ypos)
+        var finalXPos = d.dipToPxF(actualXpos)
+        var finalYPos = d.dipToPxF(actualYpos)
         if (keepRatio) {
             val targetRatio = width.toFloat() / height.toFloat()
             val sourceRatio = rawBmp.width.toFloat() / rawBmp.height.toFloat()

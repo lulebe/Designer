@@ -20,7 +20,6 @@
     <string name="fill_color">Füllfarbe</string>
     <string name="height">Höhe</string>
     <string name="keep_aspect_ratio">Seitenverhältnis beibehalten</string>
-    <string name="left">xpos</string>
     <string name="name">Name</string>
     <string name="no_object_selected">kein Objekt ausgewählt</string>
     <string name="object_name">Objektname</string>
@@ -37,10 +36,7 @@
     <string name="toggle_grid">Raster ein/aus</string>
     <string name="toggle_pan_move_item">Scrollen/Verschieben</string>
     <string name="tools">Werkzeuge</string>
-    <string name="top">ypos</string>
     <string name="width">Breite</string>
-    <string name="x">X</string>
-    <string name="y">Y</string>
     <string name="grid_and_rulers"><![CDATA[Raster & Lineale]]></string>
     <string name="grid_every">Raster alle X Striche</string>
     <string name="loading">lade...</string>
@@ -85,4 +81,6 @@
     <string name="edit_text_style">Textstil bearbeiten</string>
     <string name="group_selected_objects">ausgewählte Objekte gruppieren</string>
     <string name="import_objects">Objekte importieren</string>
+    <string name="horizontal_position">Horizontale Position</string>
+    <string name="vertical_position">Vertikale Position</string>
 </resources>

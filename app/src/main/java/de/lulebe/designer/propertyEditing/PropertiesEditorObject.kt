@@ -13,14 +13,15 @@ import android.widget.Toast
 import de.lulebe.designer.CheatSheet
 import de.lulebe.designer.R
 import de.lulebe.designer.data.BoardState
+import de.lulebe.designer.data.objects.BaseObject
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.objects.CopyObject
 import de.lulebe.designer.data.objects.SourceObject
 import de.lulebe.designer.data.styles.BoxStyle
 
 
-
-class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState) : TextView.OnEditorActionListener, View.OnKeyListener {
+class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState)
+        : TextView.OnEditorActionListener, View.OnKeyListener, View.OnClickListener {
 
 
     private val mNameView: EditText
@@ -28,6 +29,12 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
     private val mDuplicateView: View
     private val mXPosView: EditText
     private val mYPosView: EditText
+    private val mAlignhorizleftView: ImageView
+    private val mAlignhorizcenterView: ImageView
+    private val mAlignhorizrightView: ImageView
+    private val mAlignverttopView: ImageView
+    private val mAlignvertcenterView: ImageView
+    private val mAlignvertbottomView: ImageView
     private val mWidthLayoutView: View
     private val mWidthView: EditText
     private val mWidthDisplayLayoutView: View
@@ -36,6 +43,9 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
     private val mHeightView: EditText
     private val mHeightDisplayLayoutView: View
     private val mHeightDisplayView: TextView
+    private val mFillparentLayoutView: View
+    private val mFillparenthorizontalView: ImageView
+    private val mFillparentverticalView: ImageView
     private val mExtractBoxstyleView: ImageView
     private val mRotationView: EditText
     private val mRotationhandleinfoView: View
@@ -47,6 +57,12 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         mDuplicateView = mView.findViewById(R.id.btn_object_duplicate)
         mXPosView = mView.findViewById(R.id.field_object_xpos) as EditText
         mYPosView = mView.findViewById(R.id.field_object_ypos) as EditText
+        mAlignhorizleftView = mView.findViewById(R.id.btn_object_alignleft) as ImageView
+        mAlignhorizcenterView = mView.findViewById(R.id.btn_object_alignhorizcenter) as ImageView
+        mAlignhorizrightView = mView.findViewById(R.id.btn_object_alignright) as ImageView
+        mAlignverttopView = mView.findViewById(R.id.btn_object_aligntop) as ImageView
+        mAlignvertcenterView = mView.findViewById(R.id.btn_object_alignvertcenter) as ImageView
+        mAlignvertbottomView = mView.findViewById(R.id.btn_object_alignbottom) as ImageView
         mWidthLayoutView = mView.findViewById(R.id.field_object_width_layout)
         mWidthView = mView.findViewById(R.id.field_object_width) as EditText
         mWidthDisplayLayoutView = mView.findViewById(R.id.display_object_width_layout)
@@ -55,6 +71,9 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         mHeightView = mView.findViewById(R.id.field_object_height) as EditText
         mHeightDisplayLayoutView = mView.findViewById(R.id.display_object_height_layout)
         mHeightDisplayView = mView.findViewById(R.id.display_object_height) as TextView
+        mFillparentLayoutView = mView.findViewById(R.id.btns_fillparent_layout)
+        mFillparenthorizontalView = mView.findViewById(R.id.btn_object_fillparent_horizontal) as ImageView
+        mFillparentverticalView = mView.findViewById(R.id.btn_object_fillparent_vertical) as ImageView
         mExtractBoxstyleView = mView.findViewById(R.id.btn_object_extractboxstyle) as ImageView
         mRotationView = mView.findViewById(R.id.field_object_rotation) as EditText
         mRotationhandleinfoView = mView.findViewById(R.id.info_object_rotation_handles)
@@ -78,36 +97,17 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         mAlphaView.setOnKeyListener(this)
 
 
-        mDeleteView.setOnClickListener {
-            try {
-                mBoardObject.removeObject(mObject)
-            } catch (e: BoardObject.CannotDeleteCopiedObjectException) {
-                Toast.makeText(mView.context, R.string.cant_delete_copied_object, Toast.LENGTH_SHORT).show()
-            }
-            mBoardState.selectedClear()
-        }
-        mDuplicateView.setOnClickListener {
-            val newObj = CopyObject()
-            newObj.sourceId = mObject.uid
-            newObj.init(mView.context, mBoardObject)
-            newObj.xpos = mObject.xpos + 10
-            newObj.ypos = mObject.ypos + 10
-            newObj.name = mView.resources.getString(R.string.copy_of) + " " + mObject.name
-            mBoardObject.addObject(newObj)
-            mBoardState.selectedSet(newObj)
-        }
-
-        mExtractBoxstyleView.setOnClickListener {
-            if (mObject.boxStyle != null)
-                mObject.boxStyle = null
-            else {
-                val bs = mObject.extractBoxStyle()
-                StyleExtractor<BoxStyle>().createStyle(bs, mView.context) {
-                    mBoardObject.styles.addBoxStyle(bs)
-                    mObject.boxStyle = bs
-                }
-            }
-        }
+        mDeleteView.setOnClickListener(this)
+        mDuplicateView.setOnClickListener(this)
+        mAlignhorizleftView.setOnClickListener(this)
+        mAlignhorizcenterView.setOnClickListener(this)
+        mAlignhorizrightView.setOnClickListener(this)
+        mAlignverttopView.setOnClickListener(this)
+        mAlignvertcenterView.setOnClickListener(this)
+        mAlignvertbottomView.setOnClickListener(this)
+        mFillparenthorizontalView.setOnClickListener(this)
+        mFillparentverticalView.setOnClickListener(this)
+        mExtractBoxstyleView.setOnClickListener(this)
 
         mObject.addChangeListener {
             updateUI()
@@ -207,12 +207,72 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
     }
 
 
+    override fun onClick(view: View?) {
+        when (view) {
+            mDeleteView -> {
+                try {
+                    mBoardObject.removeObject(mObject)
+                } catch (e: BoardObject.CannotDeleteCopiedObjectException) {
+                    Toast.makeText(mView.context, R.string.cant_delete_copied_object, Toast.LENGTH_SHORT).show()
+                }
+                mBoardState.selectedClear()
+            }
+            mDuplicateView -> {
+                val newObj = CopyObject()
+                newObj.sourceId = mObject.uid
+                newObj.init(mView.context, mBoardObject)
+                newObj.xpos = mObject.xpos + 10
+                newObj.ypos = mObject.ypos + 10
+                newObj.name = mView.resources.getString(R.string.copy_of) + " " + mObject.name
+                mBoardObject.addObject(newObj)
+                mBoardState.selectedSet(newObj)
+            }
+            mAlignhorizleftView -> {
+                mObject.xposOrigin = BaseObject.HorizontalOrigin.LEFT
+            }
+            mAlignhorizcenterView -> {
+                mObject.xposOrigin = BaseObject.HorizontalOrigin.CENTER
+            }
+            mAlignhorizrightView -> {
+                mObject.xposOrigin = BaseObject.HorizontalOrigin.RIGHT
+            }
+            mAlignverttopView -> {
+                mObject.yposOrigin = BaseObject.VerticalOrigin.TOP
+            }
+            mAlignvertcenterView -> {
+                mObject.yposOrigin = BaseObject.VerticalOrigin.CENTER
+            }
+            mAlignvertbottomView -> {
+                mObject.yposOrigin = BaseObject.VerticalOrigin.BOTTOM
+            }
+            mFillparenthorizontalView -> {
+                mObject.lockToParentWidth = !mObject.lockToParentWidth
+            }
+            mFillparentverticalView -> {
+                mObject.lockToParentHeight = !mObject.lockToParentHeight
+            }
+            mExtractBoxstyleView -> {
+                if (mObject.boxStyle != null)
+                    mObject.boxStyle = null
+                else {
+                    val bs = mObject.extractBoxStyle()
+                    StyleExtractor<BoxStyle>().createStyle(bs, mView.context) {
+                        mBoardObject.styles.addBoxStyle(bs)
+                        mObject.boxStyle = bs
+                    }
+                }
+            }
+        }
+    }
+
+
 
     private fun updateUI () {
         mNameView.setText(mObject.name)
         mXPosView.setText(mObject.xpos.toString())
         mYPosView.setText(mObject.ypos.toString())
-        if (mObject.canDirectlyChangeWidth()) {
+        setAlignmentImages()
+        if (mObject.canDirectlyChangeWidth() && !mObject.lockToParentWidth) {
             mWidthLayoutView.visibility = View.VISIBLE
             mWidthDisplayLayoutView.visibility = View.GONE
             mWidthView.setText(mObject.width.toString())
@@ -221,7 +281,7 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
             mWidthDisplayLayoutView.visibility = View.VISIBLE
             mWidthDisplayView.text = mObject.width.toString()
         }
-        if (mObject.canDirectlyChangeHeight()) {
+        if (mObject.canDirectlyChangeHeight() && !mObject.lockToParentHeight) {
             mHeightLayoutView.visibility = View.VISIBLE
             mHeightDisplayLayoutView.visibility = View.GONE
             mHeightView.setText(mObject.height.toString())
@@ -230,6 +290,16 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
             mHeightDisplayLayoutView.visibility = View.VISIBLE
             mHeightDisplayView.text = mObject.height.toString()
         }
+        if (mObject.canDirectlyChangeWidth()) {
+            mFillparenthorizontalView.visibility = View.VISIBLE
+            setFillparentImages()
+        } else
+            mFillparenthorizontalView.visibility = View.GONE
+        if (mObject.canDirectlyChangeHeight()) {
+            mFillparentverticalView.visibility = View.VISIBLE
+            setFillparentImages()
+        } else
+            mFillparentverticalView.visibility = View.GONE
         if (mObject.canAcceptBoxStyle()) {
             mExtractBoxstyleView.visibility = View.VISIBLE
             if (mObject.boxStyle != null) {
@@ -249,6 +319,65 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         else
             mRotationhandleinfoView.visibility = View.VISIBLE
         mAlphaView.setText(mObject.alpha.toString())
+    }
+
+    private fun setFillparentImages () {
+        if (mObject.lockToParentWidth)
+            setToggleImage(mFillparenthorizontalView, R.drawable.ic_fill_parent_horizontal_grey600_24dp, true)
+        else
+            setToggleImage(mFillparenthorizontalView, R.drawable.ic_fill_parent_horizontal_grey600_24dp, false)
+        if (mObject.lockToParentHeight)
+            setToggleImage(mFillparentverticalView, R.drawable.ic_fill_parent_vertical_grey600_24dp, true)
+        else
+            setToggleImage(mFillparentverticalView, R.drawable.ic_fill_parent_vertical_grey600_24dp, false)
+    }
+
+    private fun setAlignmentImages () {
+        when (mObject.xposOrigin) {
+            BaseObject.HorizontalOrigin.LEFT -> {
+                setToggleImage(mAlignhorizleftView, R.drawable.ic_format_horizontal_align_left_grey600_24dp, true)
+                setToggleImage(mAlignhorizcenterView, R.drawable.ic_format_horizontal_align_center_grey600_24dp, false)
+                setToggleImage(mAlignhorizrightView, R.drawable.ic_format_horizontal_align_right_grey600_24dp, false)
+            }
+            BaseObject.HorizontalOrigin.CENTER -> {
+                setToggleImage(mAlignhorizleftView, R.drawable.ic_format_horizontal_align_left_grey600_24dp, false)
+                setToggleImage(mAlignhorizcenterView, R.drawable.ic_format_horizontal_align_center_grey600_24dp, true)
+                setToggleImage(mAlignhorizrightView, R.drawable.ic_format_horizontal_align_right_grey600_24dp, false)
+            }
+            BaseObject.HorizontalOrigin.RIGHT -> {
+                setToggleImage(mAlignhorizleftView, R.drawable.ic_format_horizontal_align_left_grey600_24dp, false)
+                setToggleImage(mAlignhorizcenterView, R.drawable.ic_format_horizontal_align_center_grey600_24dp, false)
+                setToggleImage(mAlignhorizrightView, R.drawable.ic_format_horizontal_align_right_grey600_24dp, true)
+            }
+        }
+        when (mObject.yposOrigin) {
+            BaseObject.VerticalOrigin.TOP -> {
+                setToggleImage(mAlignverttopView, R.drawable.ic_format_vertical_align_top_grey600_24dp, true)
+                setToggleImage(mAlignvertcenterView, R.drawable.ic_format_vertical_align_center_grey600_24dp, false)
+                setToggleImage(mAlignvertbottomView, R.drawable.ic_format_vertical_align_bottom_grey600_24dp, false)
+            }
+            BaseObject.VerticalOrigin.CENTER -> {
+                setToggleImage(mAlignverttopView, R.drawable.ic_format_vertical_align_top_grey600_24dp, false)
+                setToggleImage(mAlignvertcenterView, R.drawable.ic_format_vertical_align_center_grey600_24dp, true)
+                setToggleImage(mAlignvertbottomView, R.drawable.ic_format_vertical_align_bottom_grey600_24dp, false)
+            }
+            BaseObject.VerticalOrigin.BOTTOM -> {
+                setToggleImage(mAlignverttopView, R.drawable.ic_format_vertical_align_top_grey600_24dp, false)
+                setToggleImage(mAlignvertcenterView, R.drawable.ic_format_vertical_align_center_grey600_24dp, false)
+                setToggleImage(mAlignvertbottomView, R.drawable.ic_format_vertical_align_bottom_grey600_24dp, true)
+            }
+        }
+    }
+
+
+    private fun setToggleImage(iv: ImageView, res: Int, checked: Boolean) {
+        val dr = ContextCompat.getDrawable(mView.context, res)
+        if (checked) {
+            val d = DrawableCompat.wrap(dr).mutate()
+            d.setTint(ContextCompat.getColor(mView.context, R.color.colorAccent))
+            iv.setImageDrawable(d)
+        } else
+            iv.setImageDrawable(dr)
     }
 
 

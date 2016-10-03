@@ -81,15 +81,16 @@ abstract class BaseObject : IRenderable, Cloneable {
     var xpos: Int
         get() = _xpos
         set(value) {
-            if (xposMoving == _xpos)
-                xposMoving = value
+            val oldActual = actualXpos
             _xpos = value
+            if (xposMoving == oldActual)
+                xposMoving = actualXpos
             change()
         }
 
 
     @Transient
-    protected var _xposMoving: Int = _xpos
+    protected var _xposMoving: Int = actualXpos
     var xposMoving: Int
         get() = _xposMoving
         set(value) {
@@ -103,6 +104,7 @@ abstract class BaseObject : IRenderable, Cloneable {
         get() = _xposOrigin
         set(value) {
             _xposOrigin = value
+            _xposMoving = actualXpos
             calculateHandles()
             change()
         }
@@ -123,14 +125,15 @@ abstract class BaseObject : IRenderable, Cloneable {
     var ypos: Int
         get() = _ypos
         set(value) {
-            if (yposMoving == _ypos)
-                yposMoving = value
+            val oldActual = actualXpos
             _ypos = value
+            if (yposMoving == oldActual)
+                yposMoving = actualYpos
             change()
         }
 
     @Transient
-    protected var _yposMoving: Int = _ypos
+    protected var _yposMoving: Int = actualYpos
     var yposMoving: Int
         get() = _yposMoving
         set(value) {
@@ -144,6 +147,7 @@ abstract class BaseObject : IRenderable, Cloneable {
         get() = _yposOrigin
         set(value) {
             _yposOrigin = value
+            _yposMoving = actualYpos
             calculateHandles()
             change()
         }
@@ -169,6 +173,7 @@ abstract class BaseObject : IRenderable, Cloneable {
             if (widthMoving == _width)
                 widthMoving = value
             _width = value
+            _xposMoving = actualXpos
             change()
         }
 
@@ -191,7 +196,6 @@ abstract class BaseObject : IRenderable, Cloneable {
                 boxStyle = null
             _lockToParentWidth = value
             width = _parentBoard!!.width
-            change()
         }
 
 
@@ -205,6 +209,7 @@ abstract class BaseObject : IRenderable, Cloneable {
             if (heightMoving == _height)
                 heightMoving = value
             _height = value
+            _yposMoving = actualYpos
             change()
         }
 
@@ -255,6 +260,8 @@ abstract class BaseObject : IRenderable, Cloneable {
             } else {
                 _boxStyle?.removeChangeListener(boxStyleChangeListener!!)
                 if (value != null) {
+                    _lockToParentWidth = false
+                    _lockToParentHeight = false
                     _boxStyle = value
                     _boxStyleUID = value.uid
                     value.addChangeListener(boxStyleChangeListener!!)
@@ -308,13 +315,13 @@ abstract class BaseObject : IRenderable, Cloneable {
         else if (_xposOrigin == HorizontalOrigin.RIGHT)
             _xpos = _parentBoard!!.width - xposMoving - widthMoving
         else if (_xposOrigin == HorizontalOrigin.CENTER)
-            _xpos = xposMoving - _parentBoard!!.width/2 - widthMoving/2
+            _xpos = xposMoving + widthMoving/2 - _parentBoard!!.width/2
         if (_yposOrigin == VerticalOrigin.TOP || _parentBoard == null)
             _ypos = yposMoving
         else if (_yposOrigin == VerticalOrigin.BOTTOM)
             _ypos = _parentBoard!!.height - yposMoving - heightMoving
         else if (_yposOrigin == VerticalOrigin.CENTER)
-            _ypos = yposMoving - _parentBoard!!.height/2 - heightMoving/2
+            _ypos = yposMoving + heightMoving/2 - _parentBoard!!.height/2
         _width = widthMoving
         _height = heightMoving
         calculateHandles()

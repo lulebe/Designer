@@ -75,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
-                android:hint="@string/left"
+                android:hint="@string/xpos"
                 android:inputType="number"
                 android:maxLines="1"
                 android:maxLength="5"
@@ -91,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
-                android:hint="@string/top"
+                android:hint="@string/ypos"
                 android:inputType="number"
                 android:maxLines="1"
                 android:text="0"/>

@@ -47,9 +47,9 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
         mTextcolorView = mView.findViewById(R.id.btn_object_textcolor)
         mExtractTextcolorView = mView.findViewById(R.id.btn_object_extracttextcolor) as ImageView
         mFontView = mView.findViewById(R.id.btn_choose_font) as View
-        mAlignleftView = mView.findViewById(R.id.btn_object_alignleft) as ImageView
-        mAligncenterView = mView.findViewById(R.id.btn_object_aligncenter) as ImageView
-        mAlignrightView = mView.findViewById(R.id.btn_object_alignright) as ImageView
+        mAlignleftView = mView.findViewById(R.id.btn_object_textalignleft) as ImageView
+        mAligncenterView = mView.findViewById(R.id.btn_object_textaligncenter) as ImageView
+        mAlignrightView = mView.findViewById(R.id.btn_object_textalignright) as ImageView
         mFontsizeView = mView.findViewById(R.id.field_object_fontsize) as EditText
         mExtractTextstyleView = mView.findViewById(R.id.btn_object_extracttextstyle) as ImageView
         mTextView = mView.findViewById(R.id.field_object_text) as EditText

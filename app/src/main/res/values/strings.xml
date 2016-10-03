@@ -19,16 +19,16 @@
     <string name="object_name">Object name</string>
     <string name="delete">delete</string>
     <string name="create_standalone_item">create standalone item</string>
-    <string name="left">Left</string>
-    <string name="top">Top</string>
+    <string name="xpos" translatable="false">X Position</string>
+    <string name="ypos" translatable="false">Y Position</string>
     <string name="width">Width</string>
     <string name="height">Height</string>
     <string name="create_copy">create copy</string>
     <string name="opacity">Opacity (0-255)</string>
     <string name="shadow">Shadow</string>
     <string name="blur">Blur</string>
-    <string name="x">X</string>
-    <string name="y">Y</string>
+    <string name="x" translatable="false">X</string>
+    <string name="y" translatable="false">Y</string>
     <string name="open">open</string>
     <string name="choose_image">choose Image</string>
     <string name="keep_aspect_ratio">keep aspect ratio</string>
@@ -84,4 +84,6 @@
     <string name="edit_font">Edit font</string>
     <string name="group_selected_objects">group selected Objects</string>
     <string name="import_objects">import objects</string>
+    <string name="vertical_position">Vertical Position</string>
+    <string name="horizontal_position">Horizontal Position</string>
 </resources>

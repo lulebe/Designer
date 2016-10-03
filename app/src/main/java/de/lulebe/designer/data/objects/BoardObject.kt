@@ -282,7 +282,7 @@ class BoardObject() : SourceObject() {
         renderables.clear()
         val paint = Paint()
         paint.alpha = alpha
-        val position = Renderable.Position(d.dipToPxF(xpos), d.dipToPxF(ypos), rotation, d.dipToPxF(width)/2F, d.dipToPxF(height)/2F)
+        val position = Renderable.Position(d.dipToPxF(actualXpos), d.dipToPxF(actualYpos), rotation, d.dipToPxF(width)/2F, d.dipToPxF(height)/2F)
         renderables.add(Renderable(Renderable.Type.IMAGE, renderedBitmap!!, position, paint))
         return renderables.toTypedArray()
     }
@@ -296,8 +296,8 @@ class BoardObject() : SourceObject() {
             val o = _objects[i]
             boundPath = Path()
             pointPath = Path()
-            boundPath.addRect(o.xpos.toFloat(), o.ypos.toFloat(), (o.xpos+o.width).toFloat(), (o.ypos+o.height).toFloat(), Path.Direction.CW)
-            matrix.setRotate(o.rotation, (o.xpos+(o.width/2F)).toFloat(), (o.ypos+(o.height/2F)).toFloat())
+            boundPath.addRect(o.actualXpos.toFloat(), o.actualYpos.toFloat(), (o.actualXpos+o.width).toFloat(), (o.actualYpos+o.height).toFloat(), Path.Direction.CW)
+            matrix.setRotate(o.rotation, (o.actualXpos+(o.width/2F)).toFloat(), (o.actualYpos+(o.height/2F)).toFloat())
             boundPath.transform(matrix)
             pointPath.addRect(x.toFloat(), y.toFloat(), x.toFloat()+0.1F, y.toFloat()+0.1F, Path.Direction.CW)
             if (boundPath.op(pointPath, Path.Op.INTERSECT) && !boundPath.isEmpty)

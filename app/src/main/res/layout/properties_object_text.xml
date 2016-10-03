@@ -72,7 +72,7 @@
         android:layout_marginLeft="56dp"
         android:paddingRight="4dp">
         <ImageView
-            android:id="@+id/btn_object_alignleft"
+            android:id="@+id/btn_object_textalignleft"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
@@ -80,7 +80,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"/>
         <ImageView
-            android:id="@+id/btn_object_aligncenter"
+            android:id="@+id/btn_object_textaligncenter"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center"
@@ -89,7 +89,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"/>
         <ImageView
-            android:id="@+id/btn_object_alignright"
+            android:id="@+id/btn_object_textalignright"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="right"
