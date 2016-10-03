@@ -21,6 +21,8 @@ import com.azeesoft.lib.colorpicker.ColorPickerDialog
 import de.lulebe.designer.BoardActivity
 import de.lulebe.designer.R
 import de.lulebe.designer.adapters.FontChooserAdapter
+import de.lulebe.designer.data.FontCache
+import de.lulebe.designer.data.IncludedFiles
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.objects.TextObject
 import de.lulebe.designer.data.styles.ColorStyle
@@ -31,6 +33,7 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
 
     private val mTextcolorView: View
     private val mExtractTextcolorView: ImageView
+    private val mFontDisplayView: TextView
     private val mFontView: View
     private val mAlignleftView: ImageView
     private val mAligncenterView: ImageView
@@ -46,6 +49,7 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
     init {
         mTextcolorView = mView.findViewById(R.id.btn_object_textcolor)
         mExtractTextcolorView = mView.findViewById(R.id.btn_object_extracttextcolor) as ImageView
+        mFontDisplayView = mView.findViewById(R.id.display_object_font) as TextView
         mFontView = mView.findViewById(R.id.btn_choose_font) as View
         mAlignleftView = mView.findViewById(R.id.btn_object_textalignleft) as ImageView
         mAligncenterView = mView.findViewById(R.id.btn_object_textaligncenter) as ImageView
@@ -187,6 +191,13 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
         } else {
             val dr = ContextCompat.getDrawable(mView.context, R.drawable.ic_content_save_grey600_24dp)
             mExtractTextcolorView.setImageDrawable(dr)
+        }
+        if (mObject.fontUID < 200L)
+            mFontDisplayView.text = IncludedFiles.fonts[mObject.fontUID]
+        else
+            mFontDisplayView.text = mBoardObject.fonts[mObject.fontUID]
+        FontCache.loadFont(mObject.fontUID, mBoardObject, mView.context) {
+            mFontDisplayView.typeface = it
         }
         mFontsizeView.setText(mObject.fontSize.toString())
         when (mObject.alignment) {
