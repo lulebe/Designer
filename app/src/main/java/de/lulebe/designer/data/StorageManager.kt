@@ -71,6 +71,7 @@ class StorageManager {
         outw.close()
         outs.close()
         savePreview()
+        BoardSaves.boardSaved(mDir.name)
     }
 
     fun savePreview () {

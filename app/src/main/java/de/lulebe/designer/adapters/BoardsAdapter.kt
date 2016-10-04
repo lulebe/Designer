@@ -9,6 +9,9 @@ import android.widget.TextView
 import com.squareup.picasso.Picasso
 import de.lulebe.designer.R
 import de.lulebe.designer.data.BoardMeta
+import de.lulebe.designer.data.BoardSaves
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -17,12 +20,29 @@ import java.util.*
 class BoardsAdapter(val listener: (BoardMeta, longClick: Boolean) -> Unit) : RecyclerView.Adapter<BoardsAdapter.BoardViewHolder>() {
 
     private var mItems = mutableListOf<BoardMeta>()
+    private val saveListener: (id: Long) -> Unit =  { id -> doAsync {
+        mItems.forEachIndexed { i, boardMeta ->
+            if (boardMeta._id == id) {
+                uiThread { notifyItemChanged(i) }
+                return@doAsync
+            }
+        }
+    } }
 
     fun setItems (items: MutableList<BoardMeta>) {
         mItems = items
         notifyDataSetChanged()
     }
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+        super.onAttachedToRecyclerView(recyclerView)
+        BoardSaves.addListener(saveListener)
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        BoardSaves.removeListener(saveListener)
+    }
 
     override fun getItemCount(): Int {
         return mItems.size
@@ -39,8 +59,10 @@ class BoardsAdapter(val listener: (BoardMeta, longClick: Boolean) -> Unit) : Rec
         sdf.timeZone = Calendar.getInstance().timeZone
         holder.tvLastedited.text = sdf.format(Date(item.lastOpened))
         val ctx = holder.ivPreview.context
-        Picasso.with(ctx).load(File(ctx.filesDir.path + File.separator + item._id.toString() + File.separator + "preview.png"))
-                .into(holder.ivPreview)
+        val imgFile = File(ctx.filesDir.path + File.separator + item._id.toString() + File.separator + "preview.png")
+        val picasso = Picasso.with(ctx)
+        picasso.invalidate(imgFile)
+        picasso.load(imgFile).into(holder.ivPreview)
         holder.view.setOnClickListener {
             listener(item, false)
         }

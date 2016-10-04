@@ -7,8 +7,8 @@ import de.lulebe.designer.data.objects.CopyObject
 
 
 object Grouper {
-    fun group (ctx: Context, oldBoard: BoardObject, objects: List<BaseObject>) : BoardObject {
-        objects.filter {
+    fun group (ctx: Context, oldBoard: BoardObject, objs: List<BaseObject>) : BoardObject {
+        val objects = objs.filter {
             it !is CopyObject
         }
         val newBoard = BoardObject()
