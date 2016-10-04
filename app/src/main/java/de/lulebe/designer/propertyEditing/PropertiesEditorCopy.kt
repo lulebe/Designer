@@ -131,7 +131,9 @@ class PropertiesEditorCopy (val mObject: CopyObject, val mView: ViewGroup, val m
                 mBoardState.selectedClear()
             }
             mUnlockView -> {
-                mBoardState.selectedSet(mBoardObject.unlockCopy(mObject))
+                val unlockedObject = mBoardObject.unlockCopy(mObject, mView.context)
+                unlockedObject?.init(mView.context, mBoardObject)
+                mBoardState.selectedSet(unlockedObject)
             }
             mAlignhorizleftView -> {
                 mObject.xposOrigin = BaseObject.HorizontalOrigin.LEFT

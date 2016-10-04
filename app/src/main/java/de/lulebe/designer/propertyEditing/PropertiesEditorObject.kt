@@ -43,7 +43,6 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
     private val mHeightView: EditText
     private val mHeightDisplayLayoutView: View
     private val mHeightDisplayView: TextView
-    private val mFillparentLayoutView: View
     private val mFillparenthorizontalView: ImageView
     private val mFillparentverticalView: ImageView
     private val mExtractBoxstyleView: ImageView
@@ -71,7 +70,6 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
         mHeightView = mView.findViewById(R.id.field_object_height) as EditText
         mHeightDisplayLayoutView = mView.findViewById(R.id.display_object_height_layout)
         mHeightDisplayView = mView.findViewById(R.id.display_object_height) as TextView
-        mFillparentLayoutView = mView.findViewById(R.id.btns_fillparent_layout)
         mFillparenthorizontalView = mView.findViewById(R.id.btn_object_fillparent_horizontal) as ImageView
         mFillparentverticalView = mView.findViewById(R.id.btn_object_fillparent_vertical) as ImageView
         mExtractBoxstyleView = mView.findViewById(R.id.btn_object_extractboxstyle) as ImageView
@@ -223,6 +221,8 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
                 newObj.init(mView.context, mBoardObject)
                 newObj.xpos = mObject.xpos + 10
                 newObj.ypos = mObject.ypos + 10
+                newObj.xposOrigin = mObject.xposOrigin
+                newObj.yposOrigin = mObject.yposOrigin
                 newObj.name = mView.resources.getString(R.string.copy_of) + " " + mObject.name
                 mBoardObject.addObject(newObj)
                 mBoardState.selectedSet(newObj)

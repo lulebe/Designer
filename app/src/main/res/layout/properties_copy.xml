@@ -97,6 +97,91 @@
                 android:text="0"/>
         </android.support.design.widget.TextInputLayout>
     </FrameLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="56dp"
+        android:paddingRight="4dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:text="@string/horizontal_position"/>
+        <ImageView
+            android:id="@+id/btn_object_alignleft"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_format_horizontal_align_left_grey600_24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"/>
+        <ImageView
+            android:id="@+id/btn_object_alignhorizcenter"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center"
+            android:padding="12dp"
+            android:src="@drawable/ic_format_horizontal_align_center_grey600_24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"/>
+        <ImageView
+            android:id="@+id/btn_object_alignright"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:layout_gravity="right"
+            android:padding="12dp"
+            android:src="@drawable/ic_format_horizontal_align_right_grey600_24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="56dp"
+        android:paddingRight="4dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:text="@string/vertical_position"/>
+        <ImageView
+            android:id="@+id/btn_object_aligntop"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_format_vertical_align_top_grey600_24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"/>
+        <ImageView
+            android:id="@+id/btn_object_alignvertcenter"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center"
+            android:padding="12dp"
+            android:src="@drawable/ic_format_vertical_align_center_grey600_24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"/>
+        <ImageView
+            android:id="@+id/btn_object_alignbottom"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:layout_gravity="right"
+            android:padding="12dp"
+            android:src="@drawable/ic_format_vertical_align_bottom_grey600_24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"/>
+    </FrameLayout>
+
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

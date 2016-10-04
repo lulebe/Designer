@@ -58,6 +58,7 @@ class ImageObject() : SourceObject() {
         get() = _tintColor
         set(value) {
             _tintColor = value
+            tintColorStyle = null
             change()
         }
 
@@ -94,7 +95,8 @@ class ImageObject() : SourceObject() {
 
     @Transient
     private var tintColorStyleChangeListener = {
-        tintColor = tintColorStyle!!.color
+        _tintColor = tintColorStyle!!.color
+        change()
     }
 
 
@@ -187,9 +189,6 @@ class ImageObject() : SourceObject() {
         this.ctx = WeakReference(ctx)
         if (board != null)
             this.board = WeakReference(board)
-        tintColorStyleChangeListener = {
-            tintColor = tintColorStyle!!.color
-        }
         if (board != null) {
             tintColorStyle = board.styles.colorStyles[_tintColorStyleUID]
         }

@@ -120,7 +120,7 @@
             android:id="@+id/btn_object_alignhorizcenter"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:layout_gravity="center"
             android:padding="12dp"
             android:src="@drawable/ic_format_horizontal_align_center_grey600_24dp"
@@ -161,7 +161,7 @@
             android:id="@+id/btn_object_alignvertcenter"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:layout_gravity="center"
             android:padding="12dp"
             android:src="@drawable/ic_format_vertical_align_center_grey600_24dp"
@@ -254,11 +254,10 @@
         </FrameLayout>
     </FrameLayout>
     <FrameLayout
-        android:id="@+id/btns_fillparent_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="56dp"
-        android:layout_marginRight="4dp">
+        android:layout_marginLeft="64dp"
+        android:layout_marginRight="24dp">
         <ImageView
             android:id="@+id/btn_object_fillparent_horizontal"
             android:layout_width="48dp"

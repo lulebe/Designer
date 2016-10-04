@@ -56,12 +56,12 @@ class PathObject : SourceObject() {
     var fillColorStyle: ColorStyle?
         get() = _fillColorStyle
         set(value) {
-            _fillColorStyle?.removeChangeListener(fillColorStyleChangeListener!!)
+            _fillColorStyle?.removeChangeListener(fillColorStyleChangeListener)
             if (value != null) {
                 _fillColorStyle = value
                 _fillColorStyleUID = value.uid
-                value.addChangeListener(fillColorStyleChangeListener!!)
-                fillColorStyleChangeListener!!()
+                value.addChangeListener(fillColorStyleChangeListener)
+                fillColorStyleChangeListener()
             } else {
                 _fillColorStyle = null
                 _fillColorStyleUID = null
@@ -70,7 +70,10 @@ class PathObject : SourceObject() {
         }
 
     @Transient
-    private var fillColorStyleChangeListener: (() -> Unit)? = null
+    private var fillColorStyleChangeListener = {
+        _fillColor = _fillColorStyle!!.color
+        change()
+    }
 
 
     private var _strokeColorStyleUID: Long? = null
@@ -79,12 +82,12 @@ class PathObject : SourceObject() {
     var strokeColorStyle: ColorStyle?
         get() = _strokeColorStyle
         set(value) {
-            _strokeColorStyle?.removeChangeListener(strokeColorStyleChangeListener!!)
+            _strokeColorStyle?.removeChangeListener(strokeColorStyleChangeListener)
             if (value != null) {
                 _strokeColorStyle = value
                 _strokeColorStyleUID = value.uid
-                value.addChangeListener(strokeColorStyleChangeListener!!)
-                strokeColorStyleChangeListener!!()
+                value.addChangeListener(strokeColorStyleChangeListener)
+                strokeColorStyleChangeListener()
             } else {
                 _strokeColorStyle = null
                 _strokeColorStyleUID = null
@@ -93,7 +96,10 @@ class PathObject : SourceObject() {
         }
 
     @Transient
-    private var strokeColorStyleChangeListener: (() -> Unit)? = null
+    private var strokeColorStyleChangeListener = {
+        _strokeColor = _strokeColorStyle!!.color
+        change()
+    }
 
 
 

@@ -31,7 +31,7 @@ object IncludedFiles {
     val boards = mapOf<Long, String>(
             Pair(-1L, "Material Design")
     )
-    val includedBoardsVersion = 1
+    val includedBoardsVersion = 2
 
     fun setupBoards(ctx: Context) {
         ctx.filesDir.list(FilenameFilter { dir, fileName ->

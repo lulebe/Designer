@@ -154,13 +154,14 @@ class BoardObject() : SourceObject() {
         change()
     }
 
-    fun unlockCopy (copyObject: CopyObject) : SourceObject? {
+    fun unlockCopy (copyObject: CopyObject, ctx: Context) : SourceObject? {
         if (copyObject.source == null) return null
         val newObj = copyObject.source!!.clone() as SourceObject
         newObj.name = copyObject.name
         newObj.xpos = copyObject.xpos
         newObj.ypos = copyObject.ypos
         newObj.rotation = copyObject.rotation
+        newObj.init(ctx, this)
         _objects.add(_objects.indexOf(copyObject), newObj)
         _objects.remove(copyObject)
         copyObject.close()

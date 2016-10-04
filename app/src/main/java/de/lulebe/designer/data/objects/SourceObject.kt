@@ -18,10 +18,14 @@ abstract class SourceObject : BaseObject() {
 
 
 
-    fun applyBaseClone (obj: SourceObject, keepName: Boolean = false) {
+    fun applyBaseClone (obj: SourceObject) {
         obj.name = name
         obj.xpos = xpos
         obj.ypos = ypos
+        obj.xposOrigin = xposOrigin
+        obj.yposOrigin = yposOrigin
+        obj.lockToParentWidth = lockToParentWidth
+        obj.lockToParentHeight = lockToParentHeight
         obj.width = width
         obj.height = height
         obj.alpha = alpha

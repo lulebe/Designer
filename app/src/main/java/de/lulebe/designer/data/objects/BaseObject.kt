@@ -258,14 +258,14 @@ abstract class BaseObject : IRenderable, Cloneable {
                 _boxStyleUID = null
                 change()
             } else {
-                _boxStyle?.removeChangeListener(boxStyleChangeListener!!)
+                _boxStyle?.removeChangeListener(_boxStyleChangeListener)
                 if (value != null) {
                     _lockToParentWidth = false
                     _lockToParentHeight = false
                     _boxStyle = value
                     _boxStyleUID = value.uid
-                    value.addChangeListener(boxStyleChangeListener!!)
-                    boxStyleChangeListener!!()
+                    value.addChangeListener(_boxStyleChangeListener)
+                    _boxStyleChangeListener()
                 } else {
                     _boxStyle = null
                     _boxStyleUID = null
@@ -275,7 +275,27 @@ abstract class BaseObject : IRenderable, Cloneable {
         }
 
     @Transient
-    open protected var boxStyleChangeListener: (() -> Unit)? = null
+    private var _boxStyleChangeListener = {
+        if (canDirectlyChangeWidth()) {
+            if (_widthMoving == _width)
+                _widthMoving = boxStyle!!.width
+            _width = boxStyle!!.width
+        }
+        if (canDirectlyChangeHeight()) {
+            if (_heightMoving == _height)
+                _heightMoving = boxStyle!!.height
+            _height = boxStyle!!.height
+        }
+        calculateHandles()
+        change()
+    }
+    open protected var boxStyleChangeListener: () -> Unit
+        get() = _boxStyleChangeListener
+        set(value) {
+            _boxStyle?.removeChangeListener(_boxStyleChangeListener)
+            _boxStyleChangeListener = value
+            _boxStyle?.addChangeListener(value)
+        }
 
 
     open fun close () {
@@ -367,21 +387,6 @@ abstract class BaseObject : IRenderable, Cloneable {
 
     open fun init (ctx: Context, board: BoardObject?) {
         parentBoard = board
-        if (boxStyleChangeListener == null)
-            boxStyleChangeListener = {
-                if (canDirectlyChangeWidth()) {
-                    if (_widthMoving == _width)
-                        _widthMoving = boxStyle!!.width
-                    _width = boxStyle!!.width
-                }
-                if (canDirectlyChangeHeight()) {
-                    if (_heightMoving == _height)
-                        _heightMoving = boxStyle!!.height
-                    _height = boxStyle!!.height
-                }
-                calculateHandles()
-                change()
-            }
         if (board != null)
             boxStyle = board.styles.boxStyles[_boxStyleUID]
         _xposMoving = actualXpos

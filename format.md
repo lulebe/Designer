@@ -21,7 +21,7 @@ a `?`behind a value means it can be `null`
 "_width": Int,
 "_height": Int,
 "_rotation": Int,
-"_boxStyleUID": Long?
+"boxStyleUID": Long?
 }`
 
 2. **SourceObject** (inherits from BaseObject) `{
@@ -49,7 +49,7 @@ a `?`behind a value means it can be `null`
 "_keepRatio": Boolean,
 "_tinted": Boolean,
 "_tintColor": Int,
-"_tintColorStyleUID": Long?
+"tintColorStyleUID": Long?
 }`
 
 6. **TextObject** (inherits from SourceObject) `{
@@ -58,8 +58,8 @@ a `?`behind a value means it can be `null`
 "_textColor": Int,
 "_fontSize": Int,
 "_fontUID": Long,
-"_textStyleUID": Long?,
-"_textColorStyleUID": Long?
+"textStyleUID": Long?,
+"textColorStyleUID": Long?
 }`
 **notice:** `_fontUID 0`is the default Font, Roboto Regular
 
@@ -68,8 +68,8 @@ a `?`behind a value means it can be `null`
 "_strokeColor": Int,
 "_strokeWidth: Int,
 "_corderRadius": Int,
-"_fillColorStyleUID": Long?,
-"_strokeColorStyleUID": Long?,
+"fillColorStyleUID": Long?,
+"strokeColorStyleUID": Long?,
 "_gradient": Gradient?,
 "_shadow": Shadow?
 }`
@@ -84,8 +84,8 @@ a `?`behind a value means it can be `null`
 "_direction": "HORIZONTAL"/"VERTICAL"/"CIRCLE",
 "_startColor": Int,
 "_endColor": Int,
-"_startColorStyleUID": Long?,
-"_endColorStyleUID": Long?
+"startColorStyleUID": Long?,
+"endColorStyleUID": Long?
 }`
 
 10. **Shadow** (RectObject inner class) `{

@@ -20,9 +20,6 @@ class TextObject : SourceObject() {
     @Transient
     private var ctx: Context? = null
 
-    @Transient
-    private var board: BoardObject? = null
-
     private var _text = "Text"
     var text: String
         get() = _text
@@ -71,8 +68,8 @@ class TextObject : SourceObject() {
     var fontUID: Long
         get() = _fontUID
         set(value) {
-            if (ctx != null && board != null) {
-                FontCache.loadFont(value, board!!, ctx!!) {
+            if (ctx != null && _parentBoard != null) {
+                FontCache.loadFont(value, _parentBoard!!, ctx!!) {
                     if (_textStyle != null)
                         textStyle = null
                     _fontUID = value
@@ -123,7 +120,18 @@ class TextObject : SourceObject() {
         }
 
     @Transient
-    private var textStyleChangeListener = {}
+    private var textStyleChangeListener = {
+        _alignment = textStyle!!.alignment
+        _fontSize = textStyle!!.fontSize
+        if (_parentBoard != null && ctx != null) {
+            _fontUID = textStyle!!.font
+            FontCache.loadFont(textStyle!!.font, _parentBoard!!, ctx!!) {
+                typeFace = it
+                calcSizes()
+                change()
+            }
+        }
+    }
 
 
     private var _textColorStyleUID: Long? = null
@@ -146,7 +154,10 @@ class TextObject : SourceObject() {
         }
 
     @Transient
-    private var textColorStyleChangeListener = {}
+    private var textColorStyleChangeListener = {
+        _textColor = textColorStyle!!.color
+        change()
+    }
 
 
 
@@ -231,23 +242,6 @@ class TextObject : SourceObject() {
     override fun init(ctx: Context, board: BoardObject?) {
         super.init(ctx, board)
         this.ctx = ctx
-        this.board = board
-        textColorStyleChangeListener = {
-            _textColor = textColorStyle!!.color
-            change()
-        }
-        textStyleChangeListener = {
-            _alignment = textStyle!!.alignment
-            _fontSize = textStyle!!.fontSize
-            if (board != null) {
-                _fontUID = textStyle!!.font
-                FontCache.loadFont(textStyle!!.font, board, ctx) {
-                    typeFace = it
-                    calcSizes()
-                    change()
-                }
-            }
-        }
         if (board != null) {
             textStyle = board.styles.textStyles[_textStyleUID]
             textColorStyle = board.styles.colorStyles[_textColorStyleUID]

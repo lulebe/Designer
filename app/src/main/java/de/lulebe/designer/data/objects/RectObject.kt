@@ -151,12 +151,12 @@ class RectObject : SourceObject() {
         var startColorStyle: ColorStyle?
             get() = _startColorStyle
             set(value) {
-                _startColorStyle?.removeChangeListener(startColorStyleChangeListener!!)
+                _startColorStyle?.removeChangeListener(startColorStyleChangeListener)
                 if (value != null) {
                     _startColorStyle = value
                     _startColorStyleUID = value.uid
-                    value.addChangeListener(startColorStyleChangeListener!!)
-                    startColorStyleChangeListener!!()
+                    value.addChangeListener(startColorStyleChangeListener)
+                    startColorStyleChangeListener()
                 } else {
                     _startColorStyle = null
                     _startColorStyleUID = null
@@ -164,7 +164,10 @@ class RectObject : SourceObject() {
                 }
             }
         @Transient
-        private var startColorStyleChangeListener: (() -> Unit)? = null
+        private var startColorStyleChangeListener = {
+            _startColor = startColorStyle!!.color
+            change()
+        }
         
         
         var _endColorStyleUID: Long? = null
@@ -173,12 +176,12 @@ class RectObject : SourceObject() {
         var endColorStyle: ColorStyle?
             get() = _endColorStyle
             set(value) {
-                _endColorStyle?.removeChangeListener(endColorStyleChangeListener!!)
+                _endColorStyle?.removeChangeListener(endColorStyleChangeListener)
                 if (value != null) {
                     _endColorStyle = value
                     _endColorStyleUID = value.uid
-                    value.addChangeListener(endColorStyleChangeListener!!)
-                    endColorStyleChangeListener!!()
+                    value.addChangeListener(endColorStyleChangeListener)
+                    endColorStyleChangeListener()
                 } else {
                     _endColorStyle = null
                     _endColorStyleUID = null
@@ -186,7 +189,10 @@ class RectObject : SourceObject() {
                 }
             }
         @Transient
-        private var endColorStyleChangeListener: (() -> Unit)? = null
+        private var endColorStyleChangeListener = {
+            _endColor = endColorStyle!!.color
+            change()
+        }
 
         fun extractStartcolorStyle() : ColorStyle {
             val cs = ColorStyle()
@@ -206,14 +212,6 @@ class RectObject : SourceObject() {
                 startColorStyle = board.styles.colorStyles[_startColorStyleUID!!]
             if (_endColorStyleUID != null)
                 endColorStyle = board.styles.colorStyles[_endColorStyleUID!!]
-            startColorStyleChangeListener = {
-                _startColor = startColorStyle!!.color
-                change()
-            }
-            endColorStyleChangeListener = {
-                _endColor = endColorStyle!!.color
-                change()
-            }
         }
 
         override public fun clone () : Gradient {
@@ -308,12 +306,12 @@ class RectObject : SourceObject() {
     var fillColorStyle: ColorStyle?
         get() = _fillColorStyle
         set(value) {
-            _fillColorStyle?.removeChangeListener(fillColorStyleChangeListener!!)
+            _fillColorStyle?.removeChangeListener(fillColorStyleChangeListener)
             if (value != null) {
                 _fillColorStyle = value
                 _fillColorStyleUID = value.uid
-                value.addChangeListener(fillColorStyleChangeListener!!)
-                fillColorStyleChangeListener!!()
+                value.addChangeListener(fillColorStyleChangeListener)
+                fillColorStyleChangeListener()
             } else {
                 _fillColorStyle = null
                 _fillColorStyleUID = null
@@ -322,7 +320,10 @@ class RectObject : SourceObject() {
         }
 
     @Transient
-    private var fillColorStyleChangeListener: (() -> Unit)? = null
+    private var fillColorStyleChangeListener = {
+        _fillColor = fillColorStyle!!.color
+        change()
+    }
 
 
     private var _strokeColorStyleUID: Long? = null
@@ -331,12 +332,12 @@ class RectObject : SourceObject() {
     var strokeColorStyle: ColorStyle?
         get() = _strokeColorStyle
         set(value) {
-            _strokeColorStyle?.removeChangeListener(strokeColorStyleChangeListener!!)
+            _strokeColorStyle?.removeChangeListener(strokeColorStyleChangeListener)
             if (value != null) {
                 _strokeColorStyle = value
                 _strokeColorStyleUID = value.uid
-                value.addChangeListener(strokeColorStyleChangeListener!!)
-                strokeColorStyleChangeListener!!()
+                value.addChangeListener(strokeColorStyleChangeListener)
+                strokeColorStyleChangeListener()
             } else {
                 _strokeColorStyle = null
                 _strokeColorStyleUID = null
@@ -345,7 +346,10 @@ class RectObject : SourceObject() {
         }
 
     @Transient
-    private var strokeColorStyleChangeListener: (() -> Unit)? = null
+    private var strokeColorStyleChangeListener = {
+        _strokeColor = strokeColorStyle!!.color
+        change()
+    }
     
     
     
@@ -450,14 +454,6 @@ class RectObject : SourceObject() {
             _height = boxStyle!!.height
             _cornerRadius = boxStyle!!.cornerRadius
             calculateHandles()
-            change()
-        }
-        fillColorStyleChangeListener = {
-            _fillColor = fillColorStyle!!.color
-            change()
-        }
-        strokeColorStyleChangeListener = {
-            _strokeColor = strokeColorStyle!!.color
             change()
         }
         if (board != null) {

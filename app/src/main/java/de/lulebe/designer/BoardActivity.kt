@@ -87,7 +87,7 @@ class BoardActivity : AppCompatActivity() {
 
     override fun onStop () {
         if (intent.getBooleanExtra("isRoot", true)) {
-            SaveBoard().execute()
+            saveBoard()
         }
         super.onStop()
     }
@@ -97,7 +97,7 @@ class BoardActivity : AppCompatActivity() {
         if (key != 0)
             setResult(Activity.RESULT_OK, intent)
         if (intent.getBooleanExtra("isRoot", true)) {
-            CloseBoard().execute()
+            closeBoard()
         }
         super.onDestroy()
     }
@@ -470,20 +470,16 @@ class BoardActivity : AppCompatActivity() {
         }
     }
 
-
-    private inner class SaveBoard() : AsyncTask<Void, Void, Void>() {
-        override fun doInBackground(vararg params: Void?): Void? {
-            if (mStorageManager == null || mBoardObject == null) return null
-            mStorageManager?.save(mBoardObject!!)
-            updateLastEditedTime()
-            return null
+    private fun saveBoard () {
+        doAsync {
+            if (mStorageManager != null && mBoardObject != null) {
+                mStorageManager?.save(mBoardObject!!)
+                updateLastEditedTime()
+            }
         }
     }
 
-    private inner class CloseBoard() : AsyncTask<Void, Void, Void>() {
-        override fun doInBackground(vararg params: Void?): Void? {
-            mStorageManager?.close()
-            return null
-        }
+    private fun closeBoard () {
+        doAsync { mStorageManager?.close() }
     }
 }
