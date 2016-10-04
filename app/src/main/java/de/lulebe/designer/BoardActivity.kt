@@ -362,7 +362,7 @@ class BoardActivity : AppCompatActivity() {
             }
             REQUEST_CODE_IMPORT -> {
                 if (data != null && resultCode == Activity.RESULT_OK) {
-                    doAsync {
+                    doAsync({ it.printStackTrace() }) {
                         val toBoard = mBoardObject
                         if (toBoard != null) {
                             val sm = StorageManager(this@BoardActivity, data.getLongExtra("boardDbId", 0))

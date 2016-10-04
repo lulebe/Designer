@@ -14,6 +14,7 @@ import de.lulebe.designer.R
 import de.lulebe.designer.data.BoardState
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.styles.BoxStyle
+import org.jetbrains.anko.runOnUiThread
 
 
 class BoxStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState) {
@@ -32,7 +33,7 @@ class BoxStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val m
 
         mBoardObject.styles.addChangeListener {
             setVisibilities()
-            mListview.adapter.notifyDataSetChanged()
+            mView.context.runOnUiThread { mListview.adapter.notifyDataSetChanged() }
         }
     }
 

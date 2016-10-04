@@ -19,6 +19,7 @@ import de.lulebe.designer.data.objects.ImageObject
 import de.lulebe.designer.data.objects.RectObject
 import de.lulebe.designer.data.objects.TextObject
 import de.lulebe.designer.data.styles.ColorStyle
+import org.jetbrains.anko.runOnUiThread
 
 
 class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState) {
@@ -37,7 +38,7 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
 
         mBoardObject.styles.addChangeListener {
             setVisibilities()
-            mListview.adapter.notifyDataSetChanged()
+            mView.context.runOnUiThread { mListview.adapter.notifyDataSetChanged() }
         }
     }
 

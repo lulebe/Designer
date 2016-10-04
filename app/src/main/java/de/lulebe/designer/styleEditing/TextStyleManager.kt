@@ -23,6 +23,7 @@ import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.data.objects.TextObject
 import de.lulebe.designer.data.styles.TextStyle
 import org.jetbrains.anko.onClick
+import org.jetbrains.anko.runOnUiThread
 
 
 class TextStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val mBoardState: BoardState, val mActivity: BoardActivity) {
@@ -40,7 +41,7 @@ class TextStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val 
 
         mBoardObject.styles.addChangeListener {
             setVisibilities()
-            mListview.adapter.notifyDataSetChanged()
+            mView.context.runOnUiThread { mListview.adapter.notifyDataSetChanged() }
         }
     }
 

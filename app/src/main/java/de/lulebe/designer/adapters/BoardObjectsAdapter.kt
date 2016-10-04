@@ -2,7 +2,8 @@ package de.lulebe.designer.adapters
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.AsyncTask
+import android.os.Handler
+import android.os.Looper
 import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
@@ -20,11 +21,11 @@ class BoardObjectsAdapter(val mBoardObject: BoardObject, val mBoardState: BoardS
         setHasStableIds(true)
         itemList = mBoardObject.objects
         mBoardObject.addChangeListener {
-            Notifier().execute()
+            Handler(Looper.getMainLooper()).post { notifyDataSetChanged() }
         }
         mBoardState.addListener(object: BoardState.BoardStateListener() {
             override fun onSelectChange(objs: List<BaseObject>) {
-                notifyDataSetChanged()
+                Handler(Looper.getMainLooper()).post { notifyDataSetChanged() }
             }
         })
     }
@@ -67,13 +68,6 @@ class BoardObjectsAdapter(val mBoardObject: BoardObject, val mBoardState: BoardS
             else
                 mBoardState.selectedRemove(clicked)
             return true
-        }
-    }
-
-    inner class Notifier : AsyncTask<Void, Void, Void>() {
-        override fun doInBackground(vararg p0: Void?) = null
-        override fun onPostExecute(result: Void?) {
-            notifyDataSetChanged()
         }
     }
 }
