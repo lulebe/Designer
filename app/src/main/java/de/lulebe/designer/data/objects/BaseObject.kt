@@ -2,6 +2,7 @@ package de.lulebe.designer.data.objects
 
 import android.content.Context
 import android.graphics.*
+import android.util.Log
 import de.lulebe.designer.data.Deserializer
 import de.lulebe.designer.data.ExportContainer
 import de.lulebe.designer.data.UIDGenerator
@@ -125,7 +126,7 @@ abstract class BaseObject : IRenderable, Cloneable {
     var ypos: Int
         get() = _ypos
         set(value) {
-            val oldActual = actualXpos
+            val oldActual = actualYpos
             _ypos = value
             if (yposMoving == oldActual)
                 yposMoving = actualYpos
@@ -168,12 +169,14 @@ abstract class BaseObject : IRenderable, Cloneable {
     open var width: Int
         get() = _width
         set(value) {
+            val oldWidth = _width
+            _width = value
+            _lockToParentWidth = false
+            _xposMoving = actualXpos
             if (_boxStyle != null)
                 boxStyle = null
-            if (widthMoving == _width)
+            if (widthMoving == oldWidth)
                 widthMoving = value
-            _width = value
-            _xposMoving = actualXpos
             change()
         }
 
@@ -194,8 +197,8 @@ abstract class BaseObject : IRenderable, Cloneable {
             if (_parentBoard == null || !canDirectlyChangeWidth()) return
             if (_boxStyle != null)
                 boxStyle = null
-            _lockToParentWidth = value
             width = _parentBoard!!.width
+            _lockToParentWidth = value
         }
 
 
@@ -204,12 +207,14 @@ abstract class BaseObject : IRenderable, Cloneable {
     open var height: Int
         get() = _height
         set(value) {
+            val oldHeight = _height
+            _height = value
+            _lockToParentHeight = false
+            _yposMoving = actualYpos
             if (_boxStyle != null)
                 boxStyle = null
-            if (heightMoving == _height)
+            if (heightMoving == oldHeight)
                 heightMoving = value
-            _height = value
-            _yposMoving = actualYpos
             change()
         }
 
@@ -222,16 +227,16 @@ abstract class BaseObject : IRenderable, Cloneable {
             calculateHandles()
         }
 
-    protected var _lockToParentHeight = false
     //locked height
+    protected var _lockToParentHeight = false
     var lockToParentHeight: Boolean
         get() = _lockToParentHeight
         set(value) {
             if (_parentBoard == null || !canDirectlyChangeHeight()) return
             if (_boxStyle != null)
                 boxStyle = null
-            _lockToParentHeight = value
             height = _parentBoard!!.height
+            _lockToParentHeight = value
         }
 
     @Transient
@@ -421,6 +426,7 @@ abstract class BaseObject : IRenderable, Cloneable {
         rotRad += rad90deg
         calculateHandle(handles[3], centerX - (Math.cos(rotRad)*heightMoving/2).toInt(),
                 centerY - (Math.sin(rotRad)*heightMoving/2).toInt())
+        Log.d("HANDLES", "calculated")
     }
 
     private fun calculateHandle (handle: Rect, cx: Int, cy: Int) {
@@ -512,6 +518,11 @@ abstract class BaseObject : IRenderable, Cloneable {
         ec.newUIDs.put(uid, newObj.uid)
         newObj.boxStyle = boxStyle?.export(ec)
         return listOf(newObj)
+    }
+
+    open fun updateStyleToNewId(oldStyle: BaseStyle, newStyle: BaseStyle) {
+        if (oldStyle is BoxStyle && this.boxStyle?.uid == oldStyle.uid)
+            this.boxStyle = newStyle as BoxStyle
     }
 
     override public abstract fun clone () : BaseObject

@@ -38,7 +38,7 @@ open class BoardView(val mActivity: BoardActivity, val mBoardState: BoardState, 
         override fun onDown(event: MotionEvent?): Boolean {
             if (event == null)
                 return false
-            if (mBoardState.selected.size > 0) {
+            if (mBoardState.selected.isNotEmpty()) {
                 val x = eventXOnBoard(event)
                 val y = eventYOnBoard(event)
                 val handleAtPos = mBoardState.selected[0].getHandleAt(x, y)

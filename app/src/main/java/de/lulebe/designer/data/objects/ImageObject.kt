@@ -6,6 +6,7 @@ import android.support.v7.graphics.Palette
 import de.lulebe.designer.data.Deserializer
 import de.lulebe.designer.data.ExportContainer
 import de.lulebe.designer.data.ImageSource
+import de.lulebe.designer.data.styles.BaseStyle
 import de.lulebe.designer.data.styles.ColorStyle
 import java.io.File
 import java.lang.ref.WeakReference
@@ -231,6 +232,12 @@ class ImageObject() : SourceObject() {
             } catch (e: NumberFormatException) {}
         newObj.tintColorStyle = tintColorStyle?.export(ec)
         return list
+    }
+
+    override fun updateStyleToNewId(oldStyle: BaseStyle, newStyle: BaseStyle) {
+        super.updateStyleToNewId(oldStyle, newStyle)
+        if (oldStyle is ColorStyle && tintColorStyle?.uid == oldStyle.uid)
+            tintColorStyle = newStyle as ColorStyle
     }
 
 }
