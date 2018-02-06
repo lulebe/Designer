@@ -36,19 +36,19 @@ class PropertiesEditorCopy (val mObject: CopyObject, val mView: ViewGroup, val m
     private val mHeightDisplayView: TextView
 
     init {
-        mNameView = mView.findViewById(R.id.field_object_name) as EditText
-        mDeleteView = mView.findViewById(R.id.btn_object_delete)
-        mUnlockView = mView.findViewById(R.id.btn_object_unlock)
-        mXPosView = mView.findViewById(R.id.field_object_xpos) as EditText
-        mYPosView = mView.findViewById(R.id.field_object_ypos) as EditText
-        mAlignhorizleftView = mView.findViewById(R.id.btn_object_alignleft) as ImageView
-        mAlignhorizcenterView = mView.findViewById(R.id.btn_object_alignhorizcenter) as ImageView
-        mAlignhorizrightView = mView.findViewById(R.id.btn_object_alignright) as ImageView
-        mAlignverttopView = mView.findViewById(R.id.btn_object_aligntop) as ImageView
-        mAlignvertcenterView = mView.findViewById(R.id.btn_object_alignvertcenter) as ImageView
-        mAlignvertbottomView = mView.findViewById(R.id.btn_object_alignbottom) as ImageView
-        mWidthDisplayView = mView.findViewById(R.id.display_object_width) as TextView
-        mHeightDisplayView = mView.findViewById(R.id.display_object_height) as TextView
+        mNameView = mView.findViewById<EditText>(R.id.field_object_name)
+        mDeleteView = mView.findViewById<View>(R.id.btn_object_delete)
+        mUnlockView = mView.findViewById<View>(R.id.btn_object_unlock)
+        mXPosView = mView.findViewById<EditText>(R.id.field_object_xpos)
+        mYPosView = mView.findViewById<EditText>(R.id.field_object_ypos)
+        mAlignhorizleftView = mView.findViewById<ImageView>(R.id.btn_object_alignleft)
+        mAlignhorizcenterView = mView.findViewById<ImageView>(R.id.btn_object_alignhorizcenter)
+        mAlignhorizrightView = mView.findViewById<ImageView>(R.id.btn_object_alignright)
+        mAlignverttopView = mView.findViewById<ImageView>(R.id.btn_object_aligntop)
+        mAlignvertcenterView = mView.findViewById<ImageView>(R.id.btn_object_alignvertcenter)
+        mAlignvertbottomView = mView.findViewById<ImageView>(R.id.btn_object_alignbottom)
+        mWidthDisplayView = mView.findViewById<TextView>(R.id.display_object_width)
+        mHeightDisplayView = mView.findViewById<TextView>(R.id.display_object_height)
 
         initCheatSheets()
 

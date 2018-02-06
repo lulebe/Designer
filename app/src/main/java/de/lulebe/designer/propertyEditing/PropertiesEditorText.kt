@@ -48,15 +48,15 @@ class PropertiesEditorText(val mObject: TextObject, val mView: ViewGroup, val mB
 
     init {
         mTextcolorView = mView.findViewById(R.id.btn_object_textcolor)
-        mExtractTextcolorView = mView.findViewById(R.id.btn_object_extracttextcolor) as ImageView
-        mFontDisplayView = mView.findViewById(R.id.display_object_font) as TextView
-        mFontView = mView.findViewById(R.id.btn_choose_font) as View
-        mAlignleftView = mView.findViewById(R.id.btn_object_textalignleft) as ImageView
-        mAligncenterView = mView.findViewById(R.id.btn_object_textaligncenter) as ImageView
-        mAlignrightView = mView.findViewById(R.id.btn_object_textalignright) as ImageView
-        mFontsizeView = mView.findViewById(R.id.field_object_fontsize) as EditText
-        mExtractTextstyleView = mView.findViewById(R.id.btn_object_extracttextstyle) as ImageView
-        mTextView = mView.findViewById(R.id.field_object_text) as EditText
+        mExtractTextcolorView = mView.findViewById<ImageView>(R.id.btn_object_extracttextcolor)
+        mFontDisplayView = mView.findViewById<TextView>(R.id.display_object_font)
+        mFontView = mView.findViewById<View>(R.id.btn_choose_font)
+        mAlignleftView = mView.findViewById<ImageView>(R.id.btn_object_textalignleft)
+        mAligncenterView = mView.findViewById<ImageView>(R.id.btn_object_textaligncenter)
+        mAlignrightView = mView.findViewById<ImageView>(R.id.btn_object_textalignright)
+        mFontsizeView = mView.findViewById<EditText>(R.id.field_object_fontsize)
+        mExtractTextstyleView = mView.findViewById<ImageView>(R.id.btn_object_extracttextstyle)
+        mTextView = mView.findViewById<EditText>(R.id.field_object_text)
 
         mFontView.setOnClickListener {
             openFontChooserDialog()

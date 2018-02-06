@@ -181,7 +181,7 @@ class Pane : FrameLayout {
         super.onFinishInflate()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
         val dp2 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2F, resources.displayMetrics).toInt()
-        val scv = findViewById(R.id.vert_scrollview) as ScrollView?
+        val scv = findViewById<ScrollView?>(R.id.vert_scrollview)
         scv?.setOnScrollChangeListener { view, scrollX, scrollY, oldScrollX, oldScrollY ->
             if (scrollY > 0 && ViewCompat.getElevation(headerLayout) == 0F)
                 ViewCompat.setElevation(headerLayout, dp2.toFloat())

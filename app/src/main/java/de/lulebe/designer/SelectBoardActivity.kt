@@ -77,14 +77,14 @@ class SelectBoardActivity : AppCompatActivity() {
 
     private fun initUI () {
         setContentView(R.layout.activity_select_board)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar?
+        val toolbar = findViewById<Toolbar?>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        val fabAdd = findViewById(R.id.fab_add) as FloatingActionButton
+        val fabAdd = findViewById<FloatingActionButton>(R.id.fab_add)
         fabAdd.setOnClickListener {
             val dialogView = layoutInflater.inflate(R.layout.dialog_create_board, null)
             AlertDialog.Builder(this).setTitle(R.string.create_new_board).setView(dialogView)
                     .setPositiveButton(R.string.create, { di: DialogInterface, i: Int ->
-                        val name = (dialogView.findViewById(R.id.field_board_name) as EditText).text.toString()
+                        val name = dialogView.findViewById<EditText>(R.id.field_board_name).text.toString()
                         if (name.length > 0)
                             BoardCreator(name).execute()
                         di.dismiss()
@@ -94,14 +94,14 @@ class SelectBoardActivity : AppCompatActivity() {
                     })
                     .create().show()
         }
-        val fabImport = findViewById(R.id.fab_import) as FloatingActionButton
+        val fabImport = findViewById<FloatingActionButton>(R.id.fab_import)
         fabImport.setOnClickListener {
             val intent = Intent()
             intent.action = Intent.ACTION_GET_CONTENT
             intent.type = "application/zip"
             startActivityForResult(intent, REQUEST_CODE_IMPORT)
         }
-        val boardsList = findViewById(R.id.boardslist) as RecyclerView
+        val boardsList = findViewById<RecyclerView>(R.id.boardslist)
         boardsList.layoutManager = GridLayoutManager(this, resources.getInteger(R.integer.mainpage_grid_rows))
         boardsList.adapter = mAdapter
     }
@@ -133,7 +133,7 @@ class SelectBoardActivity : AppCompatActivity() {
                 dialogInterface.cancel()
             }
             .setPositiveButton(android.R.string.ok) { dialogInterface, i ->
-                val name = (v.findViewById(R.id.field_name) as EditText).text.toString()
+                val name = v.findViewById<EditText>(R.id.field_name).text.toString()
                 dialogInterface.dismiss()
                 BoardDuplicator(boardMeta, name).execute()
             }

@@ -43,12 +43,12 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
         mBtnImport = mPanel.findViewById(R.id.btn_import)
         mBtnJoin = mPanel.findViewById(R.id.btn_join)
 
-        mBtnToggleEditpan = mPanel.findViewById(R.id.btn_toggle_editpan) as ImageView
-        mBtnToggleGrid = mPanel.findViewById(R.id.btn_toggle_grid) as ImageView
+        mBtnToggleEditpan = mPanel.findViewById<ImageView>(R.id.btn_toggle_editpan)
+        mBtnToggleGrid = mPanel.findViewById<ImageView>(R.id.btn_toggle_grid)
         mBtnRemoveUnusedFiles = mPanel.findViewById(R.id.btn_remove_unused)
 
 
-        mObjectslistView = mPanel.findViewById(R.id.list_objects) as DragListView
+        mObjectslistView = mPanel.findViewById<DragListView>(R.id.list_objects)
 
         initCheatSheets()
 
@@ -164,7 +164,7 @@ class LeftPanelManager(val mPanel: Pane, val mBoardState: BoardState, val mBoard
     private fun initObjectslist () {
         mObjectslistView.setLayoutManager(LinearLayoutManager(mObjectslistView.context))
         val divider = ResourcesCompat.getDrawable(mObjectslistView.resources, R.drawable.listdivider, null)
-        mObjectslistView.recyclerView.addItemDecoration(DividerItemDecoration(divider))
+        mObjectslistView.recyclerView.addItemDecoration(DividerItemDecoration(divider!!))
         val adapter = BoardObjectsAdapter(mBoardObject, mBoardState)
         adapter.setHasStableIds(true)
         mObjectslistView.setAdapter(adapter, true)

@@ -51,31 +51,31 @@ class PropertiesEditorObject(val mObject: SourceObject, val mView: ViewGroup, va
     private val mAlphaView: EditText
 
     init {
-        mNameView = mView.findViewById(R.id.field_object_name) as EditText
+        mNameView = mView.findViewById<EditText>(R.id.field_object_name)
         mDeleteView = mView.findViewById(R.id.btn_object_delete)
         mDuplicateView = mView.findViewById(R.id.btn_object_duplicate)
-        mXPosView = mView.findViewById(R.id.field_object_xpos) as EditText
-        mYPosView = mView.findViewById(R.id.field_object_ypos) as EditText
-        mAlignhorizleftView = mView.findViewById(R.id.btn_object_alignleft) as ImageView
-        mAlignhorizcenterView = mView.findViewById(R.id.btn_object_alignhorizcenter) as ImageView
-        mAlignhorizrightView = mView.findViewById(R.id.btn_object_alignright) as ImageView
-        mAlignverttopView = mView.findViewById(R.id.btn_object_aligntop) as ImageView
-        mAlignvertcenterView = mView.findViewById(R.id.btn_object_alignvertcenter) as ImageView
-        mAlignvertbottomView = mView.findViewById(R.id.btn_object_alignbottom) as ImageView
+        mXPosView = mView.findViewById<EditText>(R.id.field_object_xpos)
+        mYPosView = mView.findViewById<EditText>(R.id.field_object_ypos)
+        mAlignhorizleftView = mView.findViewById<ImageView>(R.id.btn_object_alignleft)
+        mAlignhorizcenterView = mView.findViewById<ImageView>(R.id.btn_object_alignhorizcenter)
+        mAlignhorizrightView = mView.findViewById<ImageView>(R.id.btn_object_alignright)
+        mAlignverttopView = mView.findViewById<ImageView>(R.id.btn_object_aligntop)
+        mAlignvertcenterView = mView.findViewById<ImageView>(R.id.btn_object_alignvertcenter)
+        mAlignvertbottomView = mView.findViewById<ImageView>(R.id.btn_object_alignbottom)
         mWidthLayoutView = mView.findViewById(R.id.field_object_width_layout)
-        mWidthView = mView.findViewById(R.id.field_object_width) as EditText
+        mWidthView = mView.findViewById<EditText>(R.id.field_object_width)
         mWidthDisplayLayoutView = mView.findViewById(R.id.display_object_width_layout)
-        mWidthDisplayView = mView.findViewById(R.id.display_object_width) as TextView
+        mWidthDisplayView = mView.findViewById<TextView>(R.id.display_object_width)
         mHeightLayoutView = mView.findViewById(R.id.field_object_height_layout)
-        mHeightView = mView.findViewById(R.id.field_object_height) as EditText
+        mHeightView = mView.findViewById<EditText>(R.id.field_object_height)
         mHeightDisplayLayoutView = mView.findViewById(R.id.display_object_height_layout)
-        mHeightDisplayView = mView.findViewById(R.id.display_object_height) as TextView
-        mFillparenthorizontalView = mView.findViewById(R.id.btn_object_fillparent_horizontal) as ImageView
-        mFillparentverticalView = mView.findViewById(R.id.btn_object_fillparent_vertical) as ImageView
-        mExtractBoxstyleView = mView.findViewById(R.id.btn_object_extractboxstyle) as ImageView
-        mRotationView = mView.findViewById(R.id.field_object_rotation) as EditText
+        mHeightDisplayView = mView.findViewById<TextView>(R.id.display_object_height)
+        mFillparenthorizontalView = mView.findViewById<ImageView>(R.id.btn_object_fillparent_horizontal)
+        mFillparentverticalView = mView.findViewById<ImageView>(R.id.btn_object_fillparent_vertical)
+        mExtractBoxstyleView = mView.findViewById<ImageView>(R.id.btn_object_extractboxstyle)
+        mRotationView = mView.findViewById<EditText>(R.id.field_object_rotation)
         mRotationhandleinfoView = mView.findViewById(R.id.info_object_rotation_handles)
-        mAlphaView = mView.findViewById(R.id.field_object_alpha) as EditText
+        mAlphaView = mView.findViewById<EditText>(R.id.field_object_alpha)
 
         initCheatSheets()
 

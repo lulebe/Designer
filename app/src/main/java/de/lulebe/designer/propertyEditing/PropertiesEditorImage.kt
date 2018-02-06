@@ -40,10 +40,10 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val 
 
     init {
         mBtnchooseimageView = mView.findViewById(R.id.btn_choose_image)
-        mCbkeepratioView = mView.findViewById(R.id.cb_keepratio) as CheckBox
-        mCbtintView = mView.findViewById(R.id.cb_tint) as CheckBox
+        mCbkeepratioView = mView.findViewById<CheckBox>(R.id.cb_keepratio)
+        mCbtintView = mView.findViewById<CheckBox>(R.id.cb_tint)
         mTintcolorView = mView.findViewById(R.id.btn_object_tintcolor)
-        mExtractTintcolorView = mView.findViewById(R.id.btn_object_extracttintcolor) as ImageView
+        mExtractTintcolorView = mView.findViewById<ImageView>(R.id.btn_object_extracttintcolor)
 
         mBtnchooseimageView.setOnClickListener {
             openImageChooserDialog()
@@ -124,10 +124,10 @@ class PropertiesEditorImage(val mObject: ImageObject, val mView: ViewGroup, val 
 
     private fun openImageChooserDialog () {
         val v = LayoutInflater.from(mView.context).inflate(R.layout.dialog_imagechooser, null)
-        val rv = v.findViewById(R.id.list) as RecyclerView
+        val rv = v.findViewById<RecyclerView>(R.id.list)
         val lm = GridLayoutManager(mView.context, 2)
         val rvAdapter = ImageChooserAdapter(mView.context, mBoardObject, lm)
-        val spinner = v.findViewById(R.id.category) as Spinner
+        val spinner = v.findViewById<Spinner>(R.id.category)
         val spinnerAdapter = ArrayAdapter<String>(mView.context, android.R.layout.simple_spinner_item)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         SpinnerLoader(spinnerAdapter).execute()

@@ -75,9 +75,9 @@ class BoardImportAdapter(val mContext: Context, val mBoardId: Long, val mClickLi
 
 
     inner class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val included = itemView.findViewById(R.id.included)
-        val imgView = itemView.findViewById(R.id.iv) as ImageView
-        val txtView = itemView.findViewById(R.id.tv) as TextView
+        val included = itemView.findViewById<View>(R.id.included)
+        val imgView = itemView.findViewById<ImageView>(R.id.iv)
+        val txtView = itemView.findViewById<TextView>(R.id.tv)
         init {
             itemView.setOnClickListener {
                 mClickListener(mBoards[adapterPosition])

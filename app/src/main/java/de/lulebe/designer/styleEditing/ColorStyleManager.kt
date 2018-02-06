@@ -29,7 +29,7 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
 
     init {
         mEmptyview = mView.findViewById(R.id.tv_no_colorstyles)
-        mListview = mView.findViewById(R.id.rv_colorstyles) as RecyclerView
+        mListview = mView.findViewById<RecyclerView>(R.id.rv_colorstyles)
 
         mListview.layoutManager = LinearLayoutManager(mListview.context)
         mListview.adapter = ColorStyleAdapter()
@@ -72,12 +72,12 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
 
     private fun openNameEditDialog (cs: ColorStyle) {
         val v = LayoutInflater.from(mView.context).inflate(R.layout.dialog_namechooser, null)
-        (v.findViewById(R.id.field_name) as EditText).setText(cs.name)
+        v.findViewById<EditText>(R.id.field_name).setText(cs.name)
         AlertDialog.Builder(mView.context)
                 .setView(v)
                 .setTitle(R.string.name)
                 .setPositiveButton(android.R.string.ok, { dialogInterface, i ->
-                    cs.name = (v.findViewById(R.id.field_name) as EditText).text.toString()
+                    cs.name = v.findViewById<EditText>(R.id.field_name).text.toString()
                 })
                 .show()
     }
@@ -169,7 +169,7 @@ class ColorStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val
             val delete: View
             init {
                 view = itemView
-                name = itemView.findViewById(R.id.name) as TextView
+                name = itemView.findViewById<TextView>(R.id.name)
                 color = itemView.findViewById(R.id.color)
                 delete = itemView.findViewById(R.id.btn_delete)
             }

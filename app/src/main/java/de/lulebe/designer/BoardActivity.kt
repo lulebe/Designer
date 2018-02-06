@@ -20,12 +20,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
-import butterknife.bindView
 import de.lulebe.designer.data.*
 import de.lulebe.designer.data.objects.BaseObject
 import de.lulebe.designer.data.objects.BoardObject
 import de.lulebe.designer.propertyEditing.PropertyPanelManager
 import de.lulebe.designer.styleEditing.StylePanelManager
+import kotterknife.bindView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.File
@@ -240,10 +240,10 @@ class BoardActivity : AppCompatActivity() {
 
     private fun resizeDialog () {
         val dialogView = layoutInflater.inflate(R.layout.dialog_board_size, null)
-        val xField = dialogView.findViewById(R.id.field_board_sizex) as EditText
-        val yField = dialogView.findViewById(R.id.field_board_sizey) as EditText
-        val gridsizeField = dialogView.findViewById(R.id.field_board_gridsize) as EditText
-        val gridintervalField = dialogView.findViewById(R.id.field_board_gridlargeinterval) as EditText
+        val xField = dialogView.findViewById<EditText>(R.id.field_board_sizex)
+        val yField = dialogView.findViewById<EditText>(R.id.field_board_sizey)
+        val gridsizeField = dialogView.findViewById<EditText>(R.id.field_board_gridsize)
+        val gridintervalField = dialogView.findViewById<EditText>(R.id.field_board_gridlargeinterval)
         xField.setText(mBoardObject?.width.toString())
         yField.setText(mBoardObject?.height.toString())
         gridsizeField.setText(mBoardObject?.gridSize.toString())
@@ -422,7 +422,7 @@ class BoardActivity : AppCompatActivity() {
             boardView.layoutParams = lp
             mLayout.addView(boardView)
             val origLP = mLayout.layoutParams as CoordinatorLayout.LayoutParams
-            val rightpane = mRightpane.findViewById(R.id.layout_properties) as ViewGroup
+            val rightpane = mRightpane.findViewById<ViewGroup>(R.id.layout_properties)
             mPropertyPanelManager = PropertyPanelManager(this, rightpane, mBoardObject!!, mBoardState!!)
             mLeftPanelManager = LeftPanelManager(mLeftpane, mBoardState!!, mBoardObject!!, this)
             mStylePanelManager = StylePanelManager(mBottompane, mBoardObject!!, mBoardState!!, this)
@@ -436,7 +436,7 @@ class BoardActivity : AppCompatActivity() {
                 mLayout.layoutParams = lp
                 Snackbar.make(mMainView, "Select one object (or multiple by long-clicking) and go back to the previous board to import them", Snackbar.LENGTH_LONG).show()
             }
-            findViewById(R.id.loading)?.visibility = View.GONE
+            findViewById<View>(R.id.loading)?.visibility = View.GONE
             if (mBoardState!!.leftPanelLocked)
                 mLeftpane.lock(true, false)
             else

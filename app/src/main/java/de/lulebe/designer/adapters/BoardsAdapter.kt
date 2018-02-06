@@ -79,9 +79,9 @@ class BoardsAdapter(val listener: (BoardMeta, longClick: Boolean) -> Unit) : Rec
         val view: View
         constructor(itemView: ViewGroup) : super(itemView) {
             view = itemView
-            tvName = itemView.findViewById(R.id.tv_name) as TextView
-            tvLastedited = itemView.findViewById(R.id.tv_lastedited) as TextView
-            ivPreview = itemView.findViewById(R.id.iv_preview) as ImageView
+            tvName = itemView.findViewById<TextView>(R.id.tv_name)
+            tvLastedited = itemView.findViewById<TextView>(R.id.tv_lastedited)
+            ivPreview = itemView.findViewById<ImageView>(R.id.iv_preview)
         }
     }
 }

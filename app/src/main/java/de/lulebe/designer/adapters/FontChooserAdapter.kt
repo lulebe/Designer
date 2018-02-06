@@ -93,9 +93,9 @@ class FontChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val la
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var click = {}
-        val includedView = itemView.findViewById(R.id.included)
-        val fontView = itemView.findViewById(R.id.fv) as TextView
-        val txtView = itemView.findViewById(R.id.tv) as TextView
+        val includedView = itemView.findViewById<View>(R.id.included)
+        val fontView = itemView.findViewById<TextView>(R.id.fv)
+        val txtView = itemView.findViewById<TextView>(R.id.tv)
         init {
             itemView.setOnClickListener{
                 click()

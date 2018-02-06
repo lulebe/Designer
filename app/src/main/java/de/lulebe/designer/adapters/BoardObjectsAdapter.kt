@@ -53,8 +53,8 @@ class BoardObjectsAdapter(val mBoardObject: BoardObject, val mBoardState: BoardS
     override fun getItemId(position: Int) = itemList[position].uid
 
     inner class ObjectViewHolder(val view: ViewGroup) : DragItemAdapter<BaseObject, BoardObjectsAdapter.ObjectViewHolder>.ViewHolder(view, R.id.color) {
-        val colorView = view.findViewById(R.id.color)
-        val textView = view.findViewById(R.id.name) as TextView
+        val colorView = view.findViewById<View>(R.id.color)
+        val textView = view.findViewById<TextView>(R.id.name)
 
         var obj: BaseObject? = null
 

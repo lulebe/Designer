@@ -155,8 +155,8 @@ class ImageChooserAdapter(val ctx: Context, val mBoardObject: BoardObject, val l
 
     inner class ImageViewHolder(itemView: View) : ViewHolder(itemView) {
         var click = {}
-        val imgView = itemView.findViewById(R.id.iv) as ImageView
-        val txtView = itemView.findViewById(R.id.tv) as TextView
+        val imgView = itemView.findViewById<ImageView>(R.id.iv)
+        val txtView = itemView.findViewById<TextView>(R.id.tv)
         init {
             itemView.setOnClickListener {
                 click()

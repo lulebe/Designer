@@ -32,7 +32,7 @@ class TextStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val 
 
     init {
         mEmptyview = mView.findViewById(R.id.tv_no_textstyles)
-        mListview = mView.findViewById(R.id.rv_textstyles) as RecyclerView
+        mListview = mView.findViewById(R.id.rv_textstyles)
 
         mListview.layoutManager = LinearLayoutManager(mListview.context)
         mListview.adapter = TextStyleAdapter()
@@ -58,11 +58,11 @@ class TextStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val 
 
     private fun openEditDialog (ts: TextStyle) {
         val view = LayoutInflater.from(mView.context).inflate(R.layout.dialog_edit_textstyle, null)
-        val nameView = view.findViewById(R.id.field_name) as EditText
-        val alignleftView = view.findViewById(R.id.btn_alignleft) as ImageView
-        val aligncenterView = view.findViewById(R.id.btn_aligncenter) as ImageView
-        val alignrightView = view.findViewById(R.id.btn_alignright) as ImageView
-        val fontsizeView = view.findViewById(R.id.field_fontsize) as EditText
+        val nameView = view.findViewById<EditText>(R.id.field_name)
+        val alignleftView = view.findViewById<ImageView>(R.id.btn_alignleft)
+        val aligncenterView = view.findViewById<ImageView>(R.id.btn_aligncenter)
+        val alignrightView = view.findViewById<ImageView>(R.id.btn_alignright)
+        val fontsizeView = view.findViewById<EditText>(R.id.field_fontsize)
         nameView.setText(ts.name)
         var alignmentTmp = ts.alignment
         setAlignmentButtons(alignmentTmp, alignleftView, aligncenterView, alignrightView)
@@ -214,8 +214,8 @@ class TextStyleManager(val mView: ViewGroup, val mBoardObject: BoardObject, val 
             val delete: View
             init {
                 view = itemView
-                name = itemView.findViewById(R.id.name) as TextView
-                properties = itemView.findViewById(R.id.properties) as TextView
+                name = itemView.findViewById<TextView>(R.id.name)
+                properties = itemView.findViewById<TextView>(R.id.properties)
                 delete = itemView.findViewById(R.id.btn_delete)
             }
         }

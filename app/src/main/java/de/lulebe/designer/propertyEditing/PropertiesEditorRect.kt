@@ -44,27 +44,27 @@ class PropertiesEditorRect(val mObject: RectObject, val mView: ViewGroup, val mB
     private var currentEditingColor = 0 //fill, stroke, gradientStart, gradientEnd
 
     init {
-        mFilliconView = mView.findViewById(R.id.icon_object_fill) as ImageView
-        mToggleFillView = mView.findViewById(R.id.toggle_object_fill) as Switch
+        mFilliconView = mView.findViewById<ImageView>(R.id.icon_object_fill)
+        mToggleFillView = mView.findViewById<Switch>(R.id.toggle_object_fill)
         mFillcolorLayout = mView.findViewById(R.id.layout_object_fill_solid)
         mFillcolorView = mView.findViewById(R.id.btn_object_fillcolor)
-        mExtractFillcolorView = mView.findViewById(R.id.btn_object_extractfillcolor) as ImageView
+        mExtractFillcolorView = mView.findViewById<ImageView>(R.id.btn_object_extractfillcolor)
         mGradientLayout = mView.findViewById(R.id.layout_object_fill_gradient)
-        mGradienthorizontalView = mView.findViewById(R.id.btn_object_gradient_horizontal) as ImageView
-        mGradientverticalView = mView.findViewById(R.id.btn_object_gradient_vertical) as ImageView
-        mGradientcircleView = mView.findViewById(R.id.btn_object_gradient_circle) as ImageView
+        mGradienthorizontalView = mView.findViewById<ImageView>(R.id.btn_object_gradient_horizontal)
+        mGradientverticalView = mView.findViewById<ImageView>(R.id.btn_object_gradient_vertical)
+        mGradientcircleView = mView.findViewById<ImageView>(R.id.btn_object_gradient_circle)
         mGradientstartcolorView = mView.findViewById(R.id.btn_object_gradient_startcolor)
-        mExtractGradientstartcolorView = mView.findViewById(R.id.btn_object_extractgradientstartcolor) as ImageView
+        mExtractGradientstartcolorView = mView.findViewById<ImageView>(R.id.btn_object_extractgradientstartcolor)
         mGradientendcolorView = mView.findViewById(R.id.btn_object_gradient_endcolor)
-        mExtractGradientendcolorView = mView.findViewById(R.id.btn_object_extractgradientendcolor) as ImageView
-        mStrokewidthView = mView.findViewById(R.id.field_object_strokewidth) as EditText
+        mExtractGradientendcolorView = mView.findViewById<ImageView>(R.id.btn_object_extractgradientendcolor)
+        mStrokewidthView = mView.findViewById<EditText>(R.id.field_object_strokewidth)
         mStrokecolorView = mView.findViewById(R.id.btn_object_strokecolor)
-        mExtractStrokecolorView = mView.findViewById(R.id.btn_object_extractstrokecolor) as ImageView
-        mCornerradiusView = mView.findViewById(R.id.field_object_cornerradius) as EditText
-        mShadowView = mView.findViewById(R.id.field_object_shadow) as CheckBox
-        mShadowBlurView = mView.findViewById(R.id.field_object_shadowblur) as EditText
-        mShadowXPosView = mView.findViewById(R.id.field_object_shadowx) as EditText
-        mShadowYPosView = mView.findViewById(R.id.field_object_shadowy) as EditText
+        mExtractStrokecolorView = mView.findViewById<ImageView>(R.id.btn_object_extractstrokecolor)
+        mCornerradiusView = mView.findViewById<EditText>(R.id.field_object_cornerradius)
+        mShadowView = mView.findViewById<CheckBox>(R.id.field_object_shadow)
+        mShadowBlurView = mView.findViewById<EditText>(R.id.field_object_shadowblur)
+        mShadowXPosView = mView.findViewById<EditText>(R.id.field_object_shadowx)
+        mShadowYPosView = mView.findViewById<EditText>(R.id.field_object_shadowy)
 
 
         mColorpickerDialog.setOnColorPickedListener { colorInt, colorString ->
