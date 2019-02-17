@@ -14,7 +14,7 @@ object FontCache {
 
     fun loadFont (uid: Long, board: BoardObject, ctx: Context, cb: (font: Typeface) -> Unit) {
         if (FontCache.fonts.containsKey(uid) && FontCache.fonts[uid]!!.get() != null) {
-            cb(FontCache.fonts[uid]!!.get())
+            cb(FontCache.fonts[uid]!!.get()!!)
         } else {
             doAsync {
                 val typeFace: Typeface

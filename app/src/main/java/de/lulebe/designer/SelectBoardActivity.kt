@@ -9,6 +9,7 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.view.MenuItemCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
@@ -23,12 +24,15 @@ import de.lulebe.designer.data.BoardMeta
 import de.lulebe.designer.data.DBHelper
 import de.lulebe.designer.data.IncludedFiles
 import de.lulebe.designer.data.StorageManager
+import de.lulebe.designer.online.AccountManager
 import java.io.File
 import java.util.*
 
 class SelectBoardActivity : AppCompatActivity() {
 
     private val REQUEST_CODE_IMPORT = 1
+
+    private val mAccountManager = AccountManager(this)
 
     private val mAdapter = BoardsAdapter {board, longClicked ->
         if (longClicked) {
@@ -61,6 +65,8 @@ class SelectBoardActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_select_board, menu)
+        if (mAccountManager.isSignedIn)
+            menu?.getItem(R.id.menu_signin)?.isVisible = false
         return true
     }
 

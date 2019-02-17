@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Designer.iml" filepath="$PROJECT_DIR$/Designer.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\lulebe\Documents\dev\Designer\app\app.iml" filepath="C:\Users\lulebe\Documents\dev\Designer\app\app.iml" />
     </modules>
   </component>
 </project>
